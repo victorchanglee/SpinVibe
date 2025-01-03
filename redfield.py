@@ -1,5 +1,14 @@
 import numpy as np
 
+def redfield_linear():
+   g_ph = 1/np.pi 
+   return
+
+def redfield_quadratic():
+
+   return
+
+
 def td_spin(my_system, Uext=None, timers=None, computeU=False):
 
    """

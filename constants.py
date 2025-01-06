@@ -1,6 +1,10 @@
 """Constants"""
 # Atomic units of Ry
 
+hbar = 1.0
+emass = 1.0
+echarge = 1.0
+
 # Conversion factor
 Ha2eV = 27.21138386
 eV2Ry = 2./Ha2eV

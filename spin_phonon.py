@@ -1,59 +1,53 @@
 import numpy as np
-
+import s_hamiltonian
+import coupling
 
 """"
-Calculation run file
+Run file
+
+Set input parameters
 
 """
 
-class spin_phonon:
-    def __init__(self,spins,B, g_tensors, beta,D_tensor):
-        
-        
-        self.spins = spins
-        self.N = len(self.spins)  # Number of spins
 
-        self.B = B # external magnetic field
-        self.g_tensors = g_tensors
-        self.beta = beta
-        self.D_tensor = D_tensor
+"""
+Spin Hamiltonian inputs
 
-        self.H_s = np.zeros([self.N],dtype=np.float64)
+"""
 
-        self.init_spin_hamiltonian()
+B = np.array([0.1, 0.2, 0.3])  # Magnetic field vector
+g_tensors = [np.eye(3) for _ in range(3)]  # Identity g-tensors for 3 spins
+spins = [np.array([1.0, 0.0, 0.0]), np.array([0.0, 1.0, 0.0]), np.array([0.0, 0.0, 1.0])]  # Spin vectors
+beta = [1.0, 1.5, 2.0]  # Coupling constants
 
-    
-        return
-    
-    def read_file():
-        return
-    
-    def init_spin_hamiltonian(self):
-        """
-        Compute the Hamiltonian H_s for the spin system.
+# Crystal field coefficients and operators
+B_lm = [{l: {m: 0.1 for m in range(-l, l + 1)} for l in range(2, 4)} for _ in range(3)]
+spin_operators = [{(l, m): 0.1 for l in range(2, 4) for m in range(-l, l + 1)} for _ in range(3)]
 
-        Parameters:
-            B (array): External magnetic field vector (3D).
-            g_tensors (list): List of 3x3 g-tensors for each spin.
-            spins (list): List of spin vectors (3D) for each site.
-            beta (list): Coupling constants for each spin.
-            D_tensor (array): NxN array of 3x3 D-tensors for spin-spin interactions.
+# Exchange coupling tensors
+J_tensors = np.zeros((3, 3, 3, 3))  # Example 3x3 spin system
+J_tensors[0, 1] = np.eye(3)  # Interaction between spin 0 and 1
+J_tensors[1, 2] = np.eye(3)  # Interaction between spin 1 and 2
 
-        Returns:
-            float: Value of the Hamiltonian.
-        """
-        
-        
+s_h = s_hamiltonian.s_hamiltonian(B, g_tensors, spins, beta, B_lm,spin_operators, J_tensors)
 
-        # First term: Interaction with external magnetic field
-        for i in range(self.N):
-            self.H_s[i] = self.beta[i] * np.dot(self.B, np.dot(self.g_tensors[i], self.spins[i]))
-            
-        # Second term: Spin-spin interactions
-        for i in range(self.N):
-            for j in range(self.N):
-                if i != j:
-                    self.H_s[i] += 0.5 * np.dot(self.spins[i], np.dot(self.D_tensor[i, j], self.spins[j]))
+"""
+Spin-phonon coupling inputs
 
-        return 
-    
+"""
+
+N_cells = 4
+N_atoms = 2
+
+# Example parameters
+masses = np.array([1.0, 2.0])  # Masses of atoms
+omega_alpha_q = 2.0  # Phonon frequency
+x_li = np.random.rand(N_cells, 3)  # Random cell positions
+L_vectors = np.random.rand(N_atoms, 3)  # Random displacement vectors
+Q_alpha_q = (0, np.array([1.0, 0.0, 0.0]))  
+
+delta = 1e-4
+
+sp_coupling = coupling.coupling(s_h, Q_alpha_q, omega_alpha_q, masses, R_vectors, L_vectors,delta)
+
+

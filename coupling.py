@@ -58,32 +58,5 @@ def compute_prefactor(N_q, omega_alpha_q, mass, q_vector, R_vectors, mode_amplit
         prefactors.append(prefactor)
     return np.array(prefactors)
 
-def spin_hamiltonian(B, g_tensors, spins, beta, D_tensor):
-    """
-    Compute the Hamiltonian H_s for the spin system.
 
-    Parameters:
-        B (array): External magnetic field vector (3D).
-        g_tensors (list): List of 3x3 g-tensors for each spin.
-        spins (list): List of spin vectors (3D) for each site.
-        beta (list): Coupling constants for each spin.
-        D_tensor (array): NxN array of 3x3 D-tensors for spin-spin interactions.
-
-    Returns:
-        float: Value of the Hamiltonian.
-    """
-    N = len(spins)  # Number of spins
-    H_s = 0.0
-
-    # First term: Interaction with external magnetic field
-    for i in range(N):
-        H_s += beta[i] * np.dot(B, np.dot(g_tensors[i], spins[i]))
-
-    # Second term: Spin-spin interactions
-    for i in range(N):
-        for j in range(N):
-            if i != j:
-                H_s += 0.5 * np.dot(spins[i], np.dot(D_tensor[i, j], spins[j]))
-
-    return H_s
 

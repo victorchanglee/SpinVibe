@@ -12,7 +12,7 @@ Ry2eV = 1./eV2Ry
 a2bohr = 1.88973
 
 # Boltzman constant
-kb_HaK = 3.1668154267112283e-06
+k_B = 3.1668154267112283e-06
 
 # Electron mass over atomical mass unit
 me_amu = 5.4857990965007152E-4

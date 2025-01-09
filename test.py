@@ -1,75 +1,52 @@
 import numpy as np
 
-def zeeman_term_per_spin(B, g_tensors, spins, beta):
-    """
-    Compute the Zeeman interaction energy per spin.
-    """
-    zeeman_energies = []
-    for i, spin in enumerate(spins):
-        energy = beta[i] * np.dot(B, np.dot(g_tensors[i], spin))
-        zeeman_energies.append(energy)
-    return np.array(zeeman_energies)
+# Constants
+hbar = 1.0545718e-34  # Planck's constant [J·s]
 
-def crystal_field_term_per_spin(B_lm, spin_operators, spins):
-    """
-    Compute the crystal field interaction energy per spin.
-    """
-    crystal_field_energies = []
-    for i, spin in enumerate(spins):
-        energy = 0.0
-        S_magnitude = np.linalg.norm(spin)
-        S_operators = spin_operators[i]
-        for l in range(2, int(2 * S_magnitude) + 1):
-            for m in range(-l, l + 1):
-                energy += B_lm[i][l][m] * S_operators[(l, m)]
-        crystal_field_energies.append(energy)
-    return np.array(crystal_field_energies)
+# Input data
+Ns = 4  # Number of eigenstates
+Nq = 3  # Number of phonon modes
+omega_q = np.array([1.0, 1.5, 2.0])  # Phonon frequencies (example) [eV]
+omega_ab = np.random.rand(Ns, Ns)  # Energy differences [eV]
+mass_term = np.array([1.0, 1.2, 1.5])  # Example mass weights
 
-def exchange_term_per_spin(spins, J_tensors):
-    """
-    Compute the exchange interaction energy per spin.
-    """
-    N = len(spins)
-    exchange_energies = np.zeros(N)
-    for i in range(N):
-        for j in range(N):
-            if i != j:
-                exchange_energies[i] += np.dot(spins[i], np.dot(J_tensors[i, j], spins[j]))
-    return exchange_energies
+# Interaction matrix elements V^{alpha q}_{aj} (random example)
+V_alpha_q = np.random.rand(Ns, Ns, Nq)
 
-def compute_hamiltonian_per_spin(B, g_tensors, spins, beta, B_lm, spin_operators, J_tensors):
-    """
-    Compute the Hamiltonian contributions per spin.
-    """
-    # Zeeman interaction term per spin
-    zeeman_energies = zeeman_term_per_spin(B, g_tensors, spins, beta)
+# Example Green's function G^{1-ph} (frequency-dependent)
+def G_1_ph(omega_1, omega_2):
+    return 1 / (omega_1 - omega_2 + 1j * 1e-3)  # Example Green's function
 
-    # Crystal field term per spin
-    crystal_field_energies = crystal_field_term_per_spin(B_lm, spin_operators, spins)
+# Redfield tensor initialization
+R_tensor = np.zeros((Ns, Ns, Ns, Ns), dtype=np.complex128)
 
-    # Exchange interaction term per spin
-    exchange_energies = exchange_term_per_spin(spins, J_tensors)
+# Calculate the Redfield tensor
+for a in range(Ns):
+    for b in range(Ns):
+        for c in range(Ns):
+            for d in range(Ns):
+                # Sum over alpha, q
+                for alpha in range(3):  # Assuming 3 spatial directions
+                    for q in range(Nq):
+                        # First summation term
+                        term_1 = 0
+                        for j in range(Ns):
+                            term_1 += (V_alpha_q[a, j, q] * V_alpha_q[j, c, q] *
+                                       G_1_ph(omega_ab[j, c], omega_q[q]))
+                        
+                        # Second summation term
+                        term_2 = V_alpha_q[a, c, q] * V_alpha_q[d, b, q] * G_1_ph(omega_ab[b, d], omega_q[q])
+                        
+                        # Third summation term
+                        term_3 = 0
+                        for j in range(Ns):
+                            term_3 += (V_alpha_q[c, d, q] * V_alpha_q[a, j, q] *
+                                       G_1_ph(omega_ab[j, d], omega_q[q]))
+                        
+                        # Combine terms and update the tensor
+                        R_tensor[a, b, c, d] += (-np.pi / (2 * hbar) *
+                            (term_1 - term_2 + term_3) * np.sqrt(1 / (Ns * omega_q[q] * mass_term[q % len(mass_term)])))
 
-    # Total energy per spin
-    total_energies = zeeman_energies + crystal_field_energies + 0.5 * exchange_energies
-    return total_energies
-
-# Example Inputs
-B = np.array([0.1, 0.2, 0.3])  # Magnetic field vector
-g_tensors = [np.eye(3) for _ in range(3)]  # Identity g-tensors for 3 spins
-spins = [np.array([1.0, 0.0, 0.0]), np.array([0.0, 1.0, 0.0]), np.array([0.0, 0.0, 1.0])]  # Spin vectors
-beta = [1.0, 1.5, 2.0]  # Coupling constants
-
-# Crystal field coefficients and operators
-B_lm = [{l: {m: 0.1 for m in range(-l, l + 1)} for l in range(2, 4)} for _ in range(3)]
-spin_operators = [{(l, m): 0.1 for l in range(2, 4) for m in range(-l, l + 1)} for _ in range(3)]
-
-# Exchange coupling tensors
-J_tensors = np.zeros((3, 3, 3, 3))  # Example 3x3 spin system
-J_tensors[0, 1] = np.eye(3)  # Interaction between spin 0 and 1
-J_tensors[1, 2] = np.eye(3)  # Interaction between spin 1 and 2
-
-# Compute the Hamiltonian energy per spin
-H_s_per_spin = compute_hamiltonian_per_spin(B, g_tensors, spins, beta, B_lm, spin_operators, J_tensors)
-
-print(f"Hamiltonian energy per spin: {H_s_per_spin}")
+# Output the result
+print("Redfield tensor R_ab,cd:")
+print(R_tensor)

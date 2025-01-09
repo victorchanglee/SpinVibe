@@ -1,21 +1,24 @@
 import numpy as np
 from constants import hbar
+import time
 
 class coupling:
-    def __init__(self,s_h, Q_alpha_q, omega_alpha_q, masses, R_vectors, L_vectors,delta):
+    def __init__(self,Hs_xi, N_q, q_vector, omega_alpha_q, masses, R_vectors, L_vectors, disp):
         
-        self.H_s = s_h.H_s
-        self.Q_alpha_q = Q_alpha_q
+        self.Hs_xi = Hs_xi
+        self.N_q = N_q
+        self.q_vector = q_vector
         self.omega_alpha_q = omega_alpha_q
         self.masses = masses
         self.R_vectors = R_vectors
         self.L_vectors = L_vectors
-        self.N_q = len(Q_alpha_q)
+
         self.N_cells = len(R_vectors)
         self.N_atoms = len(L_vectors)
-        self.delta = delta
         self.hbar = hbar
+        self.disp = disp
 
+        self.dh_dq = np.zeros(3, dtype=np.complex128)
 
         self.compute_coupling()
 
@@ -36,68 +39,55 @@ class coupling:
         Returns:
             float: Spin-phonon coupling energy.
         """
-        #self.prefactor = np.zeros((self.N_cells, self.N_atoms, 3), dtype=np.complex128)
-        #self.compute_prefactor()
 
-        self.dh_dx = self.first_finite_diff(self.H_s, self.R_vectors, self.delta)
+        mass_term = np.sqrt(self.hbar / (self.N_q * self.omega_alpha_q * self.masses))  # sqrt(hbar / (N_q * omega * m))
+        phase_factor = np.exp(1j * np.einsum('i,ji->ji', self.q_vector, self.R_vectors))  # e^{i q . R_l}
 
-    
-    def first_finite_diff(f, x, delta):
-        """
-        Compute the first derivative of a function f using the finite difference method.
-
-        Parameters:
-            f (function): Function to differentiate.
-            x (float or array): Point(s) at which to evaluate the first derivative.
-            delta (float): Small step size for finite difference.
-
-        Returns:
-            array: First derivative of f at x.
-        """
-        derivative_first = (f(x + delta) - f(x - delta)) / (delta ** 2)
-
-        return derivative_first
-
-    def second_finite_diff(f,x,delta):
-        """
-        Compute the second derivative of a function f using the finite difference method.
-
-        Parameters:
-            f (function): Function to differentiate.
-            x (float or array): Point(s) at which to evaluate the second derivative.
-            delta (float): Small step size for finite difference.
-
-        Returns:
-            float or array: Second derivative of f at x.
-        """
-        derivative_second = (f(x + delta) - 2 * f(x) + f(x - delta)) / (delta ** 2)
-
-        return derivative_second
-
-    def compute_prefactor(N_q, omega_alpha_q, mass, q_vector, R_vectors, mode_amplitude):
-        """
-        Compute the prefactor for the given parameters.
-        Ry atomic units, hbar = 1 
-        Parameters:
-            
-            N_q (int): Number of q-points.
-            omega_alpha_q (float): Phonon frequency for mode alpha at q.
-            mass: Mass of the atom.
-            q_vector (array): Wave vector q (3D).
-            R_vectors (list or array): Position vectors of the cells.
-            mode_amplitude (list or array): Mode amplitudes L_alpha_i^q for each atom.
-
-        Returns:
-            list: Prefactor for each cell and atom.
-        """
+        # Compute the first derivative of the Hamiltonian with respect to atomic displacements  
         
-        for l, R_l in enumerate(R_vectors):
+        dh_dx = np.zeros((self.N_atoms, 3), dtype=np.complex128)
+       
+        for n in range(self.N_atoms):
+            for i in range(3):
+                x = self.disp
+                f_x = self.Hs_xi[n,i,:]
 
-            phase_factor = np.exp(1j * np.dot(q_vector, R_l))  # e^{i q . R_l}
-            mass_term = np.sqrt(1 / (N_q * omega_alpha_q * mass))  # sqrt(hbar / (N_q * omega * m))
-            self.prefactor[l,R_l] = mass_term * phase_factor * mode_amplitude
+                dh_dx[n,i] = self.compute_dHs_dx(x,f_x)
+
+
+        tmp1 = np.einsum('ij,ij->ij', self.L_vectors, dh_dx) 
+        tmp2 = np.einsum('i,ij->j', mass_term, tmp1) #Sum over atoms
+        tmp3 = np.einsum('kj,j->j', phase_factor, tmp2) #Sum over cells
+
+        self.dh_dq = tmp3 
 
         return
+    
+    
+    def compute_dHs_dx(self,x,f_x):
+        """
+        Compute the derivative of f_x with reespect to x by polynomial fitting
+
+        Returns: df_x / dx (array): Derivative of f_x with respect to x at 0.
+
+        """
+        
+        # Step 2: Fit a polynomial to the data
+        degree = 3  # Degree of the polynomial
+        coefficients = np.polyfit(x, f_x, degree)
+        polynomial = np.poly1d(coefficients)
+
+        # Step 3: Differentiate the polynomial
+        derivative_polynomial = polynomial.deriv()
+
+        # Step 4: Evaluate the derivative at specific points
+        
+        f_derivative = derivative_polynomial(0)
+
+
+
+        return f_derivative
+
 
 
 

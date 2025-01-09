@@ -7,7 +7,7 @@ Calculation run file
 """
 
 class s_hamiltonian:
-    def __init__(self, B, g_tensors, spins, beta, B_lm,spin_operators, J_tensors):
+    def __init__(self, B, g_tensors, spins, beta, B_lm,spin_operators,D_tensors, J_tensors):
         
         self.B = B
         self.g_tensors = g_tensors
@@ -15,10 +15,13 @@ class s_hamiltonian:
         self.beta = beta
         self.B_lm = B_lm
         self.spin_operators = spin_operators
+        self.D_tensors = D_tensors
         self.J_tensors = J_tensors
         self.N = len(spins)  # Number of spins
-        self.H_s = np.zeros([self.N], dtype=np.float64)  # Initialize spin Hamiltonian terms with zeros
+        self.H_s = np.zeros(1, dtype=np.float64)  # Initialize spin Hamiltonian terms with zeros
         self.init_spin_hamiltonian()
+        self.eigenvalues = np.zeros(self.N, dtype=np.float64)
+        self.eigenvectors = np.zeros((self.N, self.N), dtype=np.float64)
 
         return
     
@@ -42,15 +45,15 @@ class s_hamiltonian:
         """
 
         # Zeeman interaction term
-        self.zeeman_energy = np.zeros(self.N, dtype=np.float64)
+        self.zeeman_energy = np.zeros(1,dtype=np.float64)
         self.zeeman()
 
         # Field splitting term
-        self.field_energy = np.zeros(self.N, dtype=np.float64)
+        self.field_energy = np.zeros(1,dtype=np.float64)
         self.field_splitting()
 
         # Exchange interaction term
-        self.exchange_energy= np.zeros(self.N, dtype=np.float64)
+        self.exchange_energy= np.zeros(1,dtype=np.float64)
         self.exchange_interaction()
 
         # Total Hamiltonian energy
@@ -64,7 +67,7 @@ class s_hamiltonian:
         """
 
         for i in range(self.N):
-            self.zeeman_energy[i] += self.beta[i] * np.dot(self.B, np.dot(self.g_tensors[i], self.spins[i]))
+            self.zeeman_energy += self.beta[i] * np.dot(self.B, np.dot(self.g_tensors[i], self.spins[i]))
 
         return
 
@@ -79,7 +82,7 @@ class s_hamiltonian:
             S_operators = self.spin_operators[i]
             for l in range(2, int(2 * S_magnitude) + 1):
                 for m in range(-l, l + 1):
-                    self.field_energy[i] += self.B_lm[i][l][m] * S_operators[(l, m)]
+                    self.field_energy += self.B_lm[i][l][m] * S_operators[(l, m)]
         return 
 
     def exchange_interaction(self):
@@ -89,10 +92,17 @@ class s_hamiltonian:
 
         for i in range(self.N):
             for j in range(i + 1, self.N):
-                self.exchange_energy += np.dot(self.spins[i], np.dot(self.J_tensors[i, j], self.spins[j]))
+                self.exchange_energy += np.dot(self.spins[i], np.dot(self.D_tensors[i, j], self.spins[j])) + np.dot(self.spins[i], np.dot(self.J_tensors[i, j], self.spins[j]))
         return 
 
     
+    def diagonalization(self):
+        """
+        Diagonalize the spin Hamiltonian.
+        """
 
+        # Diagonalize the Hamiltonian
+        self.eigenvalues, self.eigenvectors = np.linalg.eigh(self.H_s)
+        return 
     
     

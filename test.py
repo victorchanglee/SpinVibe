@@ -50,3 +50,5 @@ for a in range(Ns):
 # Output the result
 print("Redfield tensor R_ab,cd:")
 print(R_tensor)
+
+print("Redfield tensor shape:", R_tensor.shape)

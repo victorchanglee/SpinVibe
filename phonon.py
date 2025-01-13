@@ -6,6 +6,7 @@ class phonon:
         
         self.hbar = hbar
         self.k_B = k_B
+        self.T = T
 
         self.omega_ij = omega_ij
         self.omega_alpha_q = omega_alpha_q

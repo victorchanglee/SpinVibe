@@ -6,7 +6,7 @@ Calculation run file
 
 """
 
-class s_hamiltonian:
+class hamiltonian:
     def __init__(self, B, S, dim, g_tensors, beta, J_tensors):
         
         self.B = B

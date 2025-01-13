@@ -1,5 +1,5 @@
 import numpy as np
-import s_hamiltonian
+import hamiltonian
 import coupling
 import phonon
 import math_func
@@ -69,11 +69,20 @@ class spin_phonon:
         self.N_disp = len(self.disp)
 
 
-        self.sp_coupling = None
+        self.dHs_dq = np.zeros([self.h_dim,self.h_dim,3], dtype=np.complex128)
         
-        self.Hs_xi = np.zeros([self.N_atoms,3,self.N_disp,self.h_dim], dtype=np.complex128)
+        self.Hs_xi = np.zeros([self.N_atoms,3,self.N_disp,self.h_dim,self.h_dim], dtype=np.complex128)
 
         self.init_sp_coupling()
+
+        
+        self.Delta_alpha_q = 0.1  # Broadening parameter
+        self.n_alpha_q = 0.1  # Phonon occupation number
+        self.T = 300  # Temperature in Kelvin
+        self.omega_ij = 0.5  # Energy difference
+
+
+        self.G_1ph = phonon.phonon(self.omega_ij, self.omega_alpha_q, self.Delta_alpha_q, self.n_alpha_q,T)
 
         return
 
@@ -94,7 +103,7 @@ class spin_phonon:
         #D_tensors[1, 2] = np.eye(3)  
 
         
-        s_H = s_hamiltonian.s_hamiltonian(self.B, self.S, self.dim, self.g_tensors, self.beta, self.J_tensors)
+        s_H = hamiltonian.hamiltonian(self.B, self.S, self.dim, self.g_tensors, self.beta, self.J_tensors)
         
         return s_H.H_s
 
@@ -113,14 +122,12 @@ class spin_phonon:
                         for l in range(self.Ns):
                             J_tensor[k,l] = np.random.rand(3, 3)
      
-                    Hs_xi = s_hamiltonian.s_hamiltonian(self.B, self.S, self.dim, self.g_tensors, self.beta, J_tensor)
-                    eigenvalues, eigenvectors = math_func.diagonalize(Hs_xi.H_s)
-                    self.Hs_xi[n,j,i,:] = eigenvalues
-
+                    Hs_xi = hamiltonian.hamiltonian(self.B, self.S, self.dim, self.g_tensors, self.beta, J_tensor)
+                    self.Hs_xi[n,j,i,:,:] = Hs_xi.H_s
         
         
 
-        self.sp_coupling = coupling.coupling(self.Hs_xi, self.N_q, self.q_vector, self.omega_alpha_q, self.masses, self.R_vectors, self.L_vectors, self.disp)
+        self.dHs_dq = coupling.coupling(self.Hs_xi, self.N_q, self.q_vector, self.omega_alpha_q, self.masses, self.R_vectors, self.L_vectors, self.disp)
 
         return
     
@@ -128,5 +135,6 @@ class spin_phonon:
 
 
 
+ 
 
-#        G_1ph = phonon.phonon(1.0, omega_alpha_q, Delta_alpha_q, n_alpha_q)
+        

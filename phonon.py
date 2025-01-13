@@ -62,7 +62,7 @@ class phonon:
         return 
     
 
-     def G_2ph(self):
+    def G_2ph(self):
         """
         
         """

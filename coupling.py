@@ -1,11 +1,14 @@
 import numpy as np
 from constants import hbar
-import time
 
 class coupling:
     def __init__(self,Hs_xi, N_q, q_vector, omega_alpha_q, masses, R_vectors, L_vectors, disp):
         
         self.Hs_xi = Hs_xi
+
+        self.Ns = len(Hs_xi[0,0,0,:])
+        
+
         self.N_q = N_q
         self.q_vector = q_vector
         self.omega_alpha_q = omega_alpha_q
@@ -18,11 +21,11 @@ class coupling:
         self.hbar = hbar
         self.disp = disp
 
-        self.dh_dq = np.zeros(3, dtype=np.complex128)
+        self.dh_dq = np.zeros((self.Ns,3), dtype=np.complex128)
 
         self.compute_coupling()
 
-        return
+        return 
     
     def compute_coupling(self):
         """
@@ -45,19 +48,20 @@ class coupling:
 
         # Compute the first derivative of the Hamiltonian with respect to atomic displacements  
         
-        dh_dx = np.zeros((self.N_atoms, 3), dtype=np.complex128)
+        dh_dx = np.zeros((self.N_atoms, self.Ns, 3), dtype=np.complex128)
        
         for n in range(self.N_atoms):
             for i in range(3):
-                x = self.disp
-                f_x = self.Hs_xi[n,i,:]
+                for s in range(self.Ns):    
+                    x = self.disp
+                    f_x = self.Hs_xi[n,i,:,s]
 
-                dh_dx[n,i] = self.compute_dHs_dx(x,f_x)
+                    dh_dx[n,s,i] = self.compute_dHs_dx(x,f_x)
 
-
-        tmp1 = np.einsum('ij,ij->ij', self.L_vectors, dh_dx) 
-        tmp2 = np.einsum('i,ij->j', mass_term, tmp1) #Sum over atoms
-        tmp3 = np.einsum('kj,j->j', phase_factor, tmp2) #Sum over cells
+        
+        tmp1 = np.einsum('ij,ikj->ikj', self.L_vectors, dh_dx) 
+        tmp2 = np.einsum('i,ikj->kj', mass_term, tmp1) #Sum over atoms
+        tmp3 = np.einsum('lj,kj->kj', phase_factor, tmp2) #Sum over cells
 
         self.dh_dq = tmp3 
 

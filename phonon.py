@@ -12,16 +12,20 @@ class phonon:
         self.omega_alpha_q = omega_alpha_q
         self.Delta_alpha_q = Delta_alpha_q
         
+        self.hdim = len(np.diag(self.omega_ij))
+        self.Nq = len(self.omega_alpha_q)
 
-        self.n_alpha_q = self.bose_einstein()
+        self.n_alpha_q = np.zeros([self.Nq],dtype=np.float64)
+        
+        self.bose_einstein()
 
-        self.G_1ph_value = 0.0
-        self.G_2ph_value = 0.0
+        self.G_1ph_value = np.zeros([self.hdim,self.hdim,self.Nq],dtype=np.float64)
 
         self.G_1ph()
-        self.G_2ph()
 
-        return
+        #self.G_2ph()
+
+        return 
     
     def bose_einstein(self):
         """
@@ -35,13 +39,11 @@ class phonon:
             float: Bose-Einstein occupation number (n̄_{αq}).
         """
 
-        
-        if T == 0:
-            return 0.0  # At T=0, the occupation number is zero
-        else:
-            return 1.0 / (np.exp(self.hbar * omega_alpha_q / (self.k_B * T)) - 1)
+        for q in range(self.Nq):
+            self.n_alpha_q[q] = 1 / (np.exp(self.hbar * self.omega_alpha_q[q] / (self.k_B * self.T)) - 1)
 
-
+        return self.n_alpha_q
+    
     def G_1ph(self):
         """
         Compute G^{1-ph}(omega_ij, omega_alpha_q) based on the given equation.
@@ -55,10 +57,11 @@ class phonon:
         Returns:
             float: Value of G^{1-ph}.
         """
-        term1 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij - self.omega_alpha_q)**2)
-        term2 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij + self.omega_alpha_q)**2)
+        for q in range(self.Nq):
+            term1 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] - self.omega_alpha_q[q])**2)
+            term2 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] + self.omega_alpha_q[q])**2)
         
-        self.G_1ph_value = (1 / np.pi) * (term1 * n_alpha_q + term2 * (n_alpha_q + 1))
+            self.G_1ph_value[:,:,q] = (1 / np.pi) * (term1 * self.n_alpha_q[q] + term2 * (self.n_alpha_q[q] + 1))
 
         return 
     

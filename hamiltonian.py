@@ -24,11 +24,14 @@ class hamiltonian:
 
         self.spin_operators()
     # Total dimension of the Hilbert space
-        self.h_dim = self.N ** self.dim
+        self.hdim = self.N ** self.dim
 
         
 
-        self.H_s = np.zeros((self.h_dim, self.h_dim), dtype=np.complex128)  # Initialize spin Hamiltonian terms with zeros
+        self.Hs = np.zeros((self.hdim, self.hdim), dtype=np.complex128)  # Initialize spin Hamiltonian terms with zeros
+        self.zeeman_energy = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
+        self.exchange_energy = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
+        
         self.init_spin_hamiltonian()
 
         return
@@ -53,11 +56,10 @@ class hamiltonian:
         """
 
         # Zeeman interaction term
-        self.zeeman_energy = np.zeros((self.h_dim, self.h_dim), dtype=np.complex128)
         self.zeeman()
 
+
         # Exchange interaction term
-        self.exchange_energy= np.zeros((self.h_dim, self.h_dim), dtype=np.complex128)
         self.exchange_interaction()
 
         # Field splitting term
@@ -65,7 +67,7 @@ class hamiltonian:
         #self.field_splitting()
 
         # Total Hamiltonian energy
-        self.H_s = self.zeeman_energy + 0.5 * self.exchange_energy #+ self.field_energy 
+        self.Hs = self.zeeman_energy + 0.5 * self.exchange_energy #+ self.field_energy 
     
         return
     
@@ -143,14 +145,13 @@ class hamiltonian:
         Compute the exchange interaction energy.
         """
 
-
-
-
+        exchange_energy = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
+        
         for i in range(self.N):
             for j in range(self.N):
                 if i != j:
                     J_matrix = self.J_tensors[i][j]
-                    for a, op1 in enumerate([self.Sx, self.Sy, self.Sz]):  # Index over spin components
+                    for a, op1 in enumerate([self.Sx,self.Sy, self.Sz]):  # Index over spin components
                         for b, op2 in enumerate([self.Sx, self.Sy, self.Sz]):
                             J_comp = J_matrix[a, b]
                             # Coupling strength between components

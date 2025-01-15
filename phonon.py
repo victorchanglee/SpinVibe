@@ -4,15 +4,13 @@ from constants import hbar,k_B
 class phonon:
     def __init__(self,omega_ij, omega_alpha_q, Delta_alpha_q, T):
         
-        self.hbar = hbar
-        self.k_B = k_B
         self.T = T
 
         self.omega_ij = omega_ij
         self.omega_alpha_q = omega_alpha_q
         self.Delta_alpha_q = Delta_alpha_q
         
-        self.hdim = len(np.diag(self.omega_ij))
+        self.hdim = self.omega_ij.shape[0]
         self.Nq = len(self.omega_alpha_q)
 
         self.n_alpha_q = np.zeros([self.Nq],dtype=np.float64)
@@ -40,7 +38,7 @@ class phonon:
         """
 
         for q in range(self.Nq):
-            self.n_alpha_q[q] = 1 / (np.exp(self.hbar * self.omega_alpha_q[q] / (self.k_B * self.T)) - 1)
+            self.n_alpha_q[q] = 1 / (np.exp(hbar * self.omega_alpha_q[q] / (k_B * self.T)) - 1)
 
         return self.n_alpha_q
     

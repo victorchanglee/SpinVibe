@@ -12,19 +12,19 @@ class hamiltonian:
         self.B = B
         self.S = S
         self.dim = dim
-        self.N = int(2*self.S + 1)
+        self.Ns = int(2*self.S + 1)
         self.g_tensors = g_tensors
         self.beta = beta
         self.J_tensors = J_tensors
 
         self.m = np.arange(-self.S, self.S+1, 1)  # m values
-        self.Sx = np.zeros((self.N, self.N),dtype=np.complex128)
-        self.Sy = np.zeros((self.N, self.N),dtype=np.complex128)
-        self.Sz = np.zeros((self.N, self.N),dtype=np.complex128)
+        self.Sx = np.zeros((self.Ns, self.Ns),dtype=np.complex128)
+        self.Sy = np.zeros((self.Ns, self.Ns),dtype=np.complex128)
+        self.Sz = np.zeros((self.Ns, self.Ns),dtype=np.complex128)
 
         self.spin_operators()
     # Total dimension of the Hilbert space
-        self.hdim = self.N ** self.dim
+        self.hdim = self.Ns ** self.dim
 
         
 
@@ -105,7 +105,7 @@ class hamiltonian:
         """
 
 
-        for i in range(self.N):
+        for i in range(self.Ns):
             Sx_total = np.eye(1)
             Sy_total = np.eye(1)
             Sz_total = np.eye(1)
@@ -116,9 +116,9 @@ class hamiltonian:
                     Sy_total = np.kron(Sy_total, self.Sy)
                     Sz_total = np.kron(Sz_total, self.Sz)
                 else:
-                    Sx_total = np.kron(Sx_total, np.eye(self.N))
-                    Sy_total = np.kron(Sy_total, np.eye(self.N))
-                    Sz_total = np.kron(Sz_total, np.eye(self.N))
+                    Sx_total = np.kron(Sx_total, np.eye(self.Ns))
+                    Sy_total = np.kron(Sy_total, np.eye(self.Ns))
+                    Sz_total = np.kron(Sz_total, np.eye(self.Ns))
             
 
             # Add g-tensor contributions
@@ -131,7 +131,7 @@ class hamiltonian:
         Compute the crystal field interaction energy.
         """
 
-        for i in range(self.N):
+        for i in range(self.Ns):
             S_i = self.spins[i]
             S_magnitude = np.linalg.norm(S_i)
             S_operators = self.spin_operators[i]
@@ -144,11 +144,9 @@ class hamiltonian:
         """
         Compute the exchange interaction energy.
         """
-
-        exchange_energy = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
         
-        for i in range(self.N):
-            for j in range(self.N):
+        for i in range(self.Ns):
+            for j in range(self.Ns):
                 if i != j:
                     J_matrix = self.J_tensors[i][j]
                     for a, op1 in enumerate([self.Sx,self.Sy, self.Sz]):  # Index over spin components
@@ -161,11 +159,11 @@ class hamiltonian:
                                 if k == i:
                                     Si = np.kron(Si, op1)  # Embed spin operator op1 for spin i
                                 else:
-                                    Si = np.kron(Si, np.eye(self.N))
+                                    Si = np.kron(Si, np.eye(self.Ns))
                                 if k == j:
                                     Sj = np.kron(Sj, op2)  # Embed spin operator op2 for spin j
                                 else:
-                                    Sj = np.kron(Sj, np.eye(self.N))
+                                    Sj = np.kron(Sj, np.eye(self.Ns))
 
                             self.exchange_energy += J_comp * np.dot(Si,Sj)  # Add the interaction term
                 

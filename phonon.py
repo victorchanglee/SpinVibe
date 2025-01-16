@@ -21,6 +21,10 @@ class phonon:
 
         self.G_1ph()
 
+        self.G_2ph_value = np.zeros([self.hdim,self.hdim,self.Nq,self.Nq],dtype=np.float64)
+
+        self.G_2ph()
+
         #self.G_2ph()
 
         return 
@@ -38,7 +42,7 @@ class phonon:
         """
 
         for q in range(self.Nq):
-            self.n_alpha_q[q] = 1 / (np.exp(hbar * self.omega_alpha_q[q] / (k_B * self.T)) - 1)
+            self.n_alpha_q[q] = 1 / (np.exp(self.omega_alpha_q[q] / (k_B * self.T)) - 1)
 
         return self.n_alpha_q
     
@@ -66,8 +70,28 @@ class phonon:
 
     def G_2ph(self):
         """
+        Compute G^{1-ph}(omega_ij, omega_alpha_q) based on the given equation.
         
+        Parameters:
+            omega_ij (float): Energy difference (ω_ij).
+            omega_alpha_q (float): Phonon frequency (ω_{αq}).
+            Delta_alpha_q (float): Broadening parameter (Δ_{αq}).
+            n_alpha_q (float): Phonon occupation number (n̄_{αq}).
+        
+        Returns:
+            float: Value of G^{1-ph}.
         """
+        for q1 in range(self.Nq):
+            for q2 in range(self.Nq):
+                term1 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] - self.omega_alpha_q[q1] - self.omega_alpha_q[q2])**2)
+                term2 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] + self.omega_alpha_q[q1] + self.omega_alpha_q[q2])**2)
+                term3 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] - self.omega_alpha_q[q1] + self.omega_alpha_q[q2])**2)
+                term4 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] + self.omega_alpha_q[q1] - self.omega_alpha_q[q2])**2)
+
+                self.G_2ph_value[:,:,q1,q2] = (1 / np.pi) * (term1 * self.n_alpha_q[q1] * self.n_alpha_q[q2] + 
+                                                             term2 * (self.n_alpha_q[q1] + 1) * (self.n_alpha_q[q2] + 1) +
+                                                             term3 * self.n_alpha_q[q1] * (self.n_alpha_q[q2] + 1) +
+                                                             term4 * (self.n_alpha_q[q1] + 1) * self.n_alpha_q[q2])
 
 
         return 

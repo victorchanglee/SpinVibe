@@ -1,5 +1,6 @@
 import numpy as np
 from constants import hbar,k_B
+import math_func
 
 class phonon:
     def __init__(self,omega_ij, omega_alpha_q, Delta_alpha_q, T):
@@ -60,8 +61,8 @@ class phonon:
             float: Value of G^{1-ph}.
         """
         for q in range(self.Nq):
-            term1 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] - self.omega_alpha_q[q])**2)
-            term2 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] + self.omega_alpha_q[q])**2)
+            term1 = math_func.lorentzian(self.omega_ij[:,:] - self.omega_alpha_q[q], self.Delta_alpha_q) 
+            term2 = math_func.lorentzian(self.omega_ij[:,:] + self.omega_alpha_q[q], self.Delta_alpha_q) 
         
             self.G_1ph_value[:,:,q] = (1 / np.pi) * (term1 * self.n_alpha_q[q] + term2 * (self.n_alpha_q[q] + 1))
 
@@ -83,10 +84,12 @@ class phonon:
         """
         for q1 in range(self.Nq):
             for q2 in range(self.Nq):
-                term1 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] - self.omega_alpha_q[q1] - self.omega_alpha_q[q2])**2)
-                term2 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] + self.omega_alpha_q[q1] + self.omega_alpha_q[q2])**2)
-                term3 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] - self.omega_alpha_q[q1] + self.omega_alpha_q[q2])**2)
-                term4 = self.Delta_alpha_q / (self.Delta_alpha_q**2 + (self.omega_ij[:,:] + self.omega_alpha_q[q1] - self.omega_alpha_q[q2])**2)
+
+                term1 = math_func.lorentzian(self.omega_ij[:,:] - self.omega_alpha_q[q1] - self.omega_alpha_q[q2], self.Delta_alpha_q) 
+                term2 = math_func.lorentzian(self.omega_ij[:,:] + self.omega_alpha_q[q1] + self.omega_alpha_q[q2], self.Delta_alpha_q) 
+                term3 = math_func.lorentzian(self.omega_ij[:,:] + self.omega_alpha_q[q1] - self.omega_alpha_q[q2], self.Delta_alpha_q) 
+                term4 = math_func.lorentzian(self.omega_ij[:,:] - self.omega_alpha_q[q1] + self.omega_alpha_q[q2], self.Delta_alpha_q) 
+    
 
                 self.G_2ph_value[:,:,q1,q2] = (1 / np.pi) * (term1 * self.n_alpha_q[q1] * self.n_alpha_q[q2] + 
                                                              term2 * (self.n_alpha_q[q1] + 1) * (self.n_alpha_q[q2] + 1) +

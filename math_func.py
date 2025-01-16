@@ -1,9 +1,9 @@
 import numpy as np
 from scipy.optimize import curve_fit
 
-def delta_lorentzian(x, xc, eta):
+def lorentzian(x, eta):
 
-    return (eta / np.pi) / ( (x-xc) ** 2 + eta ** 2)
+    return (eta / np.pi) / ( (x) ** 2 + eta ** 2)
 
 def diagonalize(hamiltonian):
     """

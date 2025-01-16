@@ -36,7 +36,7 @@ class coupling:
 
         #self.compute_d2H_dxdx()
 
-        self.V_alpha_q = np.zeros((self.hdim, self.hdim, self.Nq), dtype=np.complex128)
+        self.V_alpha = np.zeros((self.hdim, self.hdim, self.Nq), dtype=np.complex128)
 
         self.compute_V_alpha_q()
 
@@ -82,7 +82,7 @@ class coupling:
         tmp2 = np.einsum('ij,jkl->ikl', mass_term, tmp1) #Sum over atoms
         tmp3 = np.einsum('ij,ikl->kli', phase_factor, tmp2) #Sum over cells
 
-        self.V_alpha_q = tmp3 
+        self.V_alpha = tmp3 
 
         return
     

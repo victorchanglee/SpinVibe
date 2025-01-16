@@ -70,8 +70,10 @@ class spin_phonon:
 
 
         #Outputs
-        self.V_alpha_q = np.zeros([self.hdim, self.hdim, self.Nq],dtype=np.complex128)
-        self.V_alpha_beta = np.zeros([self.hdim, self.hdim, self.Nq],dtype=np.complex128)
+        self.V_alpha = np.zeros([self.hdim, self.hdim, self.Nq],dtype=np.complex128)
+        self.V_alpha_beta = np.zeros([self.hdim, self.hdim,self.Nq ,self.Nq],dtype=np.complex128)
+    
+        self.V_alpha_beta = np.tile(self.V_alpha[:, :, :, np.newaxis], (1, 1, 1, self.Nq))
         self.init_sp_coupling()
 
         
@@ -82,13 +84,14 @@ class spin_phonon:
         #Inputs
         self.omega_ij = np.zeros([self.hdim,self.hdim], dtype=np.float64)
         self.omega_ij = math_func.energy_diff(self.eigenvalues)
-        self.Delta_alpha_q = 0.1  # Broadening parameter
+        self.Delta_alpha_q = 0.025  # Broadening parameter
         self.T = 300  # Temperature in Kelvin
 
         #Outputs
         self.G_1ph = np.zeros([self.hdim,self.hdim,self.Nq], dtype=np.float64)
         self.G_2ph = np.zeros([self.hdim,self.hdim,self.Nq,self.Nq], dtype=np.float64)
         self.G_ph = phonon.phonon(self.omega_ij, self.omega_q, self.Delta_alpha_q,self.T)
+        self.n_alpha_q = self.G_ph.n_alpha_q
         self.G_1ph = self.G_ph.G_1ph_value
         self.G_2ph = self.G_ph.G_2ph_value
 
@@ -98,10 +101,13 @@ class spin_phonon:
 
         self.R1 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
         self.R2 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
+        self.R4 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
-        self.Redfield = redfield.redfield(self.V_alpha_q,self.V_alpha_beta,self.G_1ph,self.G_2ph)
+        self.Redfield = redfield.redfield(self.V_alpha,self.V_alpha_beta,self.G_1ph,self.G_2ph,self.eigenvectors,self.eigenvalues,self.omega_q,self.n_alpha_q,self.Delta_alpha_q)
+        
         self.R1 = self.Redfield.R1_tensor
         self.R2 = self.Redfield.R2_tensor
+        self.R4 = self.Redfield.R4_tensor
 
         """
         Initialize spin density
@@ -121,12 +127,12 @@ class spin_phonon:
 
         #Inputs
 
-        self.tf = 1E-4
-        self.dt = 1E-8
+        self.tf = 1E-5
+        self.dt = 1E-9
         self.tlist = np.linspace(0, self.tf, int(self.tf / self.dt))
         self.tsteps = len(self.tlist)
         #Output
-        tevol = RK.RK(self.rho,self.R1,self.R2,self.tf,self.tlist)
+        tevol = RK.RK(self.rho,self.R1,self.R2,self.R4,self.tf,self.tlist)
 
         self.drho_dt = np.zeros([self.hdim,self.hdim,self.tsteps],dtype=np.complex128)
         self.drho_dt = tevol.drho_dt
@@ -202,8 +208,8 @@ class spin_phonon:
 
         V_q = coupling.coupling(self.dim, J_xi, J_xij, self.S, q_vector, self.omega_q, self.masses, R_vectors, L1_vectors,L2_vectors, disp1,disp2)
 
-        self.V_alpha_q = V_q.V_alpha_q
-        self.V_alpha_beta = np.random.rand(1)*(V_q.V_alpha_q) #randomize second derivative similar size to first derivative
+        self.V_alpha = V_q.V_alpha
+  
         return
 
     def init_rho(self):

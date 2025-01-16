@@ -2,12 +2,13 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 class RK:
-     def __init__(self,rho,R1,R2,tf,tlist):
+     def __init__(self,rho,R1,R2,R4,tf,tlist):
           
           self.rho = rho
           self.R1 = R1
           self.R2 = R2
-          self.R = self.R1+self.R2
+          self.R4 = R4
+          self.R = self.R1+self.R2+self.R4
           self.hdim = self.rho.shape[0]
           self.tf = tf
           self.trange= [0,tf]

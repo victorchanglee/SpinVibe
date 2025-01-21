@@ -108,10 +108,21 @@ class redfield:
 
          return tmp1
 
+      
+
+
       for alpha in range(self.Nq):
          for beta in range(self.Nq):
-            if beta < alpha:
-                  continue
+            if alpha >= beta:
+               continue
+            if alpha == beta:
+               delta_alpha_beta  = 1
+            else:
+               delta_alpha_beta = 0
+
+            A_alpha_beta = 1-(0.75*delta_alpha_beta)
+            B_alpha_beta = 1-(0.5*delta_alpha_beta)
+
             for a in range(self.hdim):
                   for b in range(self.hdim):
                       
@@ -146,7 +157,7 @@ class redfield:
                      W_pm = W_pm * self.n_alpha_q[alpha] * (self.n_alpha_q[beta]+1) * math_func.lorentzian(self.omega_ij[:,:] - self.omega_q[alpha] + self.omega_q[beta], self.Delta_alpha_q) 
                      W_mp = W_mp * (self.n_alpha_q[alpha]+1) * self.n_alpha_q[beta] * math_func.lorentzian(self.omega_ij[:,:] + self.omega_q[alpha] - self.omega_q[beta], self.Delta_alpha_q)
 
-                     self.R4_tensor += (np.pi/(2*hbar**2))*(W_mm + W_pp + W_pm + W_mp) 
+                     self.R4_tensor += (np.pi/(2*hbar**2))*(A_alpha_beta*W_mm + A_alpha_beta*W_pp + B_alpha_beta*W_pm + A_alpha_beta*W_mp) 
                      
                       
       return

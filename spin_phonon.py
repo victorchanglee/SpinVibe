@@ -30,19 +30,14 @@ class spin_phonon:
         self.S = 1  # Spin quantum number (spin-1/2)
         self.m = np.arange(-self.S, self.S+1, 1)
         self.Ns = int(2*self.S + 1)  # Number of spins
-        self.dim = 2  # Dimension of the spin system
+        self.dim = 1  # Dimension of the spin system
         self.hdim = self.Ns ** self.dim
         self.beta = np.random.rand(self.Ns)
-        self.g_tensors = np.zeros((self.Ns, 3, 3), dtype=np.float64)  # g-tensor
-        
-        for i in range(self.Ns):
-            self.g_tensors[i] = 2*np.eye(3)
+        self.g_tensors = np.zeros((3, 3), dtype=np.float64)  # g-tensor
+        self.g_tensors = 2*np.eye(3)
 
-        self.J_tensors = np.zeros((self.Ns,self.Ns, 3, 3), dtype=np.float64)
-        
-        for i in range(self.Ns):
-            for j in range(self.Ns):
-                self.J_tensors[i,j] = np.random.rand(3, 3)*20*4E-4  # Heisenberg isotropic exchange interaction coupling constant
+        self.J_tensors = np.zeros((3, 3), dtype=np.float64)
+        self.J_tensors = np.random.rand(3, 3)*20*4E-4  # Heisenberg isotropic exchange interaction coupling constant
         
         #Outputs
         self.Hs = np.zeros([self.hdim, self.hdim], dtype=np.complex128)

@@ -1,13 +1,13 @@
 import numpy as np
 import hamiltonian
 import coupling
-import phonon
 import math_func
 import redfield
 import RK
 import measure
+import read_files
 import h5py as h5
-from constants import mass
+from constants import eV2cm, Bohrmagneton, k_B
 import itertools
 
 """"
@@ -17,28 +17,38 @@ Set input parameters
 
 """
 class spin_phonon:
-    def __init__(self):
+    def __init__(self, B,S, Delta_alpha_q,T,tf,dt, init_type='boltzmann'):
         
         """
         Spin Hamiltonian inputs
 
-        To Do: Crystal field
-
         """
         #Inputs
-        self.B = np.array([0.0, 0.0, 7])  # Magnetic field vector
-        self.S = 1  # Spin quantum number (spin-1/2)
+
+        self.B = B  # Magnetic field vector
+        self.B = self.B * Bohrmagneton  # Convert to eV
+        self.S = S  # Spin quantum number (spin-1/2)
+        self.T = T  # Temperature in Kelvin
+        self.init_type = init_type
         self.m = np.arange(-self.S, self.S+1, 1)
         self.Ns = int(2*self.S + 1)  # Number of spins
-        self.dim = 1  # Dimension of the spin system
-        self.hdim = self.Ns ** self.dim
-        self.beta = np.random.rand(self.Ns)
-        self.g_tensors = np.zeros((3, 3), dtype=np.float64)  # g-tensor
-        self.g_tensors = 2*np.eye(3)
+        self.hdim = self.Ns 
+            
+        self.q_vector, self.omega_q, self.L_vectors = read_files.read_phonons()
+        self.R_vectors,self.masses,self.reciprocal_vectors = read_files.read_atoms()
 
-        self.J_tensors = np.zeros((3, 3), dtype=np.float64)
-        self.J_tensors = np.random.rand(3, 3)*20*4E-4  # Heisenberg isotropic exchange interaction coupling constant
+          # Convert to eV
+
+        self.q_vector = self.q_vector @ self.reciprocal_vectors # Convert q_vector to units of A^-1
+
+        #Inputs
         
+        self.N_atoms = len(self.masses)  # Number of atoms
+        self.Nomega =  len(self.q_vector)  # Number of phonon modes
+        self.Nq = self.q_vector.shape[0]  # Number of q points
+        
+        self.g_tensors,self.D_tensors = read_files.read_orca()
+
         #Outputs
         self.Hs = np.zeros([self.hdim, self.hdim], dtype=np.complex128)
         self.eigenvalues = np.zeros(self.hdim, dtype=np.complex128)
@@ -49,26 +59,13 @@ class spin_phonon:
         self.Hs = self.init_s_H() #Zero displacement
         self.eigenvalues, self.eigenvectors = math_func.diagonalize(self.Hs)
 
-
-        """
-        Spin-phonon coupling inputs
-
-        """
-        #Inputs
-        self.N_cells = 8
-        self.N_atoms = 10
-        self.masses = np.random.rand(self.N_atoms)*20*mass  # Masses of atoms
-        self.omega_q = np.array([0.05, 0.001]) # Phonon frequency
-        self.Nq = len(self.omega_q)  # Number of phonon modes
-
-
-
+        print(self.eigenvalues)
 
         #Outputs
-        self.V_alpha = np.zeros([self.hdim, self.hdim, self.Nq],dtype=np.complex128)
-        self.V_alpha_beta = np.zeros([self.hdim, self.hdim,self.Nq ,self.Nq],dtype=np.complex128)
+        self.V_alpha = np.zeros([self.Nq, self.Nomega,self.hdim, self.hdim],dtype=np.complex128)
+    #    self.V_alpha_beta = np.zeros([self.hdim, self.hdim,self.Nq ,self.Nq],dtype=np.complex128)
     
-        self.V_alpha_beta = np.tile(self.V_alpha[:, :, :, np.newaxis], (1, 1, 1, self.Nq))
+    #    self.V_alpha_beta = np.tile(self.V_alpha[:, :, :, np.newaxis], (1, 1, 1, self.Nq))
         self.init_sp_coupling()
 
         
@@ -77,60 +74,69 @@ class spin_phonon:
         Green's function inputs
         """        
         #Inputs
-        self.omega_ij = np.zeros([self.hdim,self.hdim], dtype=np.float64)
-        self.omega_ij = math_func.energy_diff(self.eigenvalues)
-        self.Delta_alpha_q = 0.025  # Broadening parameter
-        self.T = 300  # Temperature in Kelvin
 
-        #Outputs
-        self.G_1ph = np.zeros([self.hdim,self.hdim,self.Nq], dtype=np.float64)
-        self.G_2ph = np.zeros([self.hdim,self.hdim,self.Nq,self.Nq], dtype=np.float64)
-        self.G_ph = phonon.phonon(self.omega_ij, self.omega_q, self.Delta_alpha_q,self.T)
-        self.n_alpha_q = self.G_ph.n_alpha_q
-        self.G_1ph = self.G_ph.G_1ph_value
-        self.G_2ph = self.G_ph.G_2ph_value
+        self.Delta_alpha_q = Delta_alpha_q  # Broadening parameter
+
+
 
         """
         Redfield equation
         """      
-
+        self.R =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
         self.R1 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
-        self.R2 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
+    #    self.R2 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
         self.R4 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
-        self.Redfield = redfield.redfield(self.V_alpha,self.V_alpha_beta,self.G_1ph,self.G_2ph,self.eigenvectors,self.eigenvalues,self.omega_q,self.n_alpha_q,self.Delta_alpha_q)
+
+        self.R1 = redfield.R1_tensor(self.V_alpha,self.eigenvalues,self.omega_q,self.Delta_alpha_q,self.T)
+    #    self.R2 = redfield.R2_tensor(self.V_alpha,self.G_2ph,self.eigenvalues,self.omega_q,self.n_alpha_q,self.Delta_alpha_q)
+        #self.R4 = redfield.R4_tensor(self.V_alpha,self.omega_q,self.eigenvalues,self.eigenvectors,self.n_alpha_q,self.Delta_alpha_q)
+
+        self.R = self.R1
+
+        self.R = self.R * 1E6 # Convert to microseconds
+
+        self.R_mat = np.zeros((self.hdim**2, self.hdim**2), dtype=np.complex128)
+        self.R_ten2mat()
+
         
-        self.R1 = self.Redfield.R1_tensor
-        self.R2 = self.Redfield.R2_tensor
-        self.R4 = self.Redfield.R4_tensor
+
+        R_eigenvalues, R_eigenvectors = math_func.diagonalize(self.R_mat)
+        print(R_eigenvalues)
 
         """
         Initialize spin density
         """
+        self.init_occ = np.zeros(self.hdim, dtype=np.complex128)
+        self.rho0 = np.zeros([self.hdim**2], dtype=np.complex128)
 
-        self.m0 = 1
-        self.initial_state = np.ones((self.hdim, 1), dtype=np.complex128)
-        self.initial_state = self.initial_state/ np.sqrt(self.hdim)
+        self.rho0 = self.init_rho()
 
-        self.rho = np.zeros([self.hdim,self.hdim],dtype=np.complex128)
-
-        self.rho = self.init_rho()
-
+       
         """
         Perform time-evolution
         """   
 
         #Inputs
 
-        self.tf = 1E-5
-        self.dt = 1E-9
+        self.tf = tf  #Total time
+        self.dt = dt  #Time step
         self.tlist = np.linspace(0, self.tf, int(self.tf / self.dt))
         self.tsteps = len(self.tlist)
         #Output
-        tevol = RK.RK(self.rho,self.R1,self.R2,self.R4,self.tf,self.tlist)
 
-        self.drho_dt = np.zeros([self.hdim,self.hdim,self.tsteps],dtype=np.complex128)
-        self.drho_dt = tevol.drho_dt
+        self.drho_dt = np.zeros([self.tsteps,self.hdim**2],dtype=np.complex128)
+        self.drho_dt = RK.RK(self.rho0,self.R_mat,self.dt,self.tlist)
+
+
+        
+        self.rho_t = np.zeros([self.hdim,self.hdim,self.tsteps],dtype=np.complex128)
+
+        for t in range(self.tsteps):
+            self.rho_t[:,:,t] = self.drho_dt[t].reshape(self.hdim,self.hdim)
+        self.rho_t = 0.5*(self.rho_t + self.rho_t.conj().transpose(1,0,2)) # Ensure hermiticity
+        self.rho_t = np.real(self.rho_t)  # Ensure hermiticity
+
 
         """
         Measure
@@ -138,7 +144,7 @@ class spin_phonon:
 
         self.Mvec = np.zeros([3,self.tsteps],dtype=np.complex128)
 
-        measuring = measure.measure(self.drho_dt,self.S_operator,self.tlist)
+        measuring = measure.measure(self.rho_t,self.S_operator,self.tlist)
 
         self.Mvec = measuring.Mvec
 
@@ -153,7 +159,7 @@ class spin_phonon:
 
     def init_s_H(self):
      
-        sH = hamiltonian.hamiltonian(self.B, self.S, self.dim, self.g_tensors, self.beta, self.J_tensors)
+        sH = hamiltonian.hamiltonian(self.B, self.S, self.g_tensors, self.D_tensors)
         self.S_operator = np.stack((sH.Sx,sH.Sy,sH.Sz),axis=-1)
 
         return sH.Hs
@@ -169,39 +175,9 @@ class spin_phonon:
    
         Returns:    
         """
-        R_vectors = np.random.rand(self.N_cells, 3)*10  # Random cell positions
-        L1_vectors = np.random.rand(self.N_atoms, 3)*5  # Random displacement vectors
-        L2_vectors = np.random.rand(self.N_atoms, 3)*5  # Random displacement vectors
-        q_vector = np.random.rand(self.Nq,3)  # Mode indices (alpha, q)
-        disp1 = np.linspace(-0.0025, 0.0025, 11)
+        
 
-        disp2 = np.array(list(itertools.product(disp1, disp1)))
-
-        N_disp1 = len(disp1)
-        N_disp2 = len(disp2)
-
-
-        J_xi = np.zeros([self.N_atoms,3,N_disp1,self.Ns,self.Ns, 3, 3], dtype=np.complex128)
-       
-        J_xij = np.zeros([self.N_atoms,self.N_atoms,3,3,N_disp2,self.Ns,self.Ns, 3, 3], dtype=np.complex128)
-       
-        for n in range(self.N_atoms):
-            for j in range(3):
-                for i in range(N_disp1):
-                    for k in range(self.Ns):
-                        for l in range(self.Ns):
-                            J_xi[n,j,i,k,l] = np.random.rand(3, 3)*20*4E-4
-
-        for n in range(self.N_atoms):
-            for m in range(self.N_atoms):
-                for j in range(3):
-                    for h in range(3):
-                        for i in range(N_disp2):
-                            for k in range(self.Ns):
-                                for l in range(self.Ns):
-                                    J_xij[n,m,j,h,i,k,l] = np.random.rand(3, 3)*20*4E-4
-
-        V_q = coupling.coupling(self.dim, J_xi, J_xij, self.S, q_vector, self.omega_q, self.masses, R_vectors, L1_vectors,L2_vectors, disp1,disp2)
+        V_q = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.masses, self.R_vectors, self.L_vectors)
 
         self.V_alpha = V_q.V_alpha
   
@@ -209,16 +185,48 @@ class spin_phonon:
 
     def init_rho(self):
 
-        if self.m0 not in self.m:
-            raise ValueError(f"Invalid m0 value. Must be one of {self.m}.")
+        if self.init_type == 'polarized':
+            state = np.zeros((self.hdim, 1), dtype=np.complex128)
+            state[-1] = 1.0  # Last basis state corresponds to all spins down
+            
+            # Density matrix is outer product of the state
+            rho0 = state @ state.conj().T
 
+        elif self.init_type == 'boltzmann':
+            if self.T == 0:
+            # Zero temperature: all population in ground state
+                self.init_occ[np.argmin(self.eigenvalues)] = 1.0
 
+            else:
+                beta = 1 / (k_B * self.T)
+                self.init_occ = np.exp(-beta * self.eigenvalues)
+                self.init_occ /= np.sum(self.init_occ)  # Normalize
+
+            rho_diag = np.diag(self.init_occ.astype(np.complex128))
         
-        # Compute density matrix ρ = |ψ⟩⟨ψ|
-        rho = np.outer(self.initial_state, self.initial_state.conj())
+            # Rotate back to computational basis if needed
+            rho0 = self.eigenvectors @ rho_diag @ self.eigenvectors.conj().T
+        
+        print(rho0)
 
-        return rho
+        return rho0.flatten()
     
+    def R_ten2mat(self):
+
+        # Hilbert space dimension
+        R = self.R
+        for a in range(self.hdim):
+            for b in range(self.hdim):
+                i = a * self.hdim + b  # Composite index i = ab
+                for c in range(self.hdim):
+                    for d in range(self.hdim):
+                        j = c * self.hdim + d  # Composite index j = cd
+                        self.R_mat[i, j] = R[a, b, c, d]
+        
+
+
+        return 
+  
     def save_data(self):
 
         """
@@ -231,7 +239,6 @@ class spin_phonon:
             input.create_dataset('tlist', data=self.tlist)
 
             output = f.create_group('output')
-            output.create_dataset('Hs', data=self.Hs)
             output.create_dataset('drho_dt', data=self.drho_dt)
             output.create_dataset('Mvec',data=self.Mvec)
 
@@ -239,7 +246,6 @@ class spin_phonon:
 
         return
 
-spin_phonon()
 
  
 

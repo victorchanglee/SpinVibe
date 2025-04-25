@@ -7,15 +7,14 @@ Calculation run file
 """
 
 class hamiltonian:
-    def __init__(self, B, S, dim, g_tensors, beta, J_tensors):
+    def __init__(self, B, S, g_tensors, D_tensors):
         
         self.B = B
         self.S = S
-        self.dim = dim
         self.Ns = int(2*self.S + 1)
         self.g_tensors = g_tensors
-        self.beta = beta
-        self.J_tensors = J_tensors
+
+        self.D_tensors = D_tensors
 
         self.m = np.arange(-self.S, self.S+1, 1)  # m values
         self.Sx = np.zeros((self.Ns, self.Ns),dtype=np.complex128)
@@ -24,13 +23,13 @@ class hamiltonian:
 
         self.spin_operators()
     # Total dimension of the Hilbert space
-        self.hdim = self.Ns ** self.dim
+        self.hdim = self.Ns 
 
         
 
         self.Hs = np.zeros((self.hdim, self.hdim), dtype=np.complex128)  # Initialize spin Hamiltonian terms with zeros
         self.zeeman_energy = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
-        self.exchange_energy = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
+        self.zfs_energy = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
         
         self.init_spin_hamiltonian()
 
@@ -41,33 +40,14 @@ class hamiltonian:
 
     def init_spin_hamiltonian(self):
 
-        """
-        Compute the Hamiltonian H_s for the spin system.
-
-        Parameters:
-            B (array): External magnetic field vector (3D).
-            g_tensors (list): List of 3x3 g-tensors for each spin.
-            spins (list): List of spin vectors (3D) for each site.
-            beta (list): Coupling constants for each spin.
-            D_tensor (array): NxN array of 3x3 D-tensors for spin-spin interactions.
-
-        Returns:
-            float: Value of the Hamiltonian.
-        """
-
         # Zeeman interaction term
         self.zeeman()
 
-
-        # Exchange interaction term
-        self.exchange_interaction()
-
-        # Field splitting term
-        #self.field_energy = np.zeros((self.h_dim, self.h_dim), dtype=np.complex128)
-        #self.field_splitting()
+        # ZFS interaction term
+        self.zfs_interaction()
 
         # Total Hamiltonian energy
-        self.Hs = self.zeeman_energy + 0.5 * self.exchange_energy #+ self.field_energy 
+        self.Hs = self.zeeman_energy + self.zfs_energy #+ self.field_energy 
     
         return
     
@@ -103,70 +83,30 @@ class hamiltonian:
         """
         Compute the Zeeman interaction energy.
         """
-
-
-        for i in range(self.Ns):
-            Sx_total = np.eye(1)
-            Sy_total = np.eye(1)
-            Sz_total = np.eye(1)
-            
-            for j in range(self.dim):
-                if j == i:
-                    Sx_total = np.kron(Sx_total, self.Sx)
-                    Sy_total = np.kron(Sy_total, self.Sy)
-                    Sz_total = np.kron(Sz_total, self.Sz)
-                else:
-                    Sx_total = np.kron(Sx_total, np.eye(self.Ns))
-                    Sy_total = np.kron(Sy_total, np.eye(self.Ns))
-                    Sz_total = np.kron(Sz_total, np.eye(self.Ns))
-            
-
-            # Add g-tensor contributions
-            self.zeeman_energy += self.beta[i] * self.B[0] * self.g_tensors[i,i][0] * Sx_total
-            self.zeeman_energy += self.beta[i] * self.B[1] * self.g_tensors[i,i][1] * Sy_total
-            self.zeeman_energy += self.beta[i] * self.B[2] * self.g_tensors[i,i][2] * Sz_total
-
-    def field_splitting(self):
-        """
-        Compute the crystal field interaction energy.
-        """
-
-        for i in range(self.Ns):
-            S_i = self.spins[i]
-            S_magnitude = np.linalg.norm(S_i)
-            S_operators = self.spin_operators[i]
-            for l in range(2, int(2 * S_magnitude) + 1):
-                for m in range(-l, l + 1):
-                    self.field_energy += self.B_lm[i][l][m] * S_operators[(l, m)]
-        return 
-
-    def exchange_interaction(self):
-        """
-        Compute the exchange interaction energy.
-        """
         
-        for i in range(self.Ns):
-            for j in range(self.Ns):
-                if i != j:
-                    J_matrix = self.J_tensors[i][j]
-                    for a, op1 in enumerate([self.Sx,self.Sy, self.Sz]):  # Index over spin components
-                        for b, op2 in enumerate([self.Sx, self.Sy, self.Sz]):
-                            J_comp = J_matrix[a, b]
-                            # Coupling strength between components
-                            Si = np.eye(1)
-                            Sj = np.eye(1)
-                            for k in range(self.dim):
-                                if k == i:
-                                    Si = np.kron(Si, op1)  # Embed spin operator op1 for spin i
-                                else:
-                                    Si = np.kron(Si, np.eye(self.Ns))
-                                if k == j:
-                                    Sj = np.kron(Sj, op2)  # Embed spin operator op2 for spin j
-                                else:
-                                    Sj = np.kron(Sj, np.eye(self.Ns))
+        zeeman_x = self.B[0] * self.g_tensors[0,0] * self.Sx
+        zeeman_y = self.B[1] * self.g_tensors[1,1] * self.Sy
+        zeeman_z = self.B[2] * self.g_tensors[2,2] * self.Sz
 
-                            self.exchange_energy += J_comp * np.dot(Si,Sj)  # Add the interaction term
-                
+        
+        self.zeeman_energy = zeeman_x + zeeman_y + zeeman_z
+
+
+
+    def zfs_interaction(self):
+        """
+        Compute the zero field splitting interaction energy.
+        """
+
+        spin_ops = {'x': self.Sx, 'y': self.Sy, 'z': self.Sz}
+        components = ['x', 'y', 'z']
+            
+        for i, a in enumerate(components):
+            for j, b in enumerate(components):
+                Sa = spin_ops[a]
+                Sb = spin_ops[b]
+                self.zfs_energy +=  self.D_tensors[i,j] * np.dot(Sa, Sb)
+
         
         return 
 

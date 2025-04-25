@@ -23,6 +23,6 @@ class measure:
             self.Mvec[0,t] = np.trace(np.dot(self.Sx,self.drho_dt[:,:,t]))
             self.Mvec[1,t] = np.trace(np.dot(self.Sy,self.drho_dt[:,:,t]))
             self.Mvec[2,t] = np.trace(np.dot(self.Sz,self.drho_dt[:,:,t]))
-
+            
 
         return

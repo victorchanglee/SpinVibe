@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.optimize import curve_fit
+from constants import hbar, k_B
 
 def lorentzian(x, eta):
 
@@ -13,48 +13,6 @@ def diagonalize(hamiltonian):
     eigenvalues, eigenvectors = np.linalg.eigh(hamiltonian)
     return eigenvalues, eigenvectors
 
-def compute_derivative(x,fx):
-    """
-    Compute the derivative of f_x with reespect to x by polynomial fitting
-
-    Returns: df_x / dx (array): Derivative of f_x with respect to x at 0.
-
-    """
-    
-    # Step 2: Fit a polynomial to the data
-    degree = 3  # Degree of the polynomial
-    coefficients = np.polyfit(x, fx, degree)
-    polynomial = np.poly1d(coefficients)
-
-    # Step 3: Differentiate the polynomial
-    derivative_polynomial = polynomial.deriv()
-
-    # Step 4: Evaluate the derivative at specific points
-    
-    f_derivative = derivative_polynomial(0)
-
-
-
-    return f_derivative
-
-def compute_second_derivative(xy, fx):
-
-    def poly_func(coords, a0, a1, a2, a3, a4, a5):
-        x, y = coords
-        return a0 + a1*x + a2*y + a3*x**2 + a4*y**2 + a5*x*y
-    
-    coords = (xy[:, 0], xy[:, 1])  # x and y displacements
-    popt, _ = curve_fit(poly_func, coords, fx)
-
-    a0, a1, a2, a3, a4, a5 = popt
-    
-    d2Hs_dx2 = 2 * a3
-    d2Hs_dy2 = 2 * a4
-    d2Hs_dxdy = a5
-
-    
-
-    return 
 
 def energy_diff(eigenvalues):
     """
@@ -65,3 +23,45 @@ def energy_diff(eigenvalues):
     return energy_diff
 
 
+def mat(a, b, alpha,omega,eigenvectors, V_alpha):
+
+    tmp = np.dot(V_alpha[alpha,omega,:, :],eigenvectors[b])
+    tmp1 = np.dot(eigenvectors[a], tmp)
+
+    return tmp1
+
+def bose_einstein(omega_alpha_q, T):
+        """
+        Compute the Bose-Einstein occupation number.
+        
+        Parameters:
+            omega_alpha_q (float): Phonon frequency (ω_{αq}).
+            T (float): Temperature in Kelvin.
+        
+        Returns:
+            float: Bose-Einstein occupation number (n̄_{αq}).
+        """
+
+        
+        n_alpha_q = 1 / (np.exp(omega_alpha_q / (k_B * T)) - 1)
+
+        return n_alpha_q
+
+def compute_derivative(x,fx,displacement):
+    """
+    Compute the derivative of f_x with reespect to x by polynomial fitting
+
+    Returns: df_x / dx (array): Derivative of f_x with respect to x at 0.
+
+    """
+    
+    degree = 5  # Degree of the polynomial
+    coefficients = np.polyfit(x, fx, degree)
+    
+    # Calculate derivative coefficients (using polyder)
+    deriv_coeffs = np.polyder(coefficients)
+    
+    # Evaluate derivative at displacement
+    dfdx = np.polyval(deriv_coeffs, displacement)
+
+    return dfdx

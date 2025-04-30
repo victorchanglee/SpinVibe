@@ -1,5 +1,5 @@
 import numpy as np
-from constants import hbar, k_B
+from constants import k_B
 
 def lorentzian(x, eta):
 
@@ -41,13 +41,14 @@ def bose_einstein(omega_alpha_q, T):
         Returns:
             float: Bose-Einstein occupation number (n̄_{αq}).
         """
-
+        x = omega_alpha_q / (k_B * T)
+        x = np.clip(x, None, 700)
         
-        n_alpha_q = 1 / (np.exp(omega_alpha_q / (k_B * T)) - 1)
+        n_alpha_q = 1 / (np.exp(x) - 1)
 
         return n_alpha_q
 
-def compute_derivative(x,fx,displacement):
+def compute_derivative(x,fx,displacement=0.0,degree=3):
     """
     Compute the derivative of f_x with reespect to x by polynomial fitting
 
@@ -55,7 +56,6 @@ def compute_derivative(x,fx,displacement):
 
     """
     
-    degree = 5  # Degree of the polynomial
     coefficients = np.polyfit(x, fx, degree)
     
     # Calculate derivative coefficients (using polyder)
@@ -65,3 +65,9 @@ def compute_derivative(x,fx,displacement):
     dfdx = np.polyval(deriv_coeffs, displacement)
 
     return dfdx
+
+def compute_trace(matrix):
+    n = len(matrix)
+    if n == 0 or len(matrix[0]) != n:
+        raise ValueError("Matrix must be square.")
+    return sum(matrix[i][i] for i in range(n))

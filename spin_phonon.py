@@ -3,11 +3,11 @@ import hamiltonian
 import coupling
 import math_func
 import redfield
-import RK
 import measure
+import RK
 import read_files
 import h5py as h5
-from constants import eV2cm, Bohrmagneton, k_B
+from constants import Bohrmagneton, k_B
 import itertools
 
 """"
@@ -26,7 +26,7 @@ class spin_phonon:
         #Inputs
 
         self.B = B  # Magnetic field vector
-        self.B = self.B * Bohrmagneton  # Convert to eV
+        self.B = self.B * Bohrmagneton  # Convert to cm-1
         self.S = S  # Spin quantum number (spin-1/2)
         self.T = T  # Temperature in Kelvin
         self.init_type = init_type
@@ -59,6 +59,7 @@ class spin_phonon:
         self.Hs = self.init_s_H() #Zero displacement
         self.eigenvalues, self.eigenvectors = math_func.diagonalize(self.Hs)
 
+        print("Eigenvalues of the spin Hamiltonian")
         print(self.eigenvalues)
 
         #Outputs
@@ -94,15 +95,16 @@ class spin_phonon:
 
         self.R = self.R1
 
-        self.R = self.R * 1E6 # Convert to microseconds
 
-        self.R_mat = np.zeros((self.hdim**2, self.hdim**2), dtype=np.complex128)
-        self.R_ten2mat()
-
+        self.R_mat = self.R.reshape((self.hdim**2, self.hdim**2))
+        eigenvalues = np.linalg.eigvals(self.R_mat)
+        print("Eigenvalues of the Redfield matrix")
+        print(eigenvalues)
         
 
-        R_eigenvalues, R_eigenvectors = math_func.diagonalize(self.R_mat)
-        print(R_eigenvalues)
+        #print("Eigenvectors of the Redfield matrix")
+        #print(self.R_eigenvectors)
+
 
         """
         Initialize spin density
@@ -123,20 +125,18 @@ class spin_phonon:
         self.dt = dt  #Time step
         self.tlist = np.linspace(0, self.tf, int(self.tf / self.dt))
         self.tsteps = len(self.tlist)
+
         #Output
 
         self.drho_dt = np.zeros([self.tsteps,self.hdim**2],dtype=np.complex128)
         self.drho_dt = RK.RK(self.rho0,self.R_mat,self.dt,self.tlist)
 
-
-        
         self.rho_t = np.zeros([self.hdim,self.hdim,self.tsteps],dtype=np.complex128)
 
         for t in range(self.tsteps):
             self.rho_t[:,:,t] = self.drho_dt[t].reshape(self.hdim,self.hdim)
         self.rho_t = 0.5*(self.rho_t + self.rho_t.conj().transpose(1,0,2)) # Ensure hermiticity
         self.rho_t = np.real(self.rho_t)  # Ensure hermiticity
-
 
         """
         Measure
@@ -147,6 +147,12 @@ class spin_phonon:
         measuring = measure.measure(self.rho_t,self.S_operator,self.tlist)
 
         self.Mvec = measuring.Mvec
+
+        self.T1 = measuring.T1
+        self.T1_err = measuring.T1_err
+
+        print("T1 = ",self.T1)
+        print("T1_err = ",self.T1_err)
 
         """
         Save data
@@ -175,7 +181,6 @@ class spin_phonon:
    
         Returns:    
         """
-        
 
         V_q = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.masses, self.R_vectors, self.L_vectors)
 
@@ -194,38 +199,21 @@ class spin_phonon:
 
         elif self.init_type == 'boltzmann':
             if self.T == 0:
-            # Zero temperature: all population in ground state
+                # Zero temperature: all population in ground state
                 self.init_occ[np.argmin(self.eigenvalues)] = 1.0
-
             else:
                 beta = 1 / (k_B * self.T)
                 self.init_occ = np.exp(-beta * self.eigenvalues)
                 self.init_occ /= np.sum(self.init_occ)  # Normalize
 
             rho_diag = np.diag(self.init_occ.astype(np.complex128))
-        
-            # Rotate back to computational basis if needed
             rho0 = self.eigenvectors @ rho_diag @ self.eigenvectors.conj().T
         
         print(rho0)
 
         return rho0.flatten()
     
-    def R_ten2mat(self):
 
-        # Hilbert space dimension
-        R = self.R
-        for a in range(self.hdim):
-            for b in range(self.hdim):
-                i = a * self.hdim + b  # Composite index i = ab
-                for c in range(self.hdim):
-                    for d in range(self.hdim):
-                        j = c * self.hdim + d  # Composite index j = cd
-                        self.R_mat[i, j] = R[a, b, c, d]
-        
-
-
-        return 
   
     def save_data(self):
 
@@ -235,12 +223,12 @@ class spin_phonon:
 
         with h5.File('data.h5', 'w') as f:
             input = f.create_group('input')
-            input.create_dataset('B', data=self.B)
             input.create_dataset('tlist', data=self.tlist)
 
             output = f.create_group('output')
-            output.create_dataset('drho_dt', data=self.drho_dt)
+            output.create_dataset('rho_t', data=self.rho_t)
             output.create_dataset('Mvec',data=self.Mvec)
+
 
         print("Data has been saved to data.h5")
 

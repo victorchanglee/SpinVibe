@@ -1,11 +1,14 @@
 """Constants"""
 
-
-hbar = 6.582119569E-16 #eV*s
-k_B = 8.617333262E-5 #eV/K
-kg2ev = 5.6178E35 #eV/c^2
-masses_eV = 5.6856e12
-c = 2.99792458E18 #Ang/s
-avogadro = 6.02214076e23
 eV2cm=8065.61042 #cm-1
-Bohrmagneton = 5.7883818060E-5 #eV/T
+bohr2ang = 0.5291772108 #angstrom
+c = 2.99792458E10 #cm/s
+#hbar = 6.582119569E-16 #eV*s
+hbar = 6.582119569E-16 * eV2cm
+hbar_SI = 1.0545718E-34 # J*s
+#k_B = 8.617333262E-5 #eV/K
+kB_SI = 1.38064852E-23 # J/K
+k_B = 8.617333262E-5 * eV2cm #cm-1/K
+avogadro = 6.02214179E23 #mol-1
+#Bohrmagneton = 5.7883818060E-5 #eV/T
+Bohrmagneton = 0.46686 #cm-1/T

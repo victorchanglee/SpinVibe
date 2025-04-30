@@ -31,25 +31,19 @@ class hamiltonian:
         self.zeeman_energy = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
         self.zfs_energy = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
         
-        self.init_spin_hamiltonian()
-
-        return
-    
-    def read_file():
-        return
-
-    def init_spin_hamiltonian(self):
-
         # Zeeman interaction term
         self.zeeman()
 
         # ZFS interaction term
         self.zfs_interaction()
 
-        # Total Hamiltonian energy
-        self.Hs = self.zeeman_energy + self.zfs_energy #+ self.field_energy 
-    
+        self.Hs = self.zeeman_energy + self.zfs_energy 
+
         return
+    
+    def read_file():
+        return
+
     
     def spin_operators(self):
         """

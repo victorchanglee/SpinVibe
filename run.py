@@ -6,15 +6,15 @@ import numpy as np
 if __name__ == "__main__":
     
 
-    B = np.array([0, 0, 0.333])
+    B = np.array([0, 0, 0.1])
     S = 1
 
-    init_type= 'polarized'  
-    Delta_alpha_q = 0.001  # Broadening parameter
+    init_type= 'polarized'  # 'polarized', 'boltzmann'
+    Delta_alpha_q = 1 # Broadening parameter
     T = 10
 
-    tf = 100  # Total time
-    dt = 1E-3  # Time step
+    tf = 1E-2  # Total time in seconds
+    dt = 1E-6  # Time step in seconds
 
 
 

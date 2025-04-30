@@ -15,13 +15,23 @@ def G_1ph(omega_ij, omega_alpha_q, Delta_alpha_q, T):
     Returns:
         float: Value of G^{1-ph}.
     """
+       
+
+    #term1 = math_func.lorentzian(omega_ij - omega_alpha_q, Delta_alpha_q) 
+    #term2 = math_func.lorentzian(omega_ij + omega_alpha_q, Delta_alpha_q) 
+        
+    #G_1ph_value =  (term1 * math_func.bose_einstein(omega_alpha_q,T) + term2 * (math_func.bose_einstein(omega_alpha_q,T) + 1))
     
 
-    term1 = math_func.lorentzian(omega_ij - omega_alpha_q, Delta_alpha_q) 
-    term2 = math_func.lorentzian(omega_ij + omega_alpha_q, Delta_alpha_q) 
-        
-    G_1ph_value =  (term1 * math_func.bose_einstein(omega_alpha_q,T) + term2 * (math_func.bose_einstein(omega_alpha_q,T) + 1))
-                
+    term1_numerator = Delta_alpha_q
+    term1_denominator = Delta_alpha_q**2 + (omega_ij - omega_alpha_q)**2
+    term1 = (term1_numerator / term1_denominator) * math_func.bose_einstein(omega_alpha_q,T)
+    
+    term2_numerator = Delta_alpha_q
+    term2_denominator = Delta_alpha_q**2 + (omega_ij + omega_alpha_q)**2
+    term2 = (term2_numerator / term2_denominator) * (math_func.bose_einstein(omega_alpha_q,T) + 1)
+    
+    G_1ph_value = (term1 + term2) / np.pi           
     return G_1ph_value
 
                  
@@ -33,7 +43,7 @@ def R1_tensor(V_alpha,eigenvalues,omega_alpha,Delta_alpha_q, T):
    Nomega = V_alpha.shape[1]
 
    R1_tensor = np.zeros((hdim, hdim, hdim, hdim), dtype=np.complex128)
-   prefactor = -np.pi / (2 * hbar**2)
+   prefactor = -np.pi / (2 * hbar)
    omega = eigenvalues[:, None] - eigenvalues[None, :]
 
    for a in range(hdim):
@@ -73,6 +83,7 @@ def R1_tensor(V_alpha,eigenvalues,omega_alpha,Delta_alpha_q, T):
                         R1_tensor[a, b, c, d] += prefactor * (term1 + term2 + term3 + term4)
 
 
+     
    return R1_tensor
 
 def init_R2(self):

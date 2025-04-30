@@ -1,5 +1,5 @@
 import h5py
-from constants import avogadro,kg2ev,eV2cm
+from constants import avogadro
 import numpy as np
 
 def read_orca():
@@ -7,16 +7,17 @@ def read_orca():
         g_tensor = f['g_tensor'][:]
         d_tensor = f['d_tensor'][:]
 
-    d_tensor = d_tensor/eV2cm
+    d_tensor = d_tensor
     return g_tensor, d_tensor
 
 def read_phonons():
-    with h5py.File('Sn_otolyl_4_phonon.h5', 'r') as f:
+    with h5py.File('Sn_otolyl_4_8812.h5', 'r') as f:
         q_points = f['q_points'][1:, :]
         frequencies_cm = f['frequencies_cm'][1:, :]
         eigenvectors = f['eigenvectors'][1:, :]
 
-    omega_q = frequencies_cm/eV2cm
+    omega_q = frequencies_cm
+    eigenvectors = eigenvectors
             
     return q_points, omega_q, eigenvectors
 
@@ -25,8 +26,10 @@ def read_d1():
         D_d1 = f['d_tensor'][:]
         G_d1 = f['g_matrix'][:]
 
-        D_d1 = D_d1/eV2cm
+        D_d1 = np.concatenate(([D_d1[-1]], D_d1[:-1]))
+        G_d1 = np.concatenate(([G_d1[-1]], G_d1[:-1]))
         disp =np.linspace(-0.005, 0.005, 6)
+        
 
     return D_d1, G_d1, disp
 
@@ -36,5 +39,11 @@ def read_atoms():
         masses = f['masses'][:]
         reciprocal_vectors = f['reciprocal_vectors'][:]
 
-    masses = masses*(1E-3/avogadro)*kg2ev
+    masses = masses*(1E-3/avogadro) #masses in kg
     return R_vectors, masses, reciprocal_vectors
+
+def read_indices():
+    with h5py.File('isolated_indices.h5', 'r') as f:
+        indices = f['indices'][:]
+
+    return indices

@@ -36,14 +36,21 @@ def read_d1():
 def read_atoms():
     with h5py.File('Sn_otolyl_4_atoms.h5', 'r') as f:
         R_vectors = f['positions'][:]
-        masses = f['masses'][:]
         reciprocal_vectors = f['reciprocal_vectors'][:]
 
-    masses = masses*(1E-3/avogadro) #masses in kg
-    return R_vectors, masses, reciprocal_vectors
+    
+    return R_vectors, reciprocal_vectors
 
 def read_indices():
-    with h5py.File('isolated_indices.h5', 'r') as f:
+    with h5py.File('molecule_indices.h5', 'r') as f:
         indices = f['indices'][:]
 
     return indices
+
+def read_mol_masses():
+    with h5py.File('mol_mass.h5', 'r') as f:
+        masses = f['atomic_masses'][:]
+
+    masses = masses*(1E-3/avogadro) #masses in kg
+    masses = np.concatenate(([masses[-1]], masses[:-1]))
+    return masses

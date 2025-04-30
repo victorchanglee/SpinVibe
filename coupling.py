@@ -5,7 +5,7 @@ import read_files
 import math_func
 
 class coupling:
-    def __init__(self, B, S, T, eigenvectors, q_vector, omega_q, masses, R_vectors, L_vectors):
+    def __init__(self, B, S, T, eigenvectors, q_vector, omega_q, R_vectors, L_vectors):
         
     
         self.B = B
@@ -16,8 +16,7 @@ class coupling:
         self.eigenvectors = eigenvectors # Eigenvectors of the spin Hamiltonian
         self.indices = read_files.read_indices()
         self.N = len(self.indices) # Number of atoms in the molecule
-        self.masses = masses # Masses of the atoms
-        self.masses_mol = masses[self.indices] # Masses of the atoms in the molecule
+        self.masses = read_files.read_mol_masses()
         self.q_vector = q_vector # Phonon mode index and wave vector q 
         self.omega_q = omega_q
         self.Nq = L_vectors.shape[0] # Number of q points
@@ -27,7 +26,7 @@ class coupling:
         self.R_vectors_mol = R_vectors[self.indices,:] # Position vectors of the atoms
         self.L_vectors_mol = np.zeros((self.Nq, self.Nomega, self.N, 3), dtype=np.complex128) # Displacement vectors of the atoms
         self.L_vectors_mol = L_vectors[:,:,self.indices,:] # Displacement vectors of the atoms
-        self.N_atoms = len(masses)  # Number of atoms in the crystal
+        self.N_atoms = R_vectors.shape[0]  # Number of atoms in the crystal
         
         
 
@@ -42,10 +41,6 @@ class coupling:
         self.G_d1 = G_d1
         self.disp = disp
 
-
-        #self.displacements = np.zeros((self.N, 3), dtype=np.float64)  # Initialize displacements
-
-        #self.calculate_displacements()
 
         self.compute_dH_dx()
 
@@ -103,7 +98,7 @@ class coupling:
                 for atoms in range(self.N):
                     freq = 2*np.pi * self.omega_q[q,omega] *c  # Frequency in rad/s
                     # Compute the prefactor
-                    prefactor = np.sqrt(hbar_SI / (self.N*self.Nq*self.Nomega *freq * self.masses_mol[atoms])) * 1E10  # Convert to Angstroms
+                    prefactor = np.sqrt(hbar_SI / (self.N*self.Nq*self.Nomega *freq * self.masses[atoms])) * 1E10  # Convert to Angstroms
                     
                     # Compute the exponential term (dot product of q1 and R_l)
                     q_dot_R = np.dot(self.q_vector[q,:], self.R_vectors_mol[atoms,:])

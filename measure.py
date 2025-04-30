@@ -62,7 +62,7 @@ class measure:
                 break
       
 
-        print(Mz_eq)
+        print("Equilibrium Mz:",Mz_eq)
         
 
         # Define the T1 model function

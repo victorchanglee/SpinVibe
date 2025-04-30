@@ -10,7 +10,6 @@ import h5py as h5
 from constants import Bohrmagneton, k_B
 import time
 
-
 """"
 Run file
 
@@ -160,7 +159,7 @@ class spin_phonon:
         #Output
 
         self.drho_dt = np.zeros([self.tsteps,self.hdim**2],dtype=np.complex128)
-        self.drho_dt = RK.RK(self.rho0,self.R_mat,self.dt,self.tlist)
+        self.drho_dt = self.RK(self.rho0,self.R_mat,self.dt,self.tlist)
 
         self.rho_t = np.zeros([self.hdim,self.hdim,self.tsteps],dtype=np.complex128)
 
@@ -169,10 +168,8 @@ class spin_phonon:
         self.rho_t = 0.5*(self.rho_t + self.rho_t.conj().transpose(1,0,2)) # Ensure hermiticity
         self.rho_t = np.real(self.rho_t)  # Ensure hermiticity
 
-        
         hours_evol,minutes_evol,seconds_evol = self.timer(timer_evol)
 
-        
 
         """
         Measure
@@ -192,9 +189,6 @@ class spin_phonon:
         
         print("T1 = ",self.T1)
         print("T1_err = ",self.T1_err)
-
-     
-
 
         """
         Save data
@@ -221,8 +215,6 @@ class spin_phonon:
         self.S_operator = np.stack((sH.Sx,sH.Sy,sH.Sz),axis=-1)
 
         return sH.Hs
-
-    
 
     def init_sp_coupling(self):
 
@@ -265,7 +257,30 @@ class spin_phonon:
         print(rho0)
 
         return rho0.flatten()
-  
+
+
+        
+
+    def RK(self):
+
+        from scipy.integrate import solve_ivp
+
+        nsteps = len(self.tlist)
+        hdim = len(self.rho0)
+        rho = np.zeros((nsteps,hdim), dtype=np.complex128)
+        rho[0] = self.rho0.copy()  # Force rho0 to be 1D
+        
+        for i in range(nsteps - 1):
+            # Ensure R is 2D and rho[i] is 1D
+            k1 = self.R_mat @ rho[i]
+            k2 = self.R_mat @ (rho[i] + 0.5 * self.dt * k1)
+            k3 = self.R_mat @ (rho[i] + 0.5 * self.dt * k2)
+            k4 = self.R_mat @ (rho[i] + self.dt * k3)
+            
+            rho[i+1] = rho[i] + (self.dt / 6) * (k1 + 2*k2 + 2*k3 + k4)
+        
+        return rho
+    
     def save_data(self):
 
         """

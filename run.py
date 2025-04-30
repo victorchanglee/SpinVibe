@@ -6,7 +6,7 @@ import numpy as np
 if __name__ == "__main__":
     
 
-    B = np.array([0, 0, 0.1])
+    B = np.array([0, 0, 1])
     S = 1
 
     init_type= 'polarized'  # 'polarized', 'boltzmann'

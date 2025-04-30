@@ -158,7 +158,7 @@ class spin_phonon:
         #Output
 
         self.drho_dt = np.zeros([self.tsteps,self.hdim**2],dtype=np.complex128)
-        self.drho_dt = self.RK(self.rho0,self.R_mat,self.dt,self.tlist)
+        self.drho_dt = self.RK()
 
         self.rho_t = np.zeros([self.hdim,self.hdim,self.tsteps],dtype=np.complex128)
 

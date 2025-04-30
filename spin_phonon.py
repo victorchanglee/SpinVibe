@@ -4,7 +4,6 @@ import coupling
 import math_func
 import redfield
 import measure
-import RK
 import read_files
 import h5py as h5
 from constants import Bohrmagneton, k_B

@@ -23,9 +23,9 @@ def energy_diff(eigenvalues):
     return energy_diff
 
 
-def mat(a, b, alpha,omega,eigenvectors, V_alpha):
+def mat(a, b, alpha,q,eigenvectors, V_alpha):
 
-    tmp = np.dot(V_alpha[alpha,omega,:, :],eigenvectors[b])
+    tmp = np.dot(V_alpha[q,alpha,:, :],eigenvectors[b])
     tmp1 = np.dot(eigenvectors[a], tmp)
 
     return tmp1
@@ -48,7 +48,7 @@ def bose_einstein(omega_alpha_q, T):
 
         return n_alpha_q
 
-def compute_derivative(x,fx,displacement=0.0,degree=3):
+def compute_derivative(x,fx,displacement=0.0,degree=5):
     """
     Compute the derivative of f_x with reespect to x by polynomial fitting
 

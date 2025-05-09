@@ -123,20 +123,28 @@ def init_R2(self):
 
    return
 
-def R4_tensor(V_alpha,omega_q, eigenvalues, eigenvectors, n_alpha_q, Delta_alpha_q):
+
+def R4_tensor(V_alpha,omega_q, eigenvalues, eigenvectors, Delta_alpha_q,T):
 
    hdim = V_alpha.shape[2]
    Nq = V_alpha.shape[0]
    Nomega = V_alpha.shape[1]
+
+
+   M = np.zeros((Nq, Nomega, hdim, hdim), dtype=np.complex128)
+   for q in range(Nq):
+      for alpha in range(Nomega):
+         V = V_alpha[q, alpha, :, :]
+         M[q, alpha] = eigenvectors.conj().T @ V @ eigenvectors
 
    omega_ij = np.zeros([hdim,hdim], dtype=np.float64)
    omega_ij = math_func.energy_diff(eigenvalues)
 
    R4_tensor = np.zeros((hdim, hdim, hdim, hdim), dtype=np.complex128)  
 
-   for omega in range(Nomega):
-      for alpha in range(Nq):
-         for beta in range(Nq):
+   for q in range(Nq):
+      for alpha in range(Nomega):
+         for beta in range(Nomega):
             if alpha >= beta:
                continue
             if alpha == beta:
@@ -144,44 +152,46 @@ def R4_tensor(V_alpha,omega_q, eigenvalues, eigenvectors, n_alpha_q, Delta_alpha
             else:
                delta_alpha_beta = 0
 
-            A_alpha_beta = 1-(0.75*delta_alpha_beta)
-            B_alpha_beta = 1-(0.5*delta_alpha_beta)
+            M_alpha = M[q, alpha]
+            M_beta = M[q, beta]
 
-            for a in range(hdim):
-                  for b in range(hdim):
-                        
-                     W_mm = 0
-                     W_pp = 0
-                     W_pm = 0
-                     W_mp = 0
+            term1 = M_alpha @ (M_beta.T  / (omega_ij - omega_q[q, beta]))
+            term2 = M_beta @ (M_alpha.T / (omega_ij - omega_q[q, alpha]))
+            W_mm = np.abs(term1 + term2)**2
 
-                     for c in range(hdim):
+            term3 = M_alpha @ (M_beta.T / (omega_ij + omega_q[q, beta]))
+            term4 = M_beta @ (M_alpha.T / (omega_ij + omega_q[q, alpha]))
+            W_pp = np.abs(term3 + term4)**2
 
-                        term1 =  (math_func.mat(a, c, alpha,omega,eigenvectors,V_alpha)*math_func.mat(c, b, beta,omega,eigenvectors,V_alpha))/(eigenvalues[c]-eigenvalues[b]-omega_q[beta,omega])
-                        term2 =  (math_func.mat(a, c, beta,omega,eigenvectors,V_alpha)*math_func.mat(c, b, alpha,omega,eigenvectors,V_alpha))/(eigenvalues[c]-eigenvalues[b]-omega_q[alpha,omega])
+            term5 = M_alpha @ (M_beta.T / (omega_ij + omega_q[q, beta]))
+            term6 = M_beta @ (M_alpha.T / (omega_ij - omega_q[q, alpha]))
+            W_pm = np.abs(term5 + term6)**2
 
-                        W_mm += np.abs(term1 + term2)**2
+            term7 = M_alpha @ (M_beta.T / (omega_ij - omega_q[q, beta]))
+            term8 = M_beta @ (M_alpha.T / (omega_ij + omega_q[q, alpha]))
+            W_mp = np.abs(term7 + term8)**2
 
-                        term3 =  (math_func.mat(a, c, alpha,omega,eigenvectors,V_alpha)*math_func.mat(c, b, beta,omega,eigenvectors,V_alpha))/(eigenvalues[c]-eigenvalues[b]+omega_q[beta,omega])
-                        term4 =  (math_func.mat(a, c, beta,omega,eigenvectors,V_alpha)*math_func.mat(c, b, alpha,omega,eigenvectors,V_alpha))/(eigenvalues[c]-eigenvalues[b]+omega_q[alpha,omega])
-                        W_pp += np.abs(term3 + term4)**2
+            n_alpha = math_func.bose_einstein(omega_q[q, alpha], T)
+            n_beta = math_func.bose_einstein(omega_q[q, beta], T)
 
-                        term5 =  (math_func.mat(a, c, alpha,omega,eigenvectors,V_alpha)*math_func.mat(c, b, beta,omega,eigenvectors,V_alpha))/(eigenvalues[c]-eigenvalues[b]+omega_q[beta,omega])
-                        term6 =  (math_func.mat(a, c, beta,omega,eigenvectors,V_alpha)*math_func.mat(c, b, alpha,omega,eigenvectors,V_alpha))/(eigenvalues[c]-eigenvalues[b]-omega_q[alpha,omega])
+            bose_mm = (n_alpha + 1) * n_beta
+            bose_pp = (n_alpha + 1) * (n_beta + 1)
+            bose_pm = n_alpha * n_beta
+            bose_mp = (n_alpha + 1) * n_beta
 
-                        W_pm += np.abs(term5 + term6)**2
+            lorentz_mm = math_func.lorentzian(omega_ij - omega_q[q, alpha] - omega_q[q, beta], Delta_alpha_q)
+            lorentz_pp = math_func.lorentzian(omega_ij + omega_q[q, alpha] + omega_q[q, beta], Delta_alpha_q)
+            lorentz_pm = math_func.lorentzian(omega_ij - omega_q[q, alpha] + omega_q[q, beta], Delta_alpha_q)
+            lorentz_mp = math_func.lorentzian(omega_ij + omega_q[q, alpha] - omega_q[q, beta], Delta_alpha_q)
 
-                        term7 =  (math_func.mat(a, c, alpha,omega,eigenvectors,V_alpha)*math_func.mat(c, b, beta,omega,eigenvectors,V_alpha))/(eigenvalues[c]-eigenvalues[b]-omega_q[beta,omega])
-                        term8 =  (math_func.mat(a, c, beta,omega,eigenvectors,V_alpha)*math_func.mat(c, b, alpha,omega,eigenvectors,V_alpha))/(eigenvalues[c]-eigenvalues[b]+omega_q[alpha,omega])
+            W_mm = W_mm * bose_mm * lorentz_mm
+            W_pp = W_pp * bose_pp * lorentz_pp
+            W_pm = W_pm * bose_pm * lorentz_pm
+            W_mp = W_mp * bose_mp * lorentz_mp
 
-                        W_mp += np.abs(term7 + term8)**2
+            A = 1-(0.75*delta_alpha_beta)
+            B = 1-(0.5*delta_alpha_beta)
 
-                     W_mm = W_mm * n_alpha_q[alpha,omega] * n_alpha_q[beta,omega] * math_func.lorentzian(omega_ij[:,:] - omega_q[alpha,omega] - omega_q[beta,omega], Delta_alpha_q) 
-                     W_pp = W_pp * (n_alpha_q[alpha,omega]+1) * (n_alpha_q[beta,omega]+1) * math_func.lorentzian(omega_ij[:,:] + omega_q[alpha,omega] + omega_q[beta,omega], Delta_alpha_q) 
-                     W_pm = W_pm * n_alpha_q[alpha,omega] * (n_alpha_q[beta,omega]+1) * math_func.lorentzian(omega_ij[:,:] - omega_q[alpha,omega] + omega_q[beta,omega], Delta_alpha_q) 
-                     W_mp = W_mp * (n_alpha_q[alpha,omega]+1) * n_alpha_q[beta,omega] * math_func.lorentzian(omega_ij[:,:] + omega_q[alpha,omega] - omega_q[beta,omega], Delta_alpha_q)
+            R4_tensor += (np.pi / (2 * hbar)) * (A * W_mm + A * W_pp + B * W_pm + A * W_mp)
 
-                     R4_tensor += (np.pi/(2*hbar**2))*(A_alpha_beta*W_mm + A_alpha_beta*W_pp + B_alpha_beta*W_pm + A_alpha_beta*W_mp) 
-                     
-                     
    return R4_tensor

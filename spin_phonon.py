@@ -30,7 +30,7 @@ class spin_phonon:
 
         """
         #Inputs
-
+        self.B0 = B
         self.B = B  # Magnetic field vector
         self.Delta_alpha_q = Delta_alpha_q  # Broadening parameter
         self.S = S  # Spin quantum number 
@@ -79,7 +79,7 @@ class spin_phonon:
         print("Output:")
 
 
-        timer_redfield = time.perf_counter()
+        
 
         #Outputs
         self.Hs = np.zeros([self.hdim, self.hdim], dtype=np.complex128)
@@ -112,12 +112,16 @@ class spin_phonon:
     #    self.R2 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
         self.R4 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
-
+        timer_R1 = time.perf_counter()
         self.R1 = redfield.R1_tensor(self.V_alpha,self.eigenvalues,self.omega_q,self.Delta_alpha_q,self.T)
+        hours_R1,minutes_R1,seconds_R1 = self.timer(timer_R1)
+        #timer_R2 = time.perf_counter()
     #    self.R2 = redfield.R2_tensor(self.V_alpha,self.G_2ph,self.eigenvalues,self.omega_q,self.n_alpha_q,self.Delta_alpha_q)
-        #self.R4 = redfield.R4_tensor(self.V_alpha,self.omega_q,self.eigenvalues,self.eigenvectors,self.n_alpha_q,self.Delta_alpha_q)
-
-        self.R = self.R1
+    #    hours_R2,minutes_R2,seconds_R2 = self.timer(timer_R2)
+        timer_R4 = time.perf_counter()
+        self.R4 = redfield.R4_tensor(self.V_alpha,self.omega_q,self.eigenvalues,self.eigenvectors,self.Delta_alpha_q,self.T)
+        hours_R4,minutes_R4,seconds_R4 = self.timer(timer_R4)
+        self.R = self.R1 + self.R4
 
 
         self.R_mat = self.R.reshape((self.hdim**2, self.hdim**2))
@@ -125,8 +129,6 @@ class spin_phonon:
         print("Eigenvalues of the Redfield matrix")
         print(eigenvalues)
 
-        
-        hours_redfield,minutes_redfield,seconds_redfield = self.timer(timer_redfield)
 
         
 
@@ -200,7 +202,8 @@ class spin_phonon:
 
         hours,minutes,seconds = self.timer(init_time)
         print(f"Read input Time: {hours_input}h {minutes_input}m {seconds_input:.2f}s")
-        print(f"Build Redfield: {hours_redfield}h {minutes_redfield}m {seconds_redfield:.2f}s")
+        print(f"Build R1: {hours_R1}h {minutes_R1}m {seconds_R1:.2f}s")
+        print(f"Build R4: {hours_R4}h {minutes_R4}m {seconds_R4:.2f}s")
         print(f"Time evolution: {hours_evol}h {minutes_evol}m {seconds_evol:.2f}s")
         print(f"Measuring Time: {hours_measure}h {minutes_measure}m {seconds_measure:.2f}s")
         print(f"Total Run Time: {hours}h {minutes}m {seconds:.2f}s")
@@ -262,8 +265,6 @@ class spin_phonon:
 
     def RK(self):
 
-        from scipy.integrate import solve_ivp
-
         nsteps = len(self.tlist)
         hdim = len(self.rho0)
         rho = np.zeros((nsteps,hdim), dtype=np.complex128)
@@ -286,7 +287,7 @@ class spin_phonon:
         Save data
         """
 
-        with h5.File('Redfield_SPh_coupling.h5', 'w') as f:
+        with h5.File(f"Spin_phonon_{self.B0[0]}.{self.B0[1]}.{self.B0[2]}T_{self.T}K_{self.Delta_alpha_q}.h5", 'w') as f:
             input = f.create_group('input')
             input.create_dataset('tlist', data=self.tlist)
 
@@ -295,7 +296,7 @@ class spin_phonon:
             output.create_dataset('Mvec',data=self.Mvec)
 
 
-        print("Data has been saved to Redfield_SPh_coupling.h5")
+        print(f"Data has been saved to Spin_phonon_{self.B0[0]}.{self.B0[1]}.{self.B0[2]}T_{self.T}K_{self.Delta_alpha_q}.h5")
 
         return
 

@@ -24,8 +24,7 @@ class hamiltonian:
         self.spin_operators()
     # Total dimension of the Hilbert space
         self.hdim = self.Ns 
-
-        
+                
 
         self.Hs = np.zeros((self.hdim, self.hdim), dtype=np.complex128)  # Initialize spin Hamiltonian terms with zeros
         self.zeeman_energy = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
@@ -41,37 +40,38 @@ class hamiltonian:
 
         return
     
-    def read_file():
-        return
 
     
     def spin_operators(self):
         """
-        Returns the spin operators Sx, Sy, Sz for a given spin quantum number S.
-
-        Spin operators from: https://easyspin.org/documentation/spinoperators.html
+        Construct spin operators using ladder operator formalism.
         
+        Standard formulas:
+        S+ = Sx + iSy  (raising operator)
+        S- = Sx - iSy  (lowering operator)
+        
+        S+ |S, m⟩ = ℏ√[S(S+1) - m(m+1)] |S, m+1⟩
+        S- |S, m⟩ = ℏ√[S(S+1) - m(m-1)] |S, m-1⟩
         """
         
-        
-        for i, l in enumerate(self.m):  # m is the row index
-            for j, l_prime in enumerate(self.m):  # m' is the column index
-                # Sx
-                if l_prime == l + 1 or l_prime == l - 1:
-                    self.Sx[j, i] = 0.5 * np.sqrt(self.S * (self.S + 1) - l * l_prime)
-
-                # Sy
-                if l_prime == l + 1:
-                    self.Sy[j, i] = -0.5j * np.sqrt(self.S * (self.S + 1) - l * l_prime)
-                elif l_prime == l - 1:
-                    self.Sy[j, i] = 0.5j * np.sqrt(self.S * (self.S + 1) - l * l_prime)
-
-                # Sz
-                if l_prime == l:
-                    self.Sz[j, i] = l
-
-        return 
-
+        for i, m in enumerate(self.m):  # i is row index (bra)
+            for j, m_prime in enumerate(self.m):  # j is column index (ket)
+                
+                # Sz operator (diagonal)
+                if i == j:
+                    self.Sz[i, j] = m
+                
+                # S+ operator: connects |m⟩ to |m+1⟩
+                if m_prime == m + 1:
+                    self.Sx[i, j] = 0.5 * np.sqrt(self.S * (self.S + 1) - m * (m + 1))
+                    self.Sy[i, j] = -0.5j * np.sqrt(self.S * (self.S + 1) - m * (m + 1))
+                
+                # S- operator: connects |m⟩ to |m-1⟩
+                elif m_prime == m - 1:
+                    self.Sx[i, j] = 0.5 * np.sqrt(self.S * (self.S + 1) - m * (m - 1))
+                    self.Sy[i, j] = 0.5j * np.sqrt(self.S * (self.S + 1) - m * (m - 1))
+    
+        return
 
     def zeeman(self):
         """

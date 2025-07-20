@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.optimize import curve_fit
+from mpi4py import MPI
 
 class measure:
     def __init__(self,rho_t,S_operator,tlist):
@@ -42,6 +43,11 @@ class measure:
         Compute the T1 time from the Mz(t) signal using exponential fitting.
         Returns T1 and its uncertainty.
         """
+
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        size = comm.Get_size()
+        
         # Extract Mz(t) data and time points
         self.Mz = np.real(self.Mvec[2, :])  # Assuming Mvec[2,:] is Mz(t)
         t_data = self.tlist  # Time points (ensure this is defined in your class)
@@ -53,7 +59,6 @@ class measure:
 
         positive_Mz = [x for x in self.Mz if x > 0]
 
-        
         Mz_eq = min(positive_Mz, key=lambda x: abs(x - target_value))
 
         for i in range(1, len(self.Mz)):
@@ -61,8 +66,8 @@ class measure:
                 Mz_eq = self.Mz[i]
                 break
       
-
-        print("Equilibrium Mz:",Mz_eq)
+        if rank == 0:
+            print("Equilibrium Mz:",Mz_eq)
         
 
         # Define the T1 model function

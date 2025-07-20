@@ -8,28 +8,26 @@ import read_files
 import h5py as h5
 from constants import Bohrmagneton, k_B
 import time
+from mpi4py import MPI
 
-""""
-Run file
 
-Set input parameters
-
-"""
 class spin_phonon:
-    def __init__(self, B,S, Delta_alpha_q,T,tf,dt, init_type='boltzmann'):
+    def __init__(self, B, S, Delta_alpha_q, T, tf, dt, init_type='boltzmann'):
+        
+        # MPI setup
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        size = comm.Get_size()
         
         init_time = time.perf_counter()
 
-        print("Start Spin-phonon coupling simulation")
-
-        print("\n")
+        if rank == 0:
+            print("Start Spin-phonon coupling simulation")
+            print("\n")
 
         timer_input = time.perf_counter()
-        """
-        Spin Hamiltonian inputs
-
-        """
-        #Inputs
+        
+        # Parameter initialization (ALL ranks)
         self.B0 = B
         self.B = B  # Magnetic field vector
         self.Delta_alpha_q = Delta_alpha_q  # Broadening parameter
@@ -37,179 +35,190 @@ class spin_phonon:
         self.T = T  # Temperature in Kelvin
         self.init_type = init_type
 
-        
-        print("Input Parameters:")
- 
-        print("Magnetic field:", self.B)
-        print("S:",self.S)
-        print("T:",self.T)
-        print("Broadening:",self.Delta_alpha_q)
-        print("Population type:",self.init_type)
-        
+        if rank == 0:
+            print("Input Parameters:")
+            print("Magnetic field:", self.B)
+            print("S:", self.S)
+            print("T:", self.T)
+            print("Broadening:", self.Delta_alpha_q)
+            print("Population type:", self.init_type)
 
+        # Unit conversions and array setup (ALL ranks)
         self.B = self.B * Bohrmagneton  # Convert to cm-1
-
-
         self.m = np.arange(-self.S, self.S+1, 1)
         self.Ns = int(2*self.S + 1)  # Number of spins
         self.hdim = self.Ns 
 
-        
-        
+        # File reading (ALL ranks need this data)
         self.q_vector, self.omega_q, self.L_vectors = read_files.read_phonons()
-        self.R_vectors,self.reciprocal_vectors = read_files.read_atoms()
-
-          # Convert to eV
-
+        self.R_vectors, self.reciprocal_vectors = read_files.read_atoms()
         self.q_vector = self.q_vector @ self.reciprocal_vectors # Convert q_vector to units of A^-1
 
-        #Inputs
-        
+        # More parameter setup (ALL ranks)
         self.N_atoms = self.R_vectors.shape[0]  # Number of atoms
-        self.Nomega =  len(self.q_vector)  # Number of phonon modes
+        self.Nomega = len(self.q_vector)  # Number of phonon modes
         self.Nq = self.q_vector.shape[0]  # Number of q points
         
-        self.g_tensors,self.D_tensors = read_files.read_orca()
+        self.g_tensors, self.D_tensors = read_files.read_orca()
 
-        
-        hours_input,minutes_input,seconds_input = self.timer(timer_input)
+        hours_input, minutes_input, seconds_input = self.timer(timer_input)
 
-        
-        print("\n")
-        print("Output:")
+        if rank == 0:
+            print("\n")
+            print("Output:")
 
-
-        
-
-        #Outputs
+        # Matrix initialization (ALL ranks)
         self.Hs = np.zeros([self.hdim, self.hdim], dtype=np.complex128)
         self.eigenvalues = np.zeros(self.hdim, dtype=np.complex128)
         self.eigenvectors = np.zeros([self.hdim, self.hdim], dtype=np.complex128)
-        self.S_operator = np.zeros((self.Ns, self.Ns,3),dtype=np.complex128)
+        self.S_operator = np.zeros((self.Ns, self.Ns, 3), dtype=np.complex128)
 
-
-        self.Hs = self.init_s_H() #Zero displacement
+        # Spin Hamiltonian setup (ALL ranks)
+        self.Hs = self.init_s_H()  # Zero displacement
         self.eigenvalues, self.eigenvectors = math_func.diagonalize(self.Hs)
 
-        print("Eigenvalues of the spin Hamiltonian")
-        print(self.eigenvalues)
-        print("\n")
+        if rank == 0:
+            print("Eigenvalues of the spin Hamiltonian")
+            print(self.eigenvalues)
+            print("\n")
 
-        
+        # Coupling matrices (ALL ranks)
 
-        #Outputs
-        self.V_alpha = np.zeros([self.Nq, self.Nomega,self.hdim, self.hdim],dtype=np.complex128)
-    #    self.V_alpha_beta = np.zeros([self.hdim, self.hdim,self.Nq ,self.Nq],dtype=np.complex128)
+        if rank == 0:
+            print("Initialize simulation")
+
+        self.V_alpha = np.zeros([self.Nq, self.Nomega, self.hdim, self.hdim], dtype=np.complex128)
     
-    #    self.V_alpha_beta = np.tile(self.V_alpha[:, :, :, np.newaxis], (1, 1, 1, self.Nq))
-        self.init_sp_coupling()
+        init_Vq = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors)
 
-        """
-        Redfield equation
-        """      
-        self.R =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
-        self.R1 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
-    #    self.R2 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
-        self.R4 =np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
+        self.V_alpha = init_Vq.V_alpha  # Coupling matrix for phonon modes
+
+        init_R = redfield.Redfield(self.S, self.T, self.eigenvectors,self.eigenvalues,self.q_vector, self.omega_q,self.Delta_alpha_q, self.L_vectors)
+
+        hours_input, minutes_input, seconds_input = self.timer(timer_input)
+
+        # Redfield tensors (ALL ranks)
+        self.R = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
+        self.R1 = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
+        self.R2 = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
+        #self.R4 = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
+
+        if rank == 0:
+            print("Initializing R1 tensor")
 
         timer_R1 = time.perf_counter()
-        self.R1 = redfield.R1_tensor(self.V_alpha,self.eigenvalues,self.omega_q,self.Delta_alpha_q,self.T)
-        hours_R1,minutes_R1,seconds_R1 = self.timer(timer_R1)
-        #timer_R2 = time.perf_counter()
-    #    self.R2 = redfield.R2_tensor(self.V_alpha,self.G_2ph,self.eigenvalues,self.omega_q,self.n_alpha_q,self.Delta_alpha_q)
-    #    hours_R2,minutes_R2,seconds_R2 = self.timer(timer_R2)
-        timer_R4 = time.perf_counter()
-        self.R4 = redfield.R4_tensor(self.V_alpha,self.omega_q,self.eigenvalues,self.eigenvectors,self.Delta_alpha_q,self.T)
-        hours_R4,minutes_R4,seconds_R4 = self.timer(timer_R4)
-        self.R = self.R1 + self.R4
+        self.R1 = init_R.R1_tensor(self.V_alpha)
+        hours_R1, minutes_R1, seconds_R1 = self.timer(timer_R1)
+        R1_mat = self.R1.reshape((self.hdim**2, self.hdim**2))
+
+    
+        eigenvalues = np.linalg.eigvals(R1_mat)
+
+        if rank == 0:
+            print("Eigenvalues of the R1 tensor")
+            print(eigenvalues)
+            print("\n")
+            print("Initializing R2 tensor")
+
+        timer_R2 = time.perf_counter()
+        self.R2 = init_R.R2_tensor(init_Vq)
+        eigenvalues = np.linalg.eigvals(self.R2.reshape((self.hdim**2, self.hdim**2)))
+        hours_R2, minutes_R2, seconds_R2 = self.timer(timer_R2)
+
+        
+
+        if rank == 0:
+            print("Eigenvalues of the R2 tensor")
+            print(eigenvalues)
+            print("\n")
 
 
+        #timer_R4 = time.perf_counter()
+        #self.R4 = init_R.R4_tensor(self.V_alpha)
+        #hours_R4, minutes_R4, seconds_R4 = self.timer(timer_R4)
+
+        #eigenvalues = np.linalg.eigvals(self.R4.reshape((self.hdim**2, self.hdim**2)))
+
+        #if rank == 0:
+        #    print("Eigenvalues of the R4 tensor")
+        #    print(eigenvalues)
+        #    print(f"Build R4: {hours_R4}h {minutes_R4}m {seconds_R4:.2f}s")
+        #    print("\n")
+        
+        self.R = self.R1 + self.R2 #+ self.R4
+
+        self.R_mat = np.zeros((self.hdim**2, self.hdim**2), dtype=np.complex128)
         self.R_mat = self.R.reshape((self.hdim**2, self.hdim**2))
+
         eigenvalues = np.linalg.eigvals(self.R_mat)
-        print("Eigenvalues of the Redfield matrix")
-        print(eigenvalues)
-
-
         
+        if rank == 0:
+            print("Eigenvalues of the Redfield matrix")
+            print(eigenvalues)
 
-        
-        """
-        Initialize spin density
-        """
-        print("\n")
+        # Initialize spin density (ALL ranks)
+        if rank == 0:
+            print("\n")
 
         self.init_occ = np.zeros(self.hdim, dtype=np.complex128)
         self.rho0 = np.zeros([self.hdim**2], dtype=np.complex128)
-
         self.rho0 = self.init_rho()
 
+        # Time evolution and measurement (Only rank 0)
+        if rank == 0:
+            print("Start time evolution")
+            print("\n")
         
-        """
-        Perform time-evolution
-        """   
-        print("\n")
+            timer_evol = time.perf_counter()
+            
+            self.tf = tf  # Total time
+            self.dt = dt  # Time step
+            self.tlist = np.linspace(0, self.tf, int(self.tf / self.dt))
+            self.tsteps = len(self.tlist)
+
+            self.drho_dt = np.zeros([self.tsteps, self.hdim**2], dtype=np.complex128)
+            self.drho_dt = self.RK()
+
+            self.rho_t = np.zeros([self.hdim, self.hdim, self.tsteps], dtype=np.complex128)
+
+            for t in range(self.tsteps):
+                self.rho_t[:, :, t] = self.drho_dt[t].reshape(self.hdim, self.hdim)
+
+            hours_evol, minutes_evol, seconds_evol = self.timer(timer_evol)
+
+            timer_measure = time.perf_counter()
+
+            self.Mvec = np.zeros([3, self.tsteps], dtype=np.complex128)
+
+            measuring = measure.measure(self.rho_t, self.S_operator, self.tlist)
+
+            self.Mvec = measuring.Mvec
+            self.T1 = measuring.T1
+            self.T1_err = measuring.T1_err
+
+            hours_measure, minutes_measure, seconds_measure = self.timer(timer_measure)
         
-        timer_evol = time.perf_counter()
-        #Inputs
+       
+            print("T1 = ", self.T1)
+            print("T1_err = ", self.T1_err)
 
-        self.tf = tf  #Total time
-        self.dt = dt  #Time step
-        self.tlist = np.linspace(0, self.tf, int(self.tf / self.dt))
-        self.tsteps = len(self.tlist)
-
-        #Output
-
-        self.drho_dt = np.zeros([self.tsteps,self.hdim**2],dtype=np.complex128)
-        self.drho_dt = self.RK()
-
-        self.rho_t = np.zeros([self.hdim,self.hdim,self.tsteps],dtype=np.complex128)
-
-        for t in range(self.tsteps):
-            self.rho_t[:,:,t] = self.drho_dt[t].reshape(self.hdim,self.hdim)
-        self.rho_t = 0.5*(self.rho_t + self.rho_t.conj().transpose(1,0,2)) # Ensure hermiticity
-        self.rho_t = np.real(self.rho_t)  # Ensure hermiticity
-
-        hours_evol,minutes_evol,seconds_evol = self.timer(timer_evol)
-
-
-        """
-        Measure
-        """   
-        timer_measure = time.perf_counter()
-
-        self.Mvec = np.zeros([3,self.tsteps],dtype=np.complex128)
-
-        measuring = measure.measure(self.rho_t,self.S_operator,self.tlist)
-
-        self.Mvec = measuring.Mvec
-
-        self.T1 = measuring.T1
-        self.T1_err = measuring.T1_err
-
-        hours_measure,minutes_measure,seconds_measure = self.timer(timer_measure)
         
-        print("T1 = ",self.T1)
-        print("T1_err = ",self.T1_err)
+            print("\n")
+            self.save_data()
+            print("\n")
 
-        """
-        Save data
-        """   
-        print("\n")
-
-        self.save_data()
-
-        print("\n")
-
-        hours,minutes,seconds = self.timer(init_time)
-        print(f"Read input Time: {hours_input}h {minutes_input}m {seconds_input:.2f}s")
-        print(f"Build R1: {hours_R1}h {minutes_R1}m {seconds_R1:.2f}s")
-        print(f"Build R4: {hours_R4}h {minutes_R4}m {seconds_R4:.2f}s")
-        print(f"Time evolution: {hours_evol}h {minutes_evol}m {seconds_evol:.2f}s")
-        print(f"Measuring Time: {hours_measure}h {minutes_measure}m {seconds_measure:.2f}s")
-        print(f"Total Run Time: {hours}h {minutes}m {seconds:.2f}s")
+        
+        if rank == 0:
+            hours, minutes, seconds = self.timer(init_time)
+            print(f"Initiate simulation: {hours_input}h {minutes_input}m {seconds_input:.2f}s")
+            print(f"Build R1: {hours_R1}h {minutes_R1}m {seconds_R1:.2f}s")
+            print(f"Build R2: {hours_R2}h {minutes_R2}m {seconds_R2:.2f}s")
+            #print(f"Build R4: {hours_R4}h {minutes_R4}m {seconds_R4:.2f}s")
+            print(f"Time evolution: {hours_evol}h {minutes_evol}m {seconds_evol:.2f}s")
+            print(f"Measuring Time: {hours_measure}h {minutes_measure}m {seconds_measure:.2f}s")
+            print(f"Total Run Time: {hours}h {minutes}m {seconds:.2f}s")
 
         return
-
 
     def init_s_H(self):
      
@@ -218,30 +227,25 @@ class spin_phonon:
 
         return sH.Hs
 
-    def init_sp_coupling(self):
 
-        """
-        Compute the spin-phonon coupling energy.
-
-        Parameters:
-   
-        Returns:    
-        """
-
-        V_q = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors)
-
-        self.V_alpha = V_q.V_alpha
-  
-        return
 
     def init_rho(self):
-
+        
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        size = comm.Get_size()
+    
         if self.init_type == 'polarized':
             state = np.zeros((self.hdim, 1), dtype=np.complex128)
             state[-1] = 1.0  # Along z direction
             
             # Density matrix is outer product of the state
             rho0 = state @ state.conj().T
+
+        elif self.init_type == 'inverted':
+            # Put all population in highest energy state
+            rho0 = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
+            rho0[0, 0] = 1.0  # All in |ms = -1⟩ (if this is highest energy)
 
         elif self.init_type == 'boltzmann':
             if self.T == 0:
@@ -255,8 +259,10 @@ class spin_phonon:
             rho_diag = np.diag(self.init_occ.astype(np.complex128))
             rho0 = self.eigenvectors @ rho_diag @ self.eigenvectors.conj().T
         
-        print("Initial spin population:")
-        print(rho0)
+        if rank == 0:   
+            print("Initial spin population:")
+            print(rho0)
+            print("\n")
 
         return rho0.flatten()
 
@@ -292,6 +298,7 @@ class spin_phonon:
             input.create_dataset('tlist', data=self.tlist)
 
             output = f.create_group('output')
+            output.create_dataset('redfield_matrix', data=self.R_mat)
             output.create_dataset('rho_t', data=self.rho_t)
             output.create_dataset('Mvec',data=self.Mvec)
 

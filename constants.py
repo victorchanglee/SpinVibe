@@ -2,6 +2,7 @@
 
 eV2cm=8065.61042 #cm-1
 bohr2ang = 0.5291772108 #angstrom
+cm2J = 1.98644568E-23 # J/cm-1
 c = 2.99792458E10 #cm/s
 #hbar = 6.582119569E-16 #eV*s
 hbar = 6.582119569E-16 * eV2cm

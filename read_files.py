@@ -11,7 +11,7 @@ def read_orca():
     return g_tensor, d_tensor
 
 def read_phonons():
-    with h5py.File('Sn_otolyl_4_8812.h5', 'r') as f:
+    with h5py.File('Sn_otolyl_4_223.h5', 'r') as f:
         q_points = f['q_points'][1:, :]
         frequencies_cm = f['frequencies_cm'][1:, :]
         eigenvectors = f['eigenvectors'][1:, :]
@@ -26,14 +26,14 @@ def read_d1():
         D_d1 = f['d_tensor'][:]
         G_d1 = f['g_matrix'][:]
     
-    disp1 =np.linspace(-0.005, 0.005, 6)
+    disp1 =np.linspace(-0.05, 0.05, 10)
         
 
     return D_d1, G_d1, disp1
 
 def read_d2():
 
-    disp = np.array([-0.01,-0.005, 0.005,0.01])
+    disp = np.array([-0.05, -0.0278, -0.0056, 0.0056, 0.0278, 0.05])
     disp2 = np.stack([disp, disp], axis=0)
 
 

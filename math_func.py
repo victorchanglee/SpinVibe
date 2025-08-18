@@ -1,5 +1,5 @@
 import numpy as np
-from constants import k_B
+from constants import k_B, kB_SI
 from numpy.polynomial.polynomial import polyfit, polyval2d, Polynomial
 
 def lorentzian(x, eta):
@@ -68,7 +68,7 @@ def finite_difference(f_plus, f_minus, delta):
     """
     return (f_plus - f_minus) / (2 * delta)
 
-def compute_derivative(x,fx,displacement=0.0,degree=5):
+def compute_derivative(x,fx,displacement=0.0,degree=3):
     """
     Compute the derivative of f_x with reespect to x by polynomial fitting
 

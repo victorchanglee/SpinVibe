@@ -38,46 +38,55 @@ class Redfield:
       """
 
       #cm-1 to rad/s conversion
-      omega_alpha_q = 2 * np.pi * omega_alpha_q * c
-      omega_ij = 2 * np.pi * omega_ij * c
-      Delta_alpha_q = 2 * np.pi * self.Delta_alpha_q * c
+      omega_alpha_q = omega_alpha_q 
+      omega_ij =  omega_ij 
+      Delta_alpha_q = self.Delta_alpha_q 
 
-      #delta = math_func.lorentzian((omega_ij - omega_alpha_q), Delta_alpha_q)
-      #n_aq = math_func.bose_einstein(omega_alpha_q, self.T)
-      #G_1ph = delta * n_aq + delta * (n_aq + 1)
+      delta = math_func.lorentzian((omega_ij - omega_alpha_q), Delta_alpha_q)
+      n_aq = math_func.bose_einstein(omega_alpha_q, self.T)
+      G_1ph = delta * n_aq + delta * (n_aq + 1)
 
-      term1_numerator = Delta_alpha_q
-      term1_denominator = Delta_alpha_q**2 + (omega_ij - omega_alpha_q)**2
-      n_1 = math_func.bose_einstein(omega_alpha_q, self.T)
-      term1 = (term1_numerator / term1_denominator) * n_1
+      #term1_numerator = Delta_alpha_q
+      #term1_denominator = Delta_alpha_q**2 + (omega_ij - omega_alpha_q)**2
+      #n_1 = math_func.bose_einstein(omega_alpha_q, self.T)
+      #term1 = (term1_numerator / term1_denominator) * n_1
       
-      term2_numerator = Delta_alpha_q
-      term2_denominator = Delta_alpha_q**2 + (omega_ij + omega_alpha_q)**2
-      n_2 = math_func.bose_einstein(omega_alpha_q, self.T)
-      term2 = (term2_numerator / term2_denominator) * (n_2 + 1)
+      #term2_numerator = Delta_alpha_q
+      #term2_denominator = Delta_alpha_q**2 + (omega_ij + omega_alpha_q)**2
+      #n_2 = math_func.bose_einstein(omega_alpha_q, self.T)
+      #term2 = (term2_numerator / term2_denominator) * (n_2 + 1)
       
-      G_1ph = (term1 + term2) / np.pi           
+      #G_1ph = (term1 + term2) 
+      G_1ph = G_1ph / (2* np.pi* c)           
       return G_1ph
 
    def G_2ph(self, omega_ij, omega_alpha_q, omega_beta_qp):
 
       #cm-1 to rad/s conversion
-      omega_alpha_q = 2 * np.pi * omega_alpha_q * c
-      omega_beta_qp = 2 * np.pi * omega_beta_qp * c
-      omega_ij = 2 * np.pi * omega_ij * c
-      Delta = 2 * np.pi * self.Delta_alpha_q * c
+      omega_alpha_q = omega_alpha_q
+      omega_beta_qp = omega_beta_qp 
+      omega_ij = omega_ij 
+      Delta = self.Delta_alpha_q
 
       Delta = self.Delta_alpha_q + self.Delta_alpha_q
       
       n_alpha = math_func.bose_einstein(omega_alpha_q, self.T)
       n_beta = math_func.bose_einstein(omega_beta_qp, self.T)
 
-      term1 = (Delta / (Delta**2 + (omega_ij - omega_alpha_q - omega_beta_qp)**2)) * n_alpha * n_beta
-      term2 = (Delta / (Delta**2 + (omega_ij + omega_alpha_q + omega_beta_qp)**2)) * (n_alpha + 1) * (n_beta + 1)
-      term3 = (Delta / (Delta**2 + (omega_ij - omega_alpha_q + omega_beta_qp)**2)) * n_alpha * (n_beta + 1)
-      term4 = (Delta / (Delta**2 + (omega_ij + omega_alpha_q - omega_beta_qp)**2)) * (n_alpha + 1) * n_beta
+      # Four terms of the Green's function
+      term1 = math_func.lorentzian(omega_ij - omega_alpha_q - omega_beta_qp, Delta) * n_alpha * n_beta
+      term2 = math_func.lorentzian(omega_ij + omega_alpha_q + omega_beta_qp, Delta) * (n_alpha + 1) * (n_beta + 1)
+      term3 = math_func.lorentzian(omega_ij + omega_alpha_q - omega_beta_qp, Delta) * (n_alpha + 1) * n_beta
+      term4 = math_func.lorentzian(omega_ij - omega_alpha_q + omega_beta_qp, Delta) * n_alpha * (n_beta + 1)
 
-      G2ph = (term1 + term2 + term3 + term4) / np.pi
+      #term1 = (Delta / (Delta**2 + (omega_ij - omega_alpha_q - omega_beta_qp)**2)) * n_alpha * n_beta
+      #term2 = (Delta / (Delta**2 + (omega_ij + omega_alpha_q + omega_beta_qp)**2)) * (n_alpha + 1) * (n_beta + 1)
+      #term3 = (Delta / (Delta**2 + (omega_ij - omega_alpha_q + omega_beta_qp)**2)) * n_alpha * (n_beta + 1)
+      #term4 = (Delta / (Delta**2 + (omega_ij + omega_alpha_q - omega_beta_qp)**2)) * (n_alpha + 1) * n_beta
+
+      G2ph = (term1 + term2 + term3 + term4) / (2*np.pi*c)
+
+
       return G2ph
 
    def R1_tensor(self, V_alpha):
@@ -89,7 +98,7 @@ class Redfield:
       V_alpha = V_alpha * cm2J
 
       prefactor = -np.pi / (2 * hbar_SI**2)
-
+      
       # Create all (q, alpha) tasks for parallelization
       all_tasks = []
       for q in range(self.Nq):
@@ -121,7 +130,8 @@ class Redfield:
                                  V_jc = V_alpha[q, alpha, j, c]
                                  G_term1 = self.G_1ph(self.omega[j, c], omega_alpha[q, alpha])
                                  term1 += V_aj * V_jc * G_term1
-
+                        
+                           #print(term1, G_term1)
                            # Term 2: V^α_{ac} V^α_{db} G^{1-ph}(ω_{bd}, ω_α)
                            V_ac = V_alpha[q, alpha, a, c]
                            V_db = V_alpha[q, alpha, d, b]
@@ -162,7 +172,9 @@ class Redfield:
       size = comm.Get_size()
       
       omega_alpha = self.omega_q
-      prefactor = -np.pi / (4 * hbar_SI**2)  # Corrected to match equation
+      prefactor = -np.pi / (4 * hbar_SI**2) 
+
+      
       
       # Build full list of tasks 
       all_tasks = []
@@ -183,13 +195,15 @@ class Redfield:
       R2_local = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
       # Setup progress bar only for rank 0
-      if rank == 0:
-         pbar = tqdm(total=len(all_tasks), desc="Computing R2 tensor", unit="tasks", ncols=100)
+      #if rank == 0:
+      #   pbar = tqdm(total=len(all_tasks), desc="Computing R2 tensor", unit="tasks", ncols=100)
 
       for q1, q2, alpha, beta in all_tasks:
          # Get V matrix for this (alpha, beta) pair
          V_alpha_beta = init_Vq.compute_V_alpha_beta_q(q1, q2, alpha, beta)
          V_alpha_beta = V_alpha_beta * cm2J
+
+         
          
          # Get the frequencies omega_alpha and omega_beta
          omega_a = omega_alpha[q1, alpha]  # ω_α in the equation
@@ -197,7 +211,6 @@ class Redfield:
          
          # Pre-compute all Green's functions we'll need
          G_cache = {}
-         
          # Cache G functions for all unique frequencies
          unique_freqs = set()
          for i in range(self.hdim):
@@ -207,55 +220,49 @@ class Redfield:
          for freq in unique_freqs:
                G_cache[freq] = self.G_2ph(freq, omega_a, omega_b)
          
-         # Vectorized computation of terms
          for a in range(self.hdim):
-               for c in range(self.hdim):
-                  # Get all G values for this a,c pair
-                  G_ac = G_cache[self.omega[a, c]]
-                  G_jc_vals = np.array([G_cache[self.omega[j, c]] for j in range(self.hdim)])
-                  
-                  # Term 1: δ_bd * Σ_j V^α_aj V^α_jc G^{2-ph}(ω_jc, ω_α, ω_β)
-                  # Only contributes when b=d, so we can vectorize over b
-                  term1_vals = np.sum(V_alpha_beta[a, :] * V_alpha_beta[:, c] * G_jc_vals)
-                  for b in range(self.hdim):
-                     R2_local[a, b, c, b] += term1_vals  # b=d case
-                  
-                  # Terms 2&3: -V^α_ac V^α_db G^{2-ph}(ω_bd/ω_ac, ω_α, ω_β)
-                  V_ac_val = V_alpha_beta[a, c]
-                  for b in range(self.hdim):
+            for b in range(self.hdim):
+                  for c in range(self.hdim):
                      for d in range(self.hdim):
-                           V_db_val = V_alpha_beta[d, b]
-                           product = V_ac_val * V_db_val
-                           
-                           # Term 2: G(ω_bd)
-                           G_bd = G_cache[self.omega[b, d]]
-                           R2_local[a, b, c, d] -= product * G_bd
-                           
-                           # Term 3: G(ω_ac)
-                           R2_local[a, b, c, d] -= product * G_ac
-                  
-                  # Term 4: δ_ca * Σ_j V^α_dj V^α_jb G^{2-ph}(ω_jb, ω_α, ω_β)
-                  # Only contributes when c=a
-                  if c == a:
-                     for b in range(self.hdim):
-                           G_jb_vals = np.array([G_cache[self.omega[j, b]] for j in range(self.hdim)])
-                           for d in range(self.hdim):
-                              term4_val = np.sum(V_alpha_beta[d, :] * V_alpha_beta[:, b] * G_jb_vals)
-                              R2_local[a, b, c, d] += term4_val
+                        term_sum = 0.0
+                        
+                        # First term: δ_bd * Σ_j V^{αβ}_{aj} V^{αβ}_{jc} G^{2-ph}(ω_{jc}, ω_α, ω_β)
+                        if b == d:  # Kronecker delta δ_bd
+                              for j in range(self.hdim):
+                                 omega_jc = self.omega[j, c]
+                                 G_jc = G_cache[omega_jc]
+                                 term_sum += V_alpha_beta[a, j] * V_alpha_beta[j, c] * G_jc
+                        
+                        # Second term: -V^{αβ}_{ac} V^{αβ}_{db} G^{2-ph}(ω_{bd}, ω_α, ω_β)
+                        omega_bd = self.omega[b, d]
+                        G_bd = G_cache[omega_bd]
+                        term_sum -= V_alpha_beta[a, c] * V_alpha_beta[d, b] * G_bd
+                        
+                        # Third term: -V^{αβ}_{ac} V^{αβ}_{db} G^{2-ph}(ω_{ac}, ω_α, ω_β)
+                        omega_ac = self.omega[a, c]
+                        G_ac = G_cache[omega_ac]
+                        term_sum -= V_alpha_beta[a, c] * V_alpha_beta[d, b] * G_ac
+                        
+                        # Fourth term: δ_ca * Σ_j V^{αβ}_{dj} V^{αβ}_{jb} G^{2-ph}(ω_{jd}, ω_α, ω_β)
+                        if c == a:  # Kronecker delta δ_ca
+                              for j in range(self.hdim):
+                                 omega_jd = self.omega[j, d]  # Note: corrected from ω_{jb} to ω_{jd}
+                                 G_jd = G_cache[omega_jd]
+                                 term_sum += V_alpha_beta[d, j] * V_alpha_beta[j, b] * G_jd
+                        
+                        # Apply prefactor and add to result
+                        R2_local[a, b, c, d] += prefactor * term_sum
             # Update progress bar only for rank 0
-         if rank == 0:
-               pbar.update(1)
+        # if rank == 0:
+        #       pbar.update(1)
 
       # Close progress bar for rank 0
-      if rank == 0:
-         pbar.close()
+      #if rank == 0:
+      #   pbar.close()
 
       # Gather results from all processes
       R2_tensor = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
       comm.Allreduce(R2_local, R2_tensor, op=MPI.SUM)
-
-      # Apply prefactor
-      R2_tensor = prefactor * R2_tensor
       
       return R2_tensor
 

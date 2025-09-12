@@ -8,8 +8,9 @@ tags:
 authors:
   - name: Victor Chang Lee
     orcid: 0000-0003-1767-6229
-    affiliation: 1 # (Multiple affiliations must be quoted)
+    affiliation: 1 
   - name: James M Rondinelli
+  - orcid: 0000-0003-0508-2175
     affiliation: 1
 
 affiliations:
@@ -20,11 +21,6 @@ affiliations:
 date: 12 September 2025
 bibliography: citations.bib
 
-# Optional fields if submitting to a AAS journal too, see this blog post:
-# https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-aas-journal: Astrophysical Journal <- The name of the AAS journal.
----
 
 # Summary 
 
@@ -175,26 +171,23 @@ G^{2\text{--ph}}(\omega_{jc}, \omega_{\alpha }, \omega_{\beta})
 %
 where $V^{\alpha \beta} = \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha} \partial Q_{\beta}} \right)$ and 
 
-\begin{equation}
-G^{2\text{--ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'})
-= \frac{1}{\pi} \Bigg[
-\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} - \omega_{\beta q'})^{2}}
-\bar{n}_{\alpha q}\bar{n}_{\beta q'}
- \end{equation}
- 
-\[
-+\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + omega_{\alpha q} + \omega_{\beta q'})^{2}}
-(\bar{n}_{\alpha q}+1)(\bar{n}_{\beta q'}+1)
-\]
-\[
-+\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} + \omega_{\beta q'})^{2}}
-\bar{n}_{\alpha q}(\bar{n}_{\beta q'}+1)
-\]
-\[
-+\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} - \omega_{\beta q'})^{2}}
-(\bar{n}_{\alpha q}+1)\bar{n}_{\beta q'}
-\Bigg]\
-\]
+\begin{align}
+G^{2\text{--ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'}) 
+= \frac{1}{\pi} \Bigg[ \,
+&\frac{\Delta_{\alpha q \beta q'}}
+       {\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} - \omega_{\beta q'})^{2}}
+       \bar{n}_{\alpha q}\bar{n}_{\beta q'} \nonumber \\[6pt]
++&\frac{\Delta_{\alpha q \beta q'}}
+       {\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} + \omega_{\beta q'})^{2}}
+       (\bar{n}_{\alpha q}+1)(\bar{n}_{\beta q'}+1) \nonumber \\[6pt]
++&\frac{\Delta_{\alpha q \beta q'}}
+       {\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} + \omega_{\beta q'})^{2}}
+       \bar{n}_{\alpha q}(\bar{n}_{\beta q'}+1) \nonumber \\[6pt]
++&\frac{\Delta_{\alpha q \beta q'}}
+       {\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} - \omega_{\beta q'})^{2}}
+       (\bar{n}_{\alpha q}+1)\bar{n}_{\beta q'} 
+\Bigg]
+\end{align}
 
 Once the time-evolution is performed, we can study the time-evolution of the magnetization of the system 
 

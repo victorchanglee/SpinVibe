@@ -212,7 +212,4 @@ Advanced Cyberinfrastructure Coordination Ecosystem: Services & Support
 grants #2138259, #2138286, #2138307, #2137603, and #2138296.
 V. C. L. thanks L. A. Mariano and A. Lunghi for the helpful discussions.
 
-We acknowledge contributions from Brigitta Sipocz, Syrtis Major, and Semyeong
-Oh, and support from Kathryn Johnston during the genesis of this project.
-
 # References

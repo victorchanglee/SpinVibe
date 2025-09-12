@@ -18,7 +18,7 @@ affiliations:
 
 
 date: 12 September 2025
-bibliography: paper.bib
+bibliography: citations.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
 # https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing

@@ -1,11 +1,10 @@
 ---
-title: 'Gala: A Python package for galactic dynamics'
+title: 'SpinVibe: Simulating spin-phonon coupling for molecular qubits'
 tags:
   - Python
-  - astronomy
-  - dynamics
-  - galactic dynamics
-  - milky way
+  - Condense matter physics
+  - First principles calculations
+
 authors:
   - name: Adrian M. Price-Whelan
     orcid: 0000-0000-0000-0000

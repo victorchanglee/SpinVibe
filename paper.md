@@ -140,17 +140,13 @@ R^{1-ph}_{ab,cd} = -\frac{\pi}{2 \hbar^2} \sum_{\alpha}  \sum_{j} \delta_{bd} V^
 +\sum_{j} \delta_{ca} V^{\alpha}_{dj} V^{\alpha}_{jb} G^{1-ph}(\omega_{jd}, \omega_{\alpha}) 
 $$
 
-
-
 where $V^{\alpha} = \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha}} \right)$ and
 
-\begin{equation}
-G^{1\text{--ph}}(\omega_{ij}, \omega_{\alpha q})
-= \frac{1}{\pi} \left[
-\frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} - \omega_{\alpha q})^{2}} \, \bar{n}_{\alpha q}
-+ \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} + \omega_{\alpha q})^{2}} \, (\bar{n}_{\alpha q}+1)
-\right]
-\end{equation}
+$$
+G^{1-ph}(\omega_{ij}, \omega_{\alpha q})
+= \frac{1}{\pi} \left[ \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} - \omega_{\alpha q})^{2}} \, \bar{n}_{\alpha q}
++\frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} + \omega_{\alpha q})^{2}} \, (\bar{n}_{\alpha q}+1) \right]
+$$
 
 is the phonon correlation function in the presence of
 anharmonic terms that leads to a decay in the phonon lifetime with a

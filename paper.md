@@ -117,7 +117,9 @@ $$\hat{H}_{sph} = \sum_{\alpha q} \left( \frac{\partial \hat{H}_s}{\partial Q_{\
 + \sum_{\alpha q} \sum_{\beta q'} 
 \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha q} \partial Q_{\beta q'}} \right)
 \hat{Q}_{\alpha q}(t) \hat{Q}_{\beta q'}(t)\,. 
-\label{eq:1}$$ In [\[eq:1\]](#eq:1){reference-type="ref+label"
+\label{eq:1}$$
+
+In [\[eq:1\]](#eq:1){reference-type="ref+label"
 reference="eq:1"}, the first order term represents the interaction of
 the spin with a single phonon $Q_{\alpha q}$. The second order term
 describes the interaction of the spin with two phonons $Q_{\alpha q}$
@@ -125,8 +127,10 @@ and $Q_{\beta q'}$.
 
 To describe the time evolution of the system, we employ the secular
 Redfield equation under the the Born-Markov approximation
+
 $$\frac{\partial \rho^{s}_{ab} (t)}{\partial t} = 
 \sum_{cd} e^{i(\omega_{ac} + \omega_{db})t} R_{ab,cd} \rho^{s}_{cd} (t)\,,$$
+
 where $R_{ab,cd}$ denotes the Redfield superoperator. The single-phonon
 contribution to the Redfield tensor, under the secular approximation, is
 

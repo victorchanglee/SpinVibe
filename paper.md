@@ -132,17 +132,7 @@ $$
 where $R_{ab,cd}$ denotes the Redfield superoperator. The single-phonon
 contribution to the Redfield tensor, under the secular approximation, is
 
-$$R^{1\text{-ph}}_{ab,cd} = -\frac{\pi}{2 \hbar^2} 
-\sum_{\alpha} \left\{ 
-\sum_{j} \delta_{bd} V^{\alpha}_{aj} V^{\alpha}_{jc} 
-G^{1\text{-ph}}(\omega_{jc}, \omega_{\alpha}) 
-- V^{\alpha}_{ac} V^{\alpha}_{db} 
-G^{1\text{-ph}}(\omega_{ac}, \omega_{\alpha}) 
-- V^{\alpha}_{ac} V^{\alpha}_{db} 
-G^{1\text{-ph}}(\omega_{bd}, \omega_{\alpha}) 
-+ \sum_{j} \delta_{ca} V^{\alpha}_{dj} V^{\alpha}_{jb} 
-G^{1\text{-ph}}(\omega_{jd}, \omega_{\alpha}) 
-\right\}$$
+$$R^{1\text{-ph}}_{ab,cd} = -\frac{\pi}{2 \hbar^2} \sum_{\alpha} \left\{ \sum_{j} \delta_{bd} V^{\alpha}_{aj} V^{\alpha}_{jc} G^{1\text{-ph}}(\omega_{jc}, \omega_{\alpha}) - V^{\alpha}_{ac} V^{\alpha}_{db} G^{1\text{-ph}}(\omega_{ac}, \omega_{\alpha}) - V^{\alpha}_{ac} V^{\alpha}_{db} G^{1\text{-ph}}(\omega_{bd}, \omega_{\alpha}) + \sum_{j} \delta_{ca} V^{\alpha}_{dj} V^{\alpha}_{jb} G^{1\text{-ph}}(\omega_{jd}, \omega_{\alpha}) \right\}$$
 $$
 - V^{\alpha}_{ac} V^{\alpha}_{db} 
 G^{1\text{-ph}}(\omega_{bd}, \omega_{\alpha}) 

@@ -132,9 +132,9 @@ $$
 where $R_{ab,cd}$ denotes the Redfield superoperator. The single-phonon
 contribution to the Redfield tensor, under the secular approximation, is
 
-$$
+\begin{equation}
 A = B
-$$
+\end{equation}
 
 \begin{equation}
 R^{1\text{-ph}}_{ab,cd} = -\frac{\pi}{2 \hbar^2} \sum_{\alpha}  \sum_{j} \delta_{bd} V^{\alpha}_{aj} V^{\alpha}_{jc} 

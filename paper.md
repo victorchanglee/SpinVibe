@@ -168,28 +168,26 @@ G^{2\text{--ph}}(\omega_{jc}, \omega_{\alpha }, \omega_{\beta})
  \[ - V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db} G^{2\text{--ph}}(\omega_{bd}, \omega_{\alpha },\omega_{\beta }) + \sum_j  \delta_{ca} V^{\alpha \beta}_{dj} V^{\alpha \, \beta}_{jb} G^{2\text{--ph}}(\omega_{jd}, \omega_{\alpha}, \omega_{\beta})
 $$
 
-where $V^{\alpha \beta} = \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha} \partial Q_{\beta}} \right)$ and
+where
 
-\begin{equation}
+$$
+V^{\alpha \beta} = \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha} \partial Q_{\beta}} \right)
+$$
+
+and
+
+$$
 G^{2\text{--ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'})
-= \frac{1}{\pi} \Bigg[
+= \frac{1}{\pi}
 \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2}
-+ (\omega_{ij} - \omega_{\alpha q} - \omega_{\beta q'})^{2}}
++(\omega_{ij} - \omega_{\alpha q} - \omega_{\beta q'})^{2}}
 \bar{n}_{\alpha q}\bar{n}_{\beta q'}
- \end{equation}
-\[
 +\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} + \omega_{\beta q'})^{2}}
-(\bar{n}_{\alpha q}+1)(\bar{n}_{\beta q'}+1)
-\]
-\[
 +\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} + \omega_{\beta q'})^{2}}
 \bar{n}_{\alpha q}(\bar{n}_{\beta q'}+1)
-\]
-\[
 +\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} - \omega_{\beta q'})^{2}}
 (\bar{n}_{\alpha q}+1)\bar{n}_{\beta q'}
-\Bigg]\,.
-\]
+$$
 
 Once the time-evolution is performed, we can study the time-evolution of
 the magnetization of the system

@@ -26,7 +26,7 @@ aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
 aas-journal: Astrophysical Journal <- The name of the AAS journal.
 ---
 
-# Summary {#summary .unnumbered}
+# Summary 
 
 Molecular qubits have emerged as versatile candidates for quantum
 information technologies. Their appeal lies in the chemical tunability,
@@ -73,14 +73,9 @@ different factors, including temperature, crystal/molecule orientation
 and applied magnetic fields. The code is written in Python3 and is
 MPI-parallelized over phonon modes and $q$-points using `mpi4py`.
 
-![Schematic representation of the `SpinVibe` framework. The spin
-Hamiltonian, derived from quantum chemistry calculations, and the phonon
-modes, obtained from quantum solid-state simulations, are merged within
-`SpinVibe` to compute spin--phonon relaxation dynamics and $T_1$ under
-various enironmental factors. []{#fig:DACschematic
-label="fig:DACschematic"}](spinvibe.pdf){#fig:DACschematic width="100%"}
+![Caption for example figure.\label{fig:example}](figure.png)
 
-# Statement of need {#statement-of-need .unnumbered}
+# Statement of need 
 
 Computational approaches based on density functional theory (DFT) have
 proven to be valuable for analyzing phonon modes and lattice dynamics in
@@ -104,7 +99,7 @@ HDF5 files, it is not restricted to specific codes. Any ab-initio
 package can be used to generate the input data, provided that the
 relevant quantities are extracted and saved in this format.
 
-# First principles spin-phonon coupling {#first-principles-spin-phonon-coupling .unnumbered}
+# First principles spin-phonon coupling 
 
 Our code implements the theoretical framework developed by Lunghi and
 Sanvito[@Lunghi2020; @lunghi2022; @Lunghi2023], where in the
@@ -182,8 +177,7 @@ from which the $T_1$ can be extracted by fitting the decay to
 
 $$M_z(t) = \big[ M_z(t=0) - M_z^{\mathrm{eq}} \big] e^{-t/T_1} + M_z^{\mathrm{eq}}\,.$$
 
-# Acknowledgments {#acknowledgments .unnumbered}
-
+# Acknowledgments
 This material is based upon work supported by the U.S. Department of
 Energy, Office of Science, Office of Basic Energy Sciences under Award
 Number DE-SC0025176. Code development was supported by in part through

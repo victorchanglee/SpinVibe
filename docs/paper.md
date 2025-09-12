@@ -32,7 +32,7 @@ Molecular qubits have emerged as versatile candidates for quantum
 information technologies. Their appeal lies in the chemical tunability,
 the possibility of large-scale synthetic control and their integration
 with solid-state and solution-phase
-architectures. In contrast to solid-state
+architectures.[@Bayliss2022; @Wojnar2024] In contrast to solid-state
 defects or superconducting qubits, molecular qubits can be engineered at
 the atomic level, allowing researchers to systematically tailor their
 electronic, magnetic, and vibrational properties.

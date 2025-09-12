@@ -19,8 +19,7 @@ affiliations:
 
 
 date: 12 September 2025
-bibliography: citations.bib
-
+bibliography: docs/citations.bib
 
 # Summary 
 
@@ -120,6 +119,7 @@ term:
 In \autoref{eq:1}, the first order term represents the interaction of the spin with a single phonon $ Q_{\alpha q}$. The second order term describes the interaction of the spin with two phonons $ Q_{\alpha q}$ and $Q_{\beta q'}$. 
 
 To describe the time evolution of the system, we  employ the secular Redfield equation under the the Born-Markov approximation 
+To describe the time evolution of the system, we  employ the secular Redfield equation under the the Born-Markov approximation 
 %
 \begin{equation}
 \frac{\partial \rho^{s}_{ab} (t)}{\partial t} = 
@@ -128,21 +128,19 @@ To describe the time evolution of the system, we  employ the secular Redfield eq
 %
 where $R_{ab,cd}$ denotes the Redfield superoperator. The single-phonon contribution to the Redfield tensor, under the secular approximation, is
 
-\begin{equation}
+\begin{align}
 R^{1\text{-ph}}_{ab,cd} = -\frac{\pi}{2 \hbar^2} 
 \sum_{\alpha} \Bigg\{ 
-\sum_{j} \delta_{bd} V^{\alpha}_{aj} V^{\alpha}_{jc} 
+&\sum_{j} \delta_{bd} V^{\alpha}_{aj} V^{\alpha}_{jc} 
 G^{1\text{-ph}}(\omega_{jc}, \omega_{\alpha}) 
 - V^{\alpha}_{ac} V^{\alpha}_{db} 
-G^{1\text{-ph}}(\omega_{ac}, \omega_{\alpha}) 
-\end{equation}
-\[
-- V^{\alpha}_{ac} V^{\alpha}_{db} 
+G^{1\text{-ph}}(\omega_{ac}, \omega_{\alpha}) \\
+&- V^{\alpha}_{ac} V^{\alpha}_{db} 
 G^{1\text{-ph}}(\omega_{bd}, \omega_{\alpha}) 
 + \sum_{j} \delta_{ca} V^{\alpha}_{dj} V^{\alpha}_{jb} 
 G^{1\text{-ph}}(\omega_{jd}, \omega_{\alpha}) 
 \Bigg\}\,,
-\]
+\end{align}
 %
 where $V^{\alpha} = \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha}} \right)$ and 
 %
@@ -160,14 +158,19 @@ is the phonon correlation function in the presence of anharmonic terms that lead
 %%
 The two-phonon contribution is given by
 %
-\begin{equation}
-R^{2\text{--ph}}_{ab,cd} = -\frac{\pi}{4 \hbar^2}  \sum_{\alpha \geq \beta } 
-\Bigg\{  \sum_j  \delta_{bd} V^{\alpha \beta}_{aj} V^{\alpha \, \beta }_{jc} 
-G^{2\text{--ph}}(\omega_{jc}, \omega_{\alpha }, \omega_{\beta})
- - V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db}  G^{2\text{--ph}}(\omega_{ac}, \omega_{\alpha}, \omega_{\beta})
- \end{equation}
- \[ - V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db} G^{2\text{--ph}}(\omega_{bd}, \omega_{\alpha },\omega_{\beta }) + \sum_j  \delta_{ca} V^{\alpha \beta}_{dj} V^{\alpha \, \beta}_{jb} G^{2\text{--ph}}(\omega_{jd}, \omega_{\alpha}, \omega_{\beta}) \Bigg\}
-\]
+\begin{align}
+R^{2\text{--ph}}_{ab,cd} 
+= -\frac{\pi}{4 \hbar^2} \sum_{\alpha \geq \beta } \Bigg\{ \,
+& \sum_j  \delta_{bd} V^{\alpha \beta}_{aj} V^{\alpha \, \beta }_{jc} 
+   G^{2\text{--ph}}(\omega_{jc}, \omega_{\alpha }, \omega_{\beta}) \nonumber \\[6pt]
+-& V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db}  
+   G^{2\text{--ph}}(\omega_{ac}, \omega_{\alpha}, \omega_{\beta}) \nonumber \\[6pt]
+-& V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db}  
+   G^{2\text{--ph}}(\omega_{bd}, \omega_{\alpha }, \omega_{\beta }) \nonumber \\[6pt]
++& \sum_j  \delta_{ca} V^{\alpha \beta}_{dj} V^{\alpha \, \beta}_{jb} 
+   G^{2\text{--ph}}(\omega_{jd}, \omega_{\alpha}, \omega_{\beta}) 
+\Bigg\}
+\end{align}
 %
 where $V^{\alpha \beta} = \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha} \partial Q_{\beta}} \right)$ and 
 

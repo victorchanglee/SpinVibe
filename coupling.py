@@ -1,22 +1,22 @@
 import numpy as np
 from constants import hbar_SI, c
 import hamiltonian
-import read_files
 import math_func
 from mpi4py import MPI
 
 class coupling:
-    def __init__(self, B, S, T, eigenvectors, q_vector, omega_q, R_vectors, L_vectors,rot_mat,Ncells):
+    def __init__(self, B, S, T, eigenvectors, q_vector, omega_q, R_vectors, L_vectors,rot_mat,Ncells, file_reader):
     
+        self.file_reader = file_reader
         self.B = B # Magnetic field in cm-1
         self.S = S # Spin
         self.T = T # Temperatur in K
         self.Ns = int(2*self.S + 1) # Number of spins
         self.hdim = self.Ns
         self.eigenvectors = eigenvectors # Eigenvectors of the spin Hamiltonian
-        self.indices = read_files.read_indices() # Mapping of the molecule indices in the crystal
+        self.indices = self.file_reader.read_indices() # Mapping of the molecule indices in the crystal
         self.N = len(self.indices) # Number of atoms in the molecule
-        self.masses = read_files.read_mol_masses() # Atomic mass of the molecule
+        self.masses = self.file_reader.read_mol_masses() # Atomic mass of the molecule
         self.q_vector = q_vector # Phonon mode index and wave vector q 
         self.omega_q = omega_q # Phonon frequencies in cm-1
         self.Nq = L_vectors.shape[0] # Number of q points
@@ -31,7 +31,7 @@ class coupling:
         self.rot_mat = rot_mat # Rotational matrix for hte molecule to match the coordinates in the crystal
         
         
-        d_tensor, g_tensor = read_files.read_orca() # g-matrix and ZFS D-tensor
+        d_tensor, g_tensor = self.file_reader.read_orca() # g-matrix and ZFS D-tensor
 
         #Rotate the molecular cartesian matrices to match the crystal coordinates
         self.g_tensor = self.rot_mat @ g_tensor @ self.rot_mat.T
@@ -40,13 +40,13 @@ class coupling:
         self.dH_dx = np.zeros((self.N,3,self.hdim,self.hdim), dtype=np.complex128)
 
         #Read linear displacement g-matrix and ZFS D-tensor
-        D_d1, G_d1,self.disp1 = read_files.read_d1()
+        D_d1, G_d1,self.disp1 = self.file_reader.read_d1()
         self.G_d1 = self.rot_mat @ G_d1 @ self.rot_mat
         self.D_d1 = self.rot_mat @ D_d1 @ self.rot_mat
         self.compute_dH_dx() #Compute dH/dx
 
         #Read quadratic displacement g-matrix and ZFS D-tensor
-        D_d2, G_d2, self.disp2 = read_files.read_d2()
+        D_d2, G_d2, self.disp2 = self.file_reader.read_d2()
         self.G_d2 = self.rot_mat @ G_d2 @ self.rot_mat
         self.D_d2 = self.rot_mat @ D_d2 @ self.rot_mat
 

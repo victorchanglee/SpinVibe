@@ -4,15 +4,15 @@ import coupling
 import math_func
 import redfield
 import measure
-import read_files
 import h5py as h5
 from constants import Bohrmagneton, k_B
 import time
 from mpi4py import MPI
-
+import scipy.linalg
+from datetime import datetime
 
 class spin_phonon:
-    def __init__(self, B, S, Ncells, Delta_alpha_q, rot_mat, Mpol, T, tf, dt, init_type='boltzmann',R_type=None):
+    def __init__(self, B, S, Ncells, Delta_alpha_q, rot_mat, pol, T, tf, dt, file_reader,save_file,init_type='polarized',R_type=None):
         
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
@@ -21,6 +21,7 @@ class spin_phonon:
         init_time = time.perf_counter()
 
         if rank == 0:
+            print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             print("---------------------------------------")
             print("|Start Spin-phonon coupling simulation|")
             print("---------------------------------------")
@@ -33,11 +34,12 @@ class spin_phonon:
         self.Delta_alpha_q = Delta_alpha_q  # Broadening parameter
         self.S = S  # Spin quantum number 
         self.rot_mat = rot_mat
-        self.Mpol = Mpol  # Polarization vector
+        self.pol = pol  # Polarization vector
         self.T = T  # Temperature in Kelvin
         self.init_type = init_type
         self.R_type = R_type
         self.Ncells = Ncells  # Number of unit cells 
+        self.save_file = save_file
         if rank == 0:
             print("Input Parameters")
             print("================")
@@ -47,7 +49,7 @@ class spin_phonon:
             print("Number of unit cells:", self.Ncells)
             print("Broadening:", self.Delta_alpha_q)
             print("Population type:", self.init_type)
-            print("Measure polarization:", self.Mpol)
+            print("Polarization:", self.pol)
             print("Rotational matrix:")
             print(self.rot_mat)
             print("\n")
@@ -56,12 +58,12 @@ class spin_phonon:
 
         self.B = self.B_T * Bohrmagneton  # Convert from T to cm-1
         self.m = np.arange(-self.S, self.S+1, 1)
-        self.Ns = int(2*self.S + 1) 
-        self.hdim = self.Ns 
+        self.hdim = int(2*self.S + 1) 
 
         # File reading (ALL ranks need this data)
-        self.q_vector, self.omega_q, self.L_vectors = read_files.read_phonons()
-        self.R_vectors, self.reciprocal_vectors = read_files.read_atoms()
+        self.file_reader = file_reader
+        self.q_vector, self.omega_q, self.L_vectors = self.file_reader.read_phonons()
+        self.R_vectors, self.reciprocal_vectors = self.file_reader.read_atoms()
         self.q_vector = self.q_vector @ self.reciprocal_vectors # Convert q vectors to A^-1
 
         # More parameter setup (ALL ranks)
@@ -69,7 +71,7 @@ class spin_phonon:
         self.Nomega = len(self.q_vector)  # Number of phonon modes
         self.Nq = self.q_vector.shape[0]  # Number of q points
         
-        g_tensor, d_tensor = read_files.read_orca() #Read g-matrix and zero field splitting D-tensor
+        g_tensor, d_tensor = self.file_reader.read_orca() #Read g-matrix and zero field splitting D-tensor
 
         #Rotate cartesian tensors to crystal coordinates
         self.g_tensor = self.rot_mat @ g_tensor @ self.rot_mat.T 
@@ -81,7 +83,7 @@ class spin_phonon:
         self.Hs = np.zeros([self.hdim, self.hdim], dtype=np.complex128)
         self.eigenvalues = np.zeros(self.hdim, dtype=np.complex128)
         self.eigenvectors = np.zeros([self.hdim, self.hdim], dtype=np.complex128)
-        self.S_operator = np.zeros((self.Ns, self.Ns, 3), dtype=np.complex128)
+        self.S_operator = np.zeros((self.hdim, self.hdim, 3), dtype=np.complex128)
 
         # Spin Hamiltonian setup
         self.Hs = self.init_s_H()  # Zero displacement spin Hamiltonian
@@ -108,7 +110,7 @@ class spin_phonon:
         # Linear response spin-phonon coupling
         self.V_alpha = np.zeros([self.Nq, self.Nomega, self.hdim, self.hdim], dtype=np.complex128)
     
-        init_Vq = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors,self.rot_mat,self.Ncells)
+        init_Vq = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors,self.rot_mat,self.Ncells,self.file_reader)
 
         self.V_alpha = init_Vq.V_alpha
 
@@ -127,21 +129,21 @@ class spin_phonon:
         if self.R_type in (None, 'R1'):
 
             if rank == 0:
-                print("Initializing R1 tensor")
+                print("Initializing R1 tensor (Orbach process)")
 
             timer_R1 = time.perf_counter()
             self.R1 = init_R.R1_tensor(self.V_alpha)
             hours_R1, minutes_R1, seconds_R1 = self.timer(timer_R1)
             R1_mat = self.R1.reshape((self.hdim**2, self.hdim**2)) #Transform into matrix form
 
-            eigenvalues = np.linalg.eigvals(R1_mat)
+            eigenvalues, eigenvectors = np.linalg.eig(R1_mat)
 
             #Redfield operator must have one zero value (steady state) and the rest are negative eigenvalues (relaxation process)
             nonzero_eigs = eigenvalues[np.abs(eigenvalues) > 1e-8]
             t1 = 1/np.min(np.abs(nonzero_eigs))
 
             if rank == 0:
-                print("Eigenvalues of the R1 tensor")
+                print("Eigenvalues of the R1 matrix")
                 print(eigenvalues)
                 print("T1 from R1 eigenvalues")
                 print("T1 = ", t1 , "s")
@@ -150,18 +152,20 @@ class spin_phonon:
         
         if self.R_type in (None, 'R2'):
             if rank == 0:
-                print("Initializing R2 tensor")
+                print("Initializing R2 tensor (Raman process)")
 
             timer_R2 = time.perf_counter()
             self.R2 = init_R.R2_tensor(init_Vq)
-            eigenvalues = np.linalg.eigvals(self.R2.reshape((self.hdim**2, self.hdim**2)))
+            R2_mat = self.R2.reshape((self.hdim**2, self.hdim**2)) #Transform into matrix form
+            eigenvalues, eigenvectors = np.linalg.eig(R2_mat)
+
             hours_R2, minutes_R2, seconds_R2 = self.timer(timer_R2)        
 
             nonzero_eigs = eigenvalues[np.abs(eigenvalues) > 1e-8]
             t1 = 1/np.min(np.abs(nonzero_eigs))
 
             if rank == 0:
-                print("Eigenvalues of the R2 tensor")
+                print("Eigenvalues of the R2 matrix")
                 print(eigenvalues)
                 print("T1 from R2 eigenvalues")
                 print("T1 = ", t1 , "s")
@@ -191,7 +195,7 @@ class spin_phonon:
         self.R_mat = np.zeros((self.hdim**2, self.hdim**2), dtype=np.complex128)
         self.R_mat = self.R.reshape((self.hdim**2, self.hdim**2))
 
-        eigenvalues = np.linalg.eigvals(self.R_mat)
+        eigenvalues, eigenvectors = np.linalg.eig(self.R_mat)
         
 
         nonzero_eigs = eigenvalues[np.abs(eigenvalues) > 1e-8]
@@ -238,11 +242,11 @@ class spin_phonon:
             #Compute magnetization evolution
             timer_measure = time.perf_counter()
 
-            self.Mvec = np.zeros([3, self.tsteps], dtype=np.complex128)
+            self.Mz = np.zeros([self.tsteps], dtype=np.complex128)
 
-            measuring = measure.measure(self.rho_t, self.S_operator, self.Mpol,self.tlist)
+            measuring = measure.measure(self.rho_t, self.S_operator,self.tlist, self.pol,self.init_type)
 
-            self.Mvec = measuring.Mvec
+            self.Mz = measuring.Mz
             self.T1 = measuring.T1
             self.T1_err = measuring.T1_err
 
@@ -251,6 +255,10 @@ class spin_phonon:
             print("T1 from magnetization decay")
             print("T1 = ", self.T1,"s")
             print("T1_err = ", self.T1_err,"s")
+            if self.T1 == 1 or self.T1_err == 0:
+                print("Warning: T1 likely fitting failed!!! Please check M(t) data")
+            if self.T1 < self.T1_err:
+                print("Warning: T1_err is larger than T1!!! Fitting likely failed!!!")
             print("\n")
 
             print("Saving data")
@@ -288,10 +296,29 @@ class spin_phonon:
         rank = comm.Get_rank()
         size = comm.Get_size()
     
-        if self.init_type == 'polarized': 
-            # Put all population in highest energy state
-            rho0 = np.zeros((self.hdim, self.hdim), dtype=np.complex128)
-            rho0[2, 2] = 1.0  
+        if self.init_type == 'polarized':
+            # polarization direction (default z-axis)
+            n = np.array(self.pol if self.pol is not None else [0,0,1], dtype=float)
+            n /= np.linalg.norm(n)
+
+            # extract spin operators
+            Sx = self.S_operator[:,:,0]
+            Sy = self.S_operator[:,:,1]  
+            Sz = self.S_operator[:,:,2]
+
+            # Identity matrix
+            I = np.eye(self.hdim, dtype=complex)
+            
+            if self.S == 0:
+                rho0 = I
+            else:
+                # General spin case
+                alpha = self.hdim / (self.S * (self.S + 1))
+                rho0 = (1/self.hdim) * (I + alpha * (n[0] * Sx + n[1] * Sy + n[2] * Sz))
+            
+            # Ensure hermiticity and proper normalization
+            rho0 = 0.5 * (rho0 + rho0.conj().T)
+            rho0 = rho0 / np.trace(rho0)
 
         elif self.init_type == 'boltzmann':
             if self.T == 0:
@@ -304,6 +331,22 @@ class spin_phonon:
 
             rho_diag = np.diag(self.init_occ.astype(np.complex128))
             rho0 = self.eigenvectors @ rho_diag @ self.eigenvectors.conj().T
+
+        elif self.init_type == 'pure':
+            # Initialize with the eigenstate having the highest eigenvalue
+            rho0 = np.zeros((self.hdim, self.hdim), dtype=complex)
+            
+            # Find the index of the highest eigenvalue
+            highest_energy_idx = np.argmax(self.eigenvalues)
+            
+            # Get the corresponding eigenstate (eigenvector)
+            highest_state = self.eigenvectors[:, highest_energy_idx]
+            
+            # Create pure state density matrix: |ψ⟩⟨ψ|
+            rho0 = np.outer(highest_state, highest_state.conj())
+            
+            # Ensure proper normalization (should already be normalized for pure state)
+            rho0 = rho0 / np.trace(rho0)
         
         if rank == 0:   
             print("Initial spin population:")
@@ -345,17 +388,17 @@ class spin_phonon:
             - Mvec: Time evolution of the magnetization
         """
 
-        with h5.File(f"Spin_phonon_{self.B_T[0]}.{self.B_T[1]}.{self.B_T[2]}T_{self.T}K_{self.Delta_alpha_q}.h5", 'w') as f:
+        with h5.File(self.save_file, 'w') as f:
             input = f.create_group('input')
             input.create_dataset('tlist', data=self.tlist)
 
             output = f.create_group('output')
             output.create_dataset('redfield_matrix', data=self.R_mat)
             output.create_dataset('rho_t', data=self.rho_t)
-            output.create_dataset('Mvec',data=self.Mvec)
+            output.create_dataset('M',data=self.Mz)
 
 
-        print(f"Data has been saved to Spin_phonon_{self.B_T[0]}.{self.B_T[1]}.{self.B_T[2]}T_{self.T}K_{self.Delta_alpha_q}.h5")
+        print(f"Data has been saved to {self.save_file}")
 
         return
 

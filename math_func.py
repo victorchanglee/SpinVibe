@@ -174,3 +174,21 @@ def tensor_traceless(tensor):
 
     return traceless_tensor
 
+def rotate_polarization(axis, theta):
+    """
+    Create 3D rotation matrix using Rodrigues' formula
+    axis: unit vector (nx, ny, nz)
+    theta: rotation angle in radians
+    """
+    axis = axis / np.linalg.norm(axis)  # normalize
+    nx, ny, nz = axis
+    c = np.cos(theta)
+    s = np.sin(theta)
+    
+    R = np.array([
+        [c + nx**2*(1-c),     nx*ny*(1-c) - nz*s,  nx*nz*(1-c) + ny*s],
+        [ny*nx*(1-c) + nz*s,  c + ny**2*(1-c),     ny*nz*(1-c) - nx*s],
+        [nz*nx*(1-c) - ny*s,  nz*ny*(1-c) + nx*s,  c + nz**2*(1-c)]
+    ])
+    return R
+

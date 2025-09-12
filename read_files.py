@@ -3,65 +3,86 @@ from constants import avogadro
 import numpy as np
 import math_func
 
-def read_orca():
-    with h5py.File('Cr_otolyl_4.h5', 'r') as f:
-        g_tensor = f['g_tensor'][:]
-        d_tensor = f['d_tensor'][:]
+class Read_files:
+    def __init__(self, orca_file, phonon_file, d1_file, d2_file, g2_file, atoms_file, indices_file, mol_mass, disp1, disp2):
+        self.orca_file = orca_file
+        self.phonon_file = phonon_file
+        self.d1_file = d1_file
+        self.d2_file = d2_file
+        self.g2_file = g2_file
+        self.atoms_file = atoms_file
+        self.indices_file = indices_file
+        self.mol_mass = mol_mass
+        self.disp1 = disp1
+        self.disp2 = disp2
 
-    return g_tensor, d_tensor
+    def read_orca(self):
+        with h5py.File(self.orca_file, 'r') as f:
+            g_tensor = f['g_tensor'][:]
+            d_tensor = f['d_tensor'][:]
 
-def read_phonons():
-    with h5py.File('Sn_otolyl_4_223.h5', 'r') as f:
-        q_points = f['q_points'][1:, :]
-        frequencies_cm = f['frequencies_cm'][1:, :]
-        eigenvectors = f['eigenvectors'][1:, :]
+        return g_tensor, d_tensor
 
-    omega_q = frequencies_cm
-    eigenvectors = eigenvectors
-            
-    return q_points, omega_q, eigenvectors
+    def read_phonons(self):
 
-def read_d1():
-    with h5py.File('Cr_otolyl_4_d1.h5', 'r') as f:
-        D_d1 = f['d_tensor'][:]
-        G_d1 = f['g_matrix'][:]
-    
-    disp1 =np.linspace(-0.05, 0.05, 10)
+        with h5py.File(self.phonon_file, 'r') as f:
+            q_points = f['q_points'][1:, :]
+            frequencies_cm = f['frequencies_cm'][1:, :]
+            eigenvectors = f['eigenvectors'][1:, :]
+
+        omega_q = frequencies_cm
+        eigenvectors = eigenvectors
+                
+        return q_points, omega_q, eigenvectors
+
+    def read_d1(self):
+
+        with h5py.File(self.d1_file, 'r') as f:
+            D_d1 = f['d_tensor'][:]
+            G_d1 = f['g_matrix'][:]
         
+        disp1 = self.disp1
 
-    return D_d1, G_d1, disp1
+        return D_d1, G_d1, disp1
 
-def read_d2():
-
-    disp = np.array([-0.05, -0.0278, -0.0056, 0.0056, 0.0278, 0.05])
-    disp2 = np.stack([disp, disp], axis=0)
+    def read_d2(self):
 
 
-    with h5py.File('d_predict.h5', 'r') as f:
-        D_d2 = f['d_tensor'][:]
+        disp = self.disp2
+        disp2 = np.stack([disp, disp], axis=0)
 
-    with h5py.File('g_predict.h5', 'r') as f:
-        G_d2 = f['g_tensor'][:]
- 
-    return D_d2, G_d2, disp2
 
-def read_atoms():
-    with h5py.File('Sn_otolyl_4_atoms.h5', 'r') as f:
-        R_vectors = f['positions'][:]
-        reciprocal_vectors = f['reciprocal_vectors'][:]
+        with h5py.File(self.d2_file, 'r') as f:
+            D_d2 = f['d_tensor'][:]
 
-    return R_vectors, reciprocal_vectors
+        with h5py.File(self.g2_file, 'r') as f:
+            G_d2 = f['g_tensor'][:]
+    
+        return D_d2, G_d2, disp2
 
-def read_indices():
-    with h5py.File('molecule_indices.h5', 'r') as f:
-        indices = f['indices'][:]
+    def read_atoms(self):
 
-    return indices
 
-def read_mol_masses():
-    with h5py.File('mol_mass.h5', 'r') as f:
-        masses = f['atomic_masses'][:]
+        with h5py.File(self.atoms_file, 'r') as f:
+            R_vectors = f['positions'][:]
+            reciprocal_vectors = f['reciprocal_vectors'][:]
 
-    masses = masses*(1E-3/avogadro) #masses in kg
-    masses = np.concatenate(([masses[-1]], masses[:-1]))
-    return masses
+        return R_vectors, reciprocal_vectors
+
+    def read_indices(self):
+
+
+        with h5py.File(self.indices_file, 'r') as f:
+            indices = f['indices'][:]
+
+        return indices
+
+    def read_mol_masses(self):
+
+
+        with h5py.File(self.mol_mass, 'r') as f:
+            masses = f['atomic_masses'][:]
+
+        masses = masses*(1E-3/avogadro) #masses in kg
+        masses = np.concatenate(([masses[-1]], masses[:-1]))
+        return masses

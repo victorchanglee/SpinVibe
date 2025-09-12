@@ -125,19 +125,25 @@ and $Q_{\beta q'}$.
 To describe the time evolution of the system, we employ the secular
 Redfield equation under the the Born-Markov approximation
 
-$$\frac{\partial \rho^{s}_{ab} (t)}{\partial t} = \sum_{cd} e^{i(\omega_{ac} + \omega_{db})t} R_{ab,cd} \rho^{s}_{cd} (t)\,,$$
+$$
+\frac{\partial \rho^{s}_{ab} (t)}{\partial t} = \sum_{cd} e^{i(\omega_{ac} + \omega_{db})t} R_{ab,cd} \rho^{s}_{cd} (t)\
+$$
 
 where $R_{ab,cd}$ denotes the Redfield superoperator. The single-phonon
 contribution to the Redfield tensor, under the secular approximation, is
 
-$$R^{1\text{-ph}}_{ab,cd} = -\frac{\pi}{2 \hbar^2} \sum_{\alpha} \Bigg\{ \sum_{j} \delta_{bd} V^{\alpha}_{aj} V^{\alpha}_{jc} 
-G^{1\text{-ph}}(\omega_{jc}, \omega_{\alpha}) - V^{\alpha}_{ac} V^{\alpha}_{db} G^{1\text{-ph}}(\omega_{ac}, \omega_{\alpha})$$
+$$
+R^{1\text{-ph}}_{ab,cd} = -\frac{\pi}{2 \hbar^2} \sum_{\alpha} \Bigg\{ \sum_{j} \delta_{bd} V^{\alpha}_{aj} V^{\alpha}_{jc} 
+G^{1\text{-ph}}(\omega_{jc}, \omega_{\alpha}) - V^{\alpha}_{ac} V^{\alpha}_{db} G^{1\text{-ph}}(\omega_{ac}, \omega_{\alpha})
+$$
 
-$$- V^{\alpha}_{ac} V^{\alpha}_{db} 
+$$
+- V^{\alpha}_{ac} V^{\alpha}_{db} 
 G^{1\text{-ph}}(\omega_{bd}, \omega_{\alpha}) 
 + \sum_{j} \delta_{ca} V^{\alpha}_{dj} V^{\alpha}_{jb} 
 G^{1\text{-ph}}(\omega_{jd}, \omega_{\alpha}) 
-\Bigg\}\,,$$
+\Bigg\}\
+$$
 
 where
 

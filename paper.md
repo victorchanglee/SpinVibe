@@ -149,7 +149,7 @@ G^{1\text{-ph}}(\omega_{jd}, \omega_{\alpha})
 \]
 
 
-where
+where $V^{\alpha} = \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha}} \right)$ and
 
 \begin{equation}
 G^{1\text{--ph}}(\omega_{ij}, \omega_{\alpha q})

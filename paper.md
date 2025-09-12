@@ -73,10 +73,12 @@ different factors, including temperature, crystal/molecule orientation
 and applied magnetic fields. The code is written in Python3 and is
 MPI-parallelized over phonon modes and $q$-points using `mpi4py`.
 
-![Schematic representation of the SpinVibe framework. The spin Hamiltonian, derived
+![.\label{fig:spinvibe}](spinvibe.png)
+
+*Figure: Schematic representation of the SpinVibe framework. The spin Hamiltonian, derived
 from quantum chemistry calculations, and the phonon modes, obtained from quantum solid-state
 simulations, are merged within SpinVibe to compute spin–phonon relaxation dynamics and T1
-under various enironmental factors.\label{fig:spinvibe}](spinvibe.png)
+under various enironmental factors.*
 
 # Statement of need 
 

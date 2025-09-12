@@ -170,11 +170,8 @@ $V^{\alpha \beta} = \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha} \part
 
 and
 
-$$G^{2\text{--ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'})
-= \frac{1}{\pi} \Bigg[
-\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2}
-+ (\omega_{ij} - \omega_{\alpha q} - \omega_{\beta q'})^{2}}
-\bar{n}_{\alpha q}\bar{n}_{\beta q'}$$
+$$G^{2\text{--ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'}) = \frac{1}{\pi} \Bigg[ \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2}
++ (\omega_{ij} - \omega_{\alpha q} - \omega_{\beta q'})^{2}} \bar{n}_{\alpha q}\bar{n}_{\beta q'}$$
 
 $$+\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} + \omega_{\beta q'})^{2}}
 (\bar{n}_{\alpha q}+1)(\bar{n}_{\beta q'}+1)$$

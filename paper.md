@@ -6,28 +6,17 @@ tags:
   - First principles calculations
 
 authors:
-  - name: Adrian M. Price-Whelan
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
-  - name: Author Without ORCID
-    equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
-    affiliation: 2
-  - name: Author with no affiliation
-    corresponding: true # (This is how to denote the corresponding author)
-    affiliation: 3
-  - given-names: Ludwig
-    dropping-particle: van
-    surname: Beethoven
-    affiliation: 3
+  - name: Victor Chang Lee
+    orcid: 0000-0003-1767-6229
+    affiliation: 1 # (Multiple affiliations must be quoted)
+  - name: James M Rondinelli
+    affiliation: 1
+
 affiliations:
- - name: Lyman Spitzer, Jr. Fellow, Princeton University, United States
+ - name: Department of Material Science and Engineering, Northwestern University, United States
    index: 1
    ror: 00hx57361
- - name: Institution Name, Country
-   index: 2
- - name: Independent Researcher, Country
-   index: 3
+
 date: 13 August 2017
 bibliography: paper.bib
 

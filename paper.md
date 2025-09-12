@@ -140,7 +140,7 @@ R^{1-ph}_{ab,cd} = -\frac{\pi}{2 \hbar^2} \sum_{\alpha}  \sum_{j} \delta_{bd} V^
 +\sum_{j} \delta_{ca} V^{\alpha}_{dj} V^{\alpha}_{jb} G^{1-ph}(\omega_{jd}, \omega_{\alpha}) 
 $$
 
-where $V^{\alpha} = \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha}} \right)$ and
+where $V^{\alpha}=\left(\frac{\partial \hat{H}_s}{\partial Q_{\alpha}}\right)$ and
 
 $$
 G^{1-ph}(\omega_{ij}, \omega_{\alpha q})

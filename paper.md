@@ -75,7 +75,7 @@ MPI-parallelized over phonon modes and $q$-points using `mpi4py`.
 
 ![.\label{fig:spinvibe}](spinvibe.png)
 
-*Figure: Schematic representation of the SpinVibe framework. The spin Hamiltonian, derived
+*Figure 1: Schematic representation of the SpinVibe framework. The spin Hamiltonian, derived
 from quantum chemistry calculations, and the phonon modes, obtained from quantum solid-state
 simulations, are merged within SpinVibe to compute spin–phonon relaxation dynamics and T1
 under various enironmental factors.*

@@ -35,7 +35,7 @@ with solid-state and solution-phase
 architectures.[@Bayliss2022; @Wojnar2024] In contrast to solid-state
 defects or superconducting qubits, molecular qubits can be engineered at
 the atomic level, allowing researchers to systematically tailor their
-electronic, magnetic, and vibrational properties.
+electronic, magnetic, and vibrational properties.[@Laorenza2022]
 However, the practical implementation of molecular qubits is limited by
 decoherence and relaxation processes, which shorten the time window over
 which quantum information can be stored and manipulated.
@@ -49,9 +49,9 @@ decoherence processes and determines how long the molecular spin can
 maintain its initialized state before it returns to thermal equilibrium
 after excitation. Critically, short $T_1$ values impose additional
 constraints on $T_2$, creating interdependent relationships that must be
-carefully managed through molecular design.
+carefully managed through molecular design.[@Warner2013; @Mullin2024]
 $T_1$ is limited by the coupling of electronic spins with lattice
-vibrations, commonly known as phonons. This spin--phonon
+vibrations, commonly known as phonons.[@Laorenza2021] This spin--phonon
 coupling governs energy exchange between the spin system and the
 vibrational bath, providing the dominant relaxation pathway in many
 molecular crystals.

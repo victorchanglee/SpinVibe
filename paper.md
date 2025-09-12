@@ -113,11 +113,7 @@ the phonons is expanded as a Taylor series truncated at the quadratic
 term:
 
 $$
-\hat{H}_{sph} = \sum_{\alpha q} \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha q}} \right) 
-\hat{Q}_{\alpha q}(t) 
-+ \sum_{\alpha q} \sum_{\beta q'} 
-\left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha q} \partial Q_{\beta q'}} \right)
-\hat{Q}_{\alpha q}(t) \hat{Q}_{\beta q'}(t)
+\hat{H}_{sph} = \sum_{\alpha q} \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha q}} \right) \hat{Q}_{\alpha q}(t) + \sum_{\alpha q} \sum_{\beta q'} \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha q} \partial Q_{\beta q'}} \right) \hat{Q}_{\alpha q}(t) \hat{Q}_{\beta q'}(t)
 $$
 
 In [\[eq:1\]](#eq:1){reference-type="ref+label"

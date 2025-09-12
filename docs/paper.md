@@ -181,8 +181,9 @@ G^{2\text{--ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'})
 \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} - \omega_{\beta q'})^{2}}
 \bar{n}_{\alpha q}\bar{n}_{\beta q'}
  \end{equation}
+ 
 \[
-+\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} + \omega_{\beta q'})^{2}}
++\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + omega_{\alpha q} + \omega_{\beta q'})^{2}}
 (\bar{n}_{\alpha q}+1)(\bar{n}_{\beta q'}+1)
 \]
 \[
@@ -192,7 +193,7 @@ G^{2\text{--ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'})
 \[
 +\frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} - \omega_{\beta q'})^{2}}
 (\bar{n}_{\alpha q}+1)\bar{n}_{\beta q'}
-\Bigg]\,.
+\Bigg]\
 \]
 
 Once the time-evolution is performed, we can study the time-evolution of the magnetization of the system 

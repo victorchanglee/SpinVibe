@@ -1,26 +1,18 @@
 ---
-title: 'Gala: A Python package for galactic dynamics'
+title: 'SpinVibe: Simulating spin-phonon coupling for molecular qubits'
 tags:
   - Python
-  - astronomy
-  - dynamics
-  - galactic dynamics
-  - milky way
+  - Condense matter physics
+  - First principles calculations
+  - Quantum mechanics
+
 authors:
-  - name: Adrian M. Price-Whelan
-    orcid: 0000-0000-0000-0000
+  - name: Victor Chang Lee
+   corresponding: true #
+    orcid: 0000-0003-1767-6229
     equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
-  - name: Author Without ORCID
-    equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
-    affiliation: 2
-  - name: Author with no affiliation
-    corresponding: true # (This is how to denote the corresponding author)
-    affiliation: 3
-  - given-names: Ludwig
-    dropping-particle: van
-    surname: Beethoven
-    affiliation: 3
+    affiliation: "1" # 
+
 affiliations:
  - name: Lyman Spitzer, Jr. Fellow, Princeton University, United States
    index: 1

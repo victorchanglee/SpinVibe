@@ -106,7 +106,11 @@ relevant quantities are extracted and saved in this format.
 
 # First principles spin-phonon coupling 
 
-Our code implements the theoretical framework developed by Lunghi and Sanvito, where in the weak-coupling regime the interaction between the spin Hamiltonian and the phonons is expanded as a Taylor series truncated at the quadratic term:
+Our code implements the theoretical framework developed by Lunghi and
+Sanvito[@Lunghi2020; @lunghi2022; @Lunghi2023], where in the
+weak-coupling regime the interaction between the spin Hamiltonian and
+the phonons is expanded as a Taylor series truncated at the quadratic
+term:
 
 \begin{equation}
 \hat{H}_{sph} = \sum_{\alpha q} \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha q}} \right) 

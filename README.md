@@ -1,18 +1,19 @@
 # SpinVibe
 
-[![Draft PDF](https://github.com/yourusername/SpinVibe/actions/workflows/draft-pdf.yml/badge.svg)](https://github.com/yourusername/SpinVibe/actions/workflows/draft-pdf.yml)
 
 **SpinVibe** is an open-source Python package for simulating **spin–phonon coupling in molecular qubits** using first-principles calculations.  
-It is designed to support materials discovery for quantum information and quantum sensing applications.
+It is desgin to study molecular qubits in solid-state systems.
 
 ---
 
-## Features
-- Parse and analyze molecular structures from **DFT outputs**.
-- Compute **spin–phonon coupling** parameters.
-- Tools for **vibronic Hamiltonians** and **relaxation rate calculations**.
-- Interfaces with standard electronic-structure codes (e.g., Quantum ESPRESSO, CASTEP, BerkeleyGW).
-- JOSS-compatible paper build (see [docs/paper.md](docs/paper.md)).
+## Inputs
+- Solid-state phonons and eigenvectors
+- Molecular spin-hamiltonian parameters (e.g. g-factor, zero-field splitting tensor)
+- Parameters: Temperature, Polarization, external magnetic field, etc.
+
+## Output
+- Time evolution of the spin density and magnetization
+- Spin-phonon relaxation time (T1)
 
 ---
 

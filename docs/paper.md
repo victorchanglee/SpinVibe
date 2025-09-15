@@ -18,7 +18,7 @@ affiliations:
     index: 1
 
 date: 12 September 2025
-bibliography: docs/citations.bib
+bibliography: citations.bib
 ---
 
 # Summary 

@@ -1,6 +1,11 @@
 name: Draft PDF
-on: [push]
-
+on:
+  push:
+    paths:
+      - docs/paper.md
+      - docs/citations.bib
+      - docs/spinvibe.png
+      - .github/workflows/draft-pdf.yml
 jobs:
   paper:
     runs-on: ubuntu-latest

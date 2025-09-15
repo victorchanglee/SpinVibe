@@ -2,24 +2,24 @@
 title: 'SpinVibe: Simulating spin-phonon coupling for molecular qubits'
 tags:
   - Python
-  - Condense matter physics
+  - Condensed matter physics
   - First principles calculations
 
 authors:
   - name: Victor Chang Lee
     orcid: 0000-0003-1767-6229
-    affiliation: 1 
+    affiliation: 1
   - name: James M Rondinelli
-  - orcid: 0000-0003-0508-2175
+    orcid: 0000-0003-0508-2175
     affiliation: 1
 
 affiliations:
- - name: Department of Material Science and Engineering, Northwestern University, United States
-   index: 1
-
+  - name: Department of Materials Science and Engineering, Northwestern University, United States
+    index: 1
 
 date: 12 September 2025
-bibliography: citations.bib
+bibliography: docs/citations.bib
+---
 
 # Summary 
 

@@ -312,9 +312,7 @@ class spin_phonon:
             if self.S == 0:
                 rho0 = I
             else:
-                # General spin case
-                alpha = self.hdim / (self.S * (self.S + 1))
-                rho0 = (1/self.hdim) * (I + alpha * (n[0] * Sx + n[1] * Sy + n[2] * Sz))
+                rho0 = (1/self.hdim) * (I + (n[0] * Sx + n[1] * Sy + n[2] * Sz))
             
             # Ensure hermiticity and proper normalization
             rho0 = 0.5 * (rho0 + rho0.conj().T)
@@ -336,16 +334,10 @@ class spin_phonon:
             # Initialize with the eigenstate having the highest eigenvalue
             rho0 = np.zeros((self.hdim, self.hdim), dtype=complex)
             
-            # Find the index of the highest eigenvalue
             highest_energy_idx = np.argmax(self.eigenvalues)
-            
-            # Get the corresponding eigenstate (eigenvector)
             highest_state = self.eigenvectors[:, highest_energy_idx]
-            
-            # Create pure state density matrix: |ψ⟩⟨ψ|
+
             rho0 = np.outer(highest_state, highest_state.conj())
-            
-            # Ensure proper normalization (should already be normalized for pure state)
             rho0 = rho0 / np.trace(rho0)
         
         if rank == 0:   

@@ -9,7 +9,7 @@ def main():
     rank = comm.Get_rank()
 
     # Input files
-    orca_file = 'Cr_otolyl_4.h5'
+    spin_file = 'Cr_otolyl_4.h5'
     phonon_file = 'Sn_otolyl_4_223.h5'
     d1_file = 'Cr_otolyl_4_d1.h5'
     disp1 = np.linspace(-0.05, 0.05, 10)
@@ -24,7 +24,7 @@ def main():
 
     if rank == 0:
         print("Input files to load:")
-        print("  Unperturbed g and d tensors: ", orca_file)
+        print("  Unperturbed g and d tensors: ", spin_file)
         print("  Phonon frequencies and eigenvectors: ", phonon_file)
         print("  First derivatives of d and g tensors: ", d1_file)
         print("  Second derivatives of d and g tensors: ", d2_file, g2_file)
@@ -33,7 +33,7 @@ def main():
         print("  Atomic masses: ", mol_mass)
 
     file_reader = read_files.Read_files(
-        orca_file, phonon_file, d1_file, d2_file, g2_file,
+        spin_file, phonon_file, d1_file, d2_file, g2_file,
         atoms_file, indices_file, mol_mass, disp1, disp2
     )
 

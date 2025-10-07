@@ -24,7 +24,7 @@
         <div class="code-header">Example Structure</div>
         <pre><code class="python">import h5py
 
-with h5py.File('Cr_otolyl_4.h5', 'r') as f:
+with h5py.File('spin.h5', 'r') as f:
     g_tensor = f['g_tensor'][:]        # shape: (3, 3)
     d_tensor = f['d_tensor'][:]        # shape: (3, 3)
 
@@ -63,10 +63,16 @@ with h5py.File('Cr_otolyl_4.h5', 'r') as f:
         <span class="file-format">HDF5 Format</span>
     </div>
     <p>First derivatives of g and D tensors with respect to atomic displacements.</p>
+
+    <h4>Required Datasets:</h4>
+    <ul>
+        <li><code>/D_d1</code> - First derivatives of D-tensor</li>
+        <li><code>/G_d1</code> - First derivatives of g-tensor</li>
+    </ul>
     
     <div class="code-example">
         <div class="code-header">Example Structure</div>
-        <pre><code class="python">with h5py.File(self.d1_file, 'r') as f:
+        <pre><code class="python">with h5py.File(d1.h5, 'r') as f:
             D_d1 = f['d_tensor'][:]
             G_d1 = f['g_matrix'][:]
     </div>
@@ -78,13 +84,19 @@ with h5py.File('Cr_otolyl_4.h5', 'r') as f:
         <span class="file-format">HDF5 Format</span>
     </div>
     <p>Second derivatives of D and g tensors</p>
+
+    <h4>Required Datasets:</h4>
+    <ul>
+        <li><code>/second_derivatives</code> - Second derivative tensors</li>
+        <li><code>/displacement_range</code> - Displacement range for fitting</li>
+    </ul>
     
     <div class="code-example">
         <div class="code-header">Example Structure</div>
-        <pre><code class="python">with h5py.File(self.d2_file, 'r') as f:
+        <pre><code class="python">with h5py.File(d2.h5, 'r') as f:
             D_d2 = f['d_tensor'][:]
 
-        with h5py.File(self.g2_file, 'r') as f:
+        with h5py.File(g2.h5, 'r') as f:
             G_d2 = f['g_tensor'][:]
     </div>
 </div>
@@ -93,18 +105,24 @@ with h5py.File('Cr_otolyl_4.h5', 'r') as f:
 
 <div class="input-file">
     <div class="file-header">
-        <span class="filename">Sn_otolyl_4_atoms.h5</span>
+        <span class="filename">atoms.h5</span>
         <span class="file-format">HDF5 Format</span>
     </div>
     <p>Contains atomic positions and crystal structure information.</p>
-    
+
     <h4>Required Datasets:</h4>
     <ul>
-        <li><code>/atomic_positions</code> - Atomic coordinates in Å</li>
+        <li><code>/R_vectors</code> - Atomic coordinates in Å</li>
         <li><code>/reciprocal_vectors</code> - Reciprocal lattice vectors</li>
-        <li><code>/lattice_vectors</code> - Real-space lattice vectors</li>
-        <li><code>/atomic_numbers</code> - Element atomic numbers</li>
     </ul>
+    
+    <div class="code-example">
+        <div class="code-header">Example Structure</div>
+        <pre><code class="python">with h5py.File(self.atoms_file, 'r') as f:
+            R_vectors = f['positions'][:]
+            reciprocal_vectors = f['reciprocal_vectors'][:]
+
+    </div>
 </div>
 
 <div class="input-file">
@@ -116,9 +134,14 @@ with h5py.File('Cr_otolyl_4.h5', 'r') as f:
     
     <h4>Required Datasets:</h4>
     <ul>
-        <li><code>/molecule_indices</code> - Atom indices in the molecule</li>
-        <li><code>/molecule_center</code> - Center of mass coordinates</li>
+        <li><code>/indices</code> - Atom indices in the molecule</li>
     </ul>
+    <div class="code-example">
+        <div class="code-header">Example Structure</div>
+        <pre><code class="python">with h5py.File(molecule_indices.h5, 'r') as f:
+            indices = f['indices'][:]
+
+    </div>
 </div>
 
 <div class="input-file">
@@ -126,13 +149,20 @@ with h5py.File('Cr_otolyl_4.h5', 'r') as f:
         <span class="filename">mol_mass.h5</span>
         <span class="file-format">HDF5 Format</span>
     </div>
-    <p>Atomic masses for phonon calculations.</p>
+    <p>Atomic masses of the molecule.</p>
     
     <h4>Required Datasets:</h4>
     <ul>
-        <li><code>/atomic_masses</code> - Masses of atoms in atomic units</li>
-        <li><code>/element_symbols</code> - Chemical element symbols</li>
+        <li><code>/masses</code> - Masses of atoms in atomic units</li>
+
     </ul>
+    <div class="code-example">
+        <div class="code-header">Example Structure</div>
+        <pre><code class="python">with h5py.File(mol_mass.h5, 'r') as f:
+            masses = f['atomic_masses'][:]
+
+
+    </div>
 </div>
 
 <hr>

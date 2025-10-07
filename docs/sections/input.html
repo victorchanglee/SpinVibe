@@ -27,7 +27,7 @@
             with h5py.File('spin.h5', 'r') as f:
                 g_tensor = f['g_tensor'][:]      
                 d_tensor = f['d_tensor'][:]      
-    
+            </code></pre>
         </div>
     </div>
 
@@ -53,6 +53,7 @@
             q_points = f['q_points'][1:, :]
             frequencies_cm = f['frequencies_cm'][1:, :]
             eigenvectors = f['eigenvectors'][1:, :]
+        </code></pre>
     </div>
 </div>
 
@@ -76,6 +77,7 @@
         <pre><code class="python">with h5py.File(d1.h5, 'r') as f:
             D_d1 = f['d_tensor'][:]
             G_d1 = f['g_matrix'][:]
+        </code></pre>
     </div>
 </div>
 
@@ -99,6 +101,7 @@
 
         with h5py.File(g2.h5, 'r') as f:
             G_d2 = f['g_tensor'][:]
+        </code></pre>
     </div>
 </div>
 
@@ -122,6 +125,7 @@
         <pre><code class="python">with h5py.File(self.atoms_file, 'r') as f:
             R_vectors = f['positions'][:]
             reciprocal_vectors = f['reciprocal_vectors'][:]
+        </code></pre>
 
     </div>
 </div>
@@ -141,6 +145,7 @@
         <div class="code-header">Example Structure</div>
         <pre><code class="python">with h5py.File(molecule_indices.h5, 'r') as f:
             indices = f['indices'][:]
+        </code></pre>
 
     </div>
 </div>
@@ -161,6 +166,7 @@
         <div class="code-header">Example Structure</div>
         <pre><code class="python">with h5py.File(mol_mass.h5, 'r') as f:
             masses = f['atomic_masses'][:]
+        </code></pre>
 
 
     </div>

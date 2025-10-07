@@ -198,27 +198,11 @@
                 margin-left: 0;
                 padding: 20px;
             }
-            .search-box {
-                width: 150px;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Top Navigation -->
-    <nav class="top-nav">
-        <div class="nav-content">
-            <div class="nav-left">
-                <a href="#" class="project-name">SpinVibe</a>
-                <select class="version-selector">
-                    <option>latest</option>
-                    <option>v1.0.0</option>
-                    <option>v0.9.0</option>
-                </select>
-            </div>
-            <input type="text" class="search-box" placeholder="Search docs...">
-        </div>
-    </nav>
+   
 
     <!-- Main Container -->
     <div class="container">

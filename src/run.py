@@ -29,17 +29,11 @@ def main():
     disp2 = np.array(params["disp2"])
     rot_mat = np.array(params["rotation_matrix"])
     pol = np.array(params["polarization_axis"])
-    axis = np.array(params["rotation_axis"])
-    theta = np.deg2rad(params["rotation_angle_deg"])
-
-    # Rotate polarization
-    R = math_func.rotate_polarization(axis, theta)
-    pol = np.dot(R, pol)
 
     if rank == 0:
         print("Initializing input files...")
         for key in [
-            "orca_file", "phonon_file", "d1_file",
+            "spin_file", "phonon_file", "d1_file",
             "d2_file", "g2_file", "atoms_file",
             "indices_file", "mol_mass"
         ]:
@@ -47,7 +41,7 @@ def main():
 
     # Create file reader
     file_reader = read_files.Read_files(
-        params["orca_file"], params["phonon_file"], params["d1_file"],
+        params["spin_file"], params["phonon_file"], params["d1_file"],
         params["d2_file"], params["g2_file"],
         params["atoms_file"], params["indices_file"],
         params["mol_mass"], disp1, disp2

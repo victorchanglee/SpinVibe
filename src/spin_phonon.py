@@ -1,9 +1,5 @@
 import numpy as np
-from . import hamiltonian
-from . import coupling
-from . import math_func
-from . import redfield
-from . import measure
+from . import hamiltonian, coupling, math_func, redfield, measure
 import h5py as h5
 from .constants import Bohrmagneton, k_B
 import time

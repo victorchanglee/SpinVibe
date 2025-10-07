@@ -3,7 +3,6 @@ from .constants import hbar, c, hbar_SI, cm2J
 from . import math_func
 from . import coupling
 from mpi4py import MPI
-from matplotlib import pyplot as plt
 
 class Redfield:
 

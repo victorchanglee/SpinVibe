@@ -1,440 +1,366 @@
 <h1 id="input">Input</h1>
 
+<p>SpinVibe requires several inputs from other codes and parameters to perform spin-phonon coupling simulations. 
+    All input files are required to be formated in HDF5 format for universal compatibility.</p>
 
-<div class="note">
-    <div class="note-title">Interactive Example</div>
-    <p>Modify the parameters below to generate a customized Python script for your simulation.</p>
-</div>
 
-<h2>Input Configuration</h2>
+<h2>Required Input Files</h2>
 
-<div class="input-section">
-    <h3>File Inputs</h3>
-    
-    <div class="input-group">
-        <label for="orca_file">ORCA File (g and d tensors):</label>
-        <input type="text" id="orca_file" value="Cr_otolyl_4.h5" class="code-input">
-        <small>File containing unperturbed g and d tensors</small>
+<h3>Molecular spin hamiltonian calculation Output</h3>
+<div class="spin_file">
+    <div class="file-header">
+        <span class="filename">spin.h5</span>
+        <span class="file-format">HDF5 Format</span>
     </div>
+    <p>Contains unperturbed g-tensor and zero-field splitting (D) tensor from quantum chemistry calculations.</p>
     
-    <div class="input-group">
-        <label for="phonon_file">Phonon File:</label>
-        <input type="text" id="phonon_file" value="Sn_otolyl_4_223.h5" class="code-input">
-        <small>File containing phonon frequencies and eigenvectors</small>
-    </div>
+    <h4>Required Datasets:</h4>
+    <ul>
+        <li><code>/g_tensor</code> - 3×3 g-tensor matrix</li>
+        <li><code>/d_tensor</code> - 3×3 zero-field splitting tensor</li>
+    </ul>
     
-    <div class="input-group">
-        <label for="d1_file">First Derivatives File:</label>
-        <input type="text" id="d1_file" value="Cr_otolyl_4_d1.h5" class="code-input">
-        <small>File containing first derivatives of d tensor</small>
-    </div>
-    
-    <div class="input-group">
-        <label for="d2_file">Second Derivatives (d):</label>
-        <input type="text" id="d2_file" value="d_predict.h5" class="code-input">
-        <small>File containing second derivatives of d tensor</small>
-    </div>
-    
-    <div class="input-group">
-        <label for="g2_file">Second Derivatives (g):</label>
-        <input type="text" id="g2_file" value="g_predict.h5" class="code-input">
-        <small>File containing second derivatives of g tensor</small>
+    <div class="code-example">
+        <div class="code-header">Example Structure</div>
+        <pre><code class="python">import h5py
+
+with h5py.File('Cr_otolyl_4.h5', 'r') as f:
+    g_tensor = f['g_tensor'][:]        # shape: (3, 3)
+    d_tensor = f['d_tensor'][:]        # shape: (3, 3)
+    energy = f['energy'][()]           # scalar value</code></pre>
     </div>
 </div>
 
-<div class="input-section">
-    <h3>Simulation Parameters</h3>
-    
-    <div class="input-row">
-        <div class="input-group">
-            <label for="magnetic_field">Magnetic Field (T):</label>
-            <input type="text" id="magnetic_field" value="[0.0, 0.0, 0.410]" class="code-input">
-            <small>External magnetic field vector</small>
-        </div>
-        
-        <div class="input-group">
-            <label for="spin">Spin (S):</label>
-            <input type="number" id="spin" value="1" step="0.5" class="code-input">
-            <small>Spin quantum number</small>
-        </div>
+<h3>2. Phonon Data</h3>
+<div class="input-file">
+    <div class="file-header">
+        <span class="filename">Sn_otolyl_4_223.h5</span>
+        <span class="file-format">HDF5 Format</span>
     </div>
+    <p>Contains phonon frequencies and eigenvectors from solid-state calculations.</p>
     
-    <div class="input-row">
-        <div class="input-group">
-            <label for="temperature">Temperature (K):</label>
-            <input type="number" id="temperature" value="300" step="1" class="code-input">
-            <small>Simulation temperature</small>
-        </div>
-        
-        <div class="input-group">
-            <label for="broadening">Broadening (cm⁻¹):</label>
-            <input type="number" id="broadening" value="0.1" step="0.01" class="code-input">
-            <small>Δα_q broadening parameter</small>
-        </div>
-    </div>
+    <h4>Required Datasets:</h4>
+    <ul>
+        <li><code>/frequencies</code> - Phonon frequencies in cm⁻¹</li>
+        <li><code>/eigenvectors</code> - Phonon eigenvectors</li>
+        <li><code>/q_points</code> - Q-points in reciprocal space</li>
+    </ul>
     
-    <div class="input-row">
-        <div class="input-group">
-            <label for="total_time">Total Time (s):</label>
-            <input type="text" id="total_time" value="1E-3" class="code-input">
-            <small>tf - Total simulation time</small>
-        </div>
-        
-        <div class="input-group">
-            <label for="time_step">Time Step (s):</label>
-            <input type="text" id="time_step" value="1E-6" class="code-input">
-            <small>dt - Time step size</small>
-        </div>
-    </div>
-    
-    <div class="input-group">
-        <label for="init_type">Initial State Type:</label>
-        <select id="init_type" class="code-input">
-            <option value="pure">pure</option>
-            <option value="polarized">polarized</option>
-            <option value="boltzmann">boltzmann</option>
-            <option value="photon">photon</option>
-        </select>
-        <small>How to initialize the spin density</small>
-    </div>
-    
-    <div class="input-group">
-        <label for="polarization">Polarization Vector:</label>
-        <input type="text" id="polarization" value="[0, 0, 1]" class="code-input">
-        <small>Polarization axis for initial state</small>
+    <div class="code-example">
+        <div class="code-header">Example Structure</div>
+        <pre><code class="python">with h5py.File('Sn_otolyl_4_223.h5', 'r') as f:
+    frequencies = f['frequencies'][:]      # shape: (n_phonons,)
+    eigenvectors = f['eigenvectors'][:]    # shape: (n_atoms, 3, n_phonons)
+    q_points = f['q_points'][:]            # shape: (n_q, 3)</code></pre>
     </div>
 </div>
 
-<div class="input-section">
-    <h3>Advanced Parameters</h3>
+<h3>3. Tensor Derivatives</h3>
+
+<div class="input-file">
+    <div class="file-header">
+        <span class="filename">Cr_otolyl_4_d1.h5</span>
+        <span class="file-format">HDF5 Format</span>
+    </div>
+    <p>First derivatives of g and D tensors with respect to atomic displacements.</p>
     
-    <div class="input-group">
-        <label for="rotation_matrix">Rotation Matrix:</label>
-        <textarea id="rotation_matrix" class="code-input" rows="3">[[0, 0, 1],
-[1, 0, 0],
-[0, 1, 0]]</textarea>
-        <small>Matrix to rotate molecule to crystal coordinates</small>
+    <h4>Required Datasets:</h4>
+    <ul>
+        <li><code>/d_tensor_derivatives</code> - First derivatives of D-tensor</li>
+        <li><code>/g_tensor_derivatives</code> - First derivatives of g-tensor</li>
+        <li><code>/displacements</code> - Displacement values used for derivatives</li>
+    </ul>
+</div>
+
+<div class="input-file">
+    <div class="file-header">
+        <span class="filename">d_predict.h5, g_predict.h5</span>
+        <span class="file-format">HDF5 Format</span>
+    </div>
+    <p>Second derivatives of D and g tensors (optional, for higher accuracy).</p>
+    
+    <h4>Required Datasets:</h4>
+    <ul>
+        <li><code>/second_derivatives</code> - Second derivative tensors</li>
+        <li><code>/displacement_range</code> - Displacement range for fitting</li>
+    </ul>
+</div>
+
+<h3>4. Structural Information</h3>
+
+<div class="input-file">
+    <div class="file-header">
+        <span class="filename">Sn_otolyl_4_atoms.h5</span>
+        <span class="file-format">HDF5 Format</span>
+    </div>
+    <p>Contains atomic positions and crystal structure information.</p>
+    
+    <h4>Required Datasets:</h4>
+    <ul>
+        <li><code>/atomic_positions</code> - Atomic coordinates in Å</li>
+        <li><code>/reciprocal_vectors</code> - Reciprocal lattice vectors</li>
+        <li><code>/lattice_vectors</code> - Real-space lattice vectors</li>
+        <li><code>/atomic_numbers</code> - Element atomic numbers</li>
+    </ul>
+</div>
+
+<div class="input-file">
+    <div class="file-header">
+        <span class="filename">molecule_indices.h5</span>
+        <span class="file-format">HDF5 Format</span>
+    </div>
+    <p>Indices of atoms belonging to the molecular qubit within the crystal.</p>
+    
+    <h4>Required Datasets:</h4>
+    <ul>
+        <li><code>/molecule_indices</code> - Atom indices in the molecule</li>
+        <li><code>/molecule_center</code> - Center of mass coordinates</li>
+    </ul>
+</div>
+
+<div class="input-file">
+    <div class="file-header">
+        <span class="filename">mol_mass.h5</span>
+        <span class="file-format">HDF5 Format</span>
+    </div>
+    <p>Atomic masses for phonon calculations.</p>
+    
+    <h4>Required Datasets:</h4>
+    <ul>
+        <li><code>/atomic_masses</code> - Masses of atoms in atomic units</li>
+        <li><code>/element_symbols</code> - Chemical element symbols</li>
+    </ul>
+</div>
+
+<hr>
+
+<h2>Simulation Parameters</h2>
+
+<div class="parameter-section">
+    <h3>Physical Parameters</h3>
+    
+    <div class="parameter">
+        <h4>Magnetic Field (B)</h4>
+        <p><strong>Type:</strong> numpy array<br>
+           <strong>Format:</strong> <code>[Bx, By, Bz]</code> in Tesla<br>
+           <strong>Example:</strong> <code>np.array([0.0, 0.0, 0.410])</code><br>
+           <strong>Description:</strong> External magnetic field vector applied to the system.</p>
     </div>
     
-    <div class="input-group">
-        <label for="rotation_axis">Rotation Axis:</label>
-        <input type="text" id="rotation_axis" value="[1, 0, 0]" class="code-input">
-        <small>Axis for polarization rotation</small>
+    <div class="parameter">
+        <h4>Spin Quantum Number (S)</h4>
+        <p><strong>Type:</strong> integer or half-integer<br>
+           <strong>Example:</strong> <code>1</code> (for S=1 system)<br>
+           <strong>Description:</strong> Total spin quantum number of the molecular qubit.</p>
     </div>
     
-    <div class="input-group">
-        <label for="rotation_angle">Rotation Angle (degrees):</label>
-        <input type="number" id="rotation_angle" value="0" step="1" class="code-input">
-        <small>Angle for polarization rotation</small>
+    <div class="parameter">
+        <h4>Temperature (T)</h4>
+        <p><strong>Type:</strong> float<br>
+           <strong>Unit:</strong> Kelvin<br>
+           <strong>Example:</strong> <code>300.0</code><br>
+           <strong>Description:</strong> Simulation temperature.</p>
     </div>
     
-    <div class="input-group">
-        <label for="unit_cells">Number of Unit Cells:</label>
-        <input type="number" id="unit_cells" value="1" step="1" class="code-input">
-        <small>Ncells - Number of unit cells to consider</small>
+    <div class="parameter">
+        <h4>Broadening Parameter (Δα_q)</h4>
+        <p><strong>Type:</strong> float<br>
+           <strong>Unit:</strong> cm⁻¹<br>
+           <strong>Example:</strong> <code>0.1</code><br>
+           <strong>Description:</strong> Phonon linewidth broadening parameter.</p>
     </div>
 </div>
 
-<h2>Generated Python Script</h2>
-
-<div class="code-container">
-    <div class="code-header">
-        <span>spin_phonon_example.py</span>
-        <button onclick="copyCode()" class="copy-btn">Copy Code</button>
+<div class="parameter-section">
+    <h3>Time Parameters</h3>
+    
+    <div class="parameter">
+        <h4>Total Time (tf)</h4>
+        <p><strong>Type:</strong> float<br>
+           <strong>Unit:</strong> seconds<br>
+           <strong>Example:</strong> <code>1E-3</code> (1 millisecond)<br>
+           <strong>Description:</strong> Total simulation time.</p>
     </div>
-    <pre id="generated-code"><code class="python"># Generated SpinVibe Example Script
-import spin_phonon
+    
+    <div class="parameter">
+        <h4>Time Step (dt)</h4>
+        <p><strong>Type:</strong> float<br>
+           <strong>Unit:</strong> seconds<br>
+           <strong>Example:</strong> <code>1E-6</code> (1 microsecond)<br>
+           <strong>Description:</strong> Time step for numerical integration.</p>
+    </div>
+</div>
+
+<div class="parameter-section">
+    <h3>Initial State Parameters</h3>
+    
+    <div class="parameter">
+        <h4>Initial State Type</h4>
+        <p><strong>Type:</strong> string<br>
+           <strong>Options:</strong> <code>'pure'</code>, <code>'polarized'</code>, <code>'boltzmann'</code>, <code>'photon'</code><br>
+           <strong>Default:</strong> <code>'pure'</code><br>
+           <strong>Description:</strong> Method for initializing the spin density matrix.</p>
+    </div>
+    
+    <div class="parameter">
+        <h4>Polarization Vector</h4>
+        <p><strong>Type:</strong> numpy array<br>
+           <strong>Format:</strong> <code>[px, py, pz]</code><br>
+           <strong>Example:</strong> <code>np.array([0, 0, 1])</code><br>
+           <strong>Description:</strong> Initial spin polarization direction.</p>
+    </div>
+</div>
+
+<div class="parameter-section">
+    <h3>Crystal Structure Parameters</h3>
+    
+    <div class="parameter">
+        <h4>Rotation Matrix</h4>
+        <p><strong>Type:</strong> 3×3 numpy array<br>
+           <strong>Example:</strong> <code>np.array([[0,0,1], [1,0,0], [0,1,0]])</code><br>
+           <strong>Description:</strong> Matrix to align molecular frame with crystal frame.</p>
+    </div>
+    
+    <div class="parameter">
+        <h4>Number of Unit Cells (Ncells)</h4>
+        <p><strong>Type:</strong> integer<br>
+           <strong>Example:</strong> <code>1</code><br>
+           <strong>Description:</strong> Number of unit cells to include in supercell calculation.</p>
+    </div>
+</div>
+
+<hr>
+
+<h2>Input File Generation</h2>
+
+<p>Here's an example Python script to generate the required HDF5 input files:</p>
+
+<div class="code-example">
+    <div class="code-header">generate_inputs.py</div>
+    <pre><code class="python">import h5py
 import numpy as np
-from mpi4py import MPI
-import sys
-import read_files
-import math_func
 
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-size = comm.Get_size()
+# Generate ORCA output file
+with h5py.File('Cr_otolyl_4.h5', 'w') as f:
+    # Example g-tensor (isotropic)
+    g_tensor = np.array([[2.0023, 0.0000, 0.0000],
+                         [0.0000, 2.0023, 0.0000],
+                         [0.0000, 0.0000, 2.0023]])
+    f.create_dataset('g_tensor', data=g_tensor)
+    
+    # Example D-tensor
+    d_tensor = np.array([[0.500, 0.000, 0.000],
+                         [0.000, 0.500, 0.000],
+                         [0.000, 0.000, -1.000]])
+    f.create_dataset('d_tensor', data=d_tensor)
+    
+    # Electronic energy
+    f.create_dataset('energy', data=-1250.45)
 
-# Input files
-orca_file = 'Cr_otolyl_4.h5'
-phonon_file = 'Sn_otolyl_4_223.h5'
-d1_file = 'Cr_otolyl_4_d1.h5'
-disp1 = np.linspace(-0.05, 0.05, 10)
+# Generate phonon file
+with h5py.File('Sn_otolyl_4_223.h5', 'w') as f:
+    n_phonons = 100
+    n_atoms = 20
+    
+    frequencies = np.linspace(10, 500, n_phonons)  # cm⁻¹
+    eigenvectors = np.random.random((n_atoms, 3, n_phonons))
+    q_points = np.random.random((50, 3))
+    
+    f.create_dataset('frequencies', data=frequencies)
+    f.create_dataset('eigenvectors', data=eigenvectors)
+    f.create_dataset('q_points', data=q_points)
 
-d2_file = 'd_predict.h5'
-g2_file = 'g_predict.h5' 
-disp2 = np.array([-0.05, -0.0278, -0.0056, 0.0056, 0.0278, 0.05])
-
-atoms_file = 'Sn_otolyl_4_atoms.h5'
-indices_file = 'molecule_indices.h5'
-mol_mass = 'mol_mass.h5'
-
-if rank == 0:
-    print("Input files to load:")
-    print("  Unperturbed g and d tensors: ", orca_file)
-    print("  Phonon frequencies and eigenvectors: ", phonon_file)
-    print("  First derivatives of d and g tensors: ", d1_file)
-    print("  Second derivatives of d and g tensors: ", d2_file, g2_file)
-    print("  Atomic positions and reciprocal vectors: ", atoms_file)
-    print("  Indices of atoms in the molecule in the crystal: ", indices_file)
-    print("  Atomic masses: ", mol_mass)
-
-file_reader = read_files.Read_files(orca_file, phonon_file, d1_file, d2_file, g2_file, atoms_file, indices_file, mol_mass, disp1, disp2)
-
-# Input parameters
-B = np.array([0.0, 0.0, 0.410])  # External magnetic field in T
-S = 1  # Spin
-
-init_type = 'pure'  # Spin density initialization
-R_type = None
-Delta_alpha_q = 0.1  # Broadening parameter in cm-1
-T = 300  # Temperature in Kelvin
-Ncells = 1
-
-# Rotation matrix
-rot_mat = np.array([[0, 0, 1],
-                    [1, 0, 0], 
-                    [0, 1, 0]])
-
-# Polarization
-pol = np.array([0, 0, 1])
-axis = np.array([1, 0, 0])
-theta = np.deg2rad(0)
-R = math_func.rotate_polarization(axis, theta)
-pol = np.dot(R, pol)
-
-# Time parameters
-tf = 1E-3  # Total time in seconds
-dt = 1E-6  # Time step in seconds
-
-save_file = f'Spin_phonon_{T}K_{Delta_alpha_q}_{Ncells}_{theta}.h5'
-
-# Run simulation
-spin_phonon.spin_phonon(B, S, Ncells, Delta_alpha_q, rot_mat, pol, T, tf, dt, file_reader, save_file, init_type, R_type)
-
-if rank == 0:
-    print("Job completed.")</code></pre>
+print("Input files generated successfully!")</code></pre>
 </div>
 
 <div class="note">
-    <div class="note-title">Usage Instructions</div>
-    <p>Run the generated script with MPI: <code>mpirun -n 4 python spin_phonon_example.py</code></p>
+    <div class="note-title">File Validation</div>
+    <p>Use the <code>read_files.py</code> module to validate your input files before running simulations.</p>
 </div>
 
 <style>
-.input-section {
+.input-file {
     background: #f8f9fa;
     border: 1px solid #e9ecef;
     border-radius: 5px;
     padding: 20px;
-    margin: 20px 0;
-}
-
-.input-section h3 {
-    color: #2c3e50;
-    margin-top: 0;
-    border-bottom: 1px solid #dee2e6;
-    padding-bottom: 10px;
-}
-
-.input-group {
     margin: 15px 0;
 }
 
-.input-row {
+.file-header {
     display: flex;
-    gap: 20px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-.input-row .input-group {
-    flex: 1;
-}
-
-.input-group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: #495057;
-}
-
-.input-group input, .input-group select, .input-group textarea {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
+.filename {
     font-family: 'Courier New', monospace;
-    font-size: 14px;
+    font-weight: bold;
+    color: #2c3e50;
 }
 
-.input-group small {
-    display: block;
-    color: #6c757d;
+.file-format {
+    background: #2980b9;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 3px;
     font-size: 12px;
-    margin-top: 4px;
 }
 
-.code-input {
-    background: #f8f9fa;
+.parameter-section {
+    margin: 25px 0;
+}
+
+.parameter-section h3 {
+    color: #2c3e50;
+    border-bottom: 2px solid #e1e4e5;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+.parameter {
+    background: white;
     border: 1px solid #e9ecef;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
 }
 
-.code-container {
+.parameter h4 {
+    margin: 0 0 10px 0;
+    color: #2980b9;
+    font-size: 1.1em;
+}
+
+.parameter p {
+    margin: 5px 0;
+}
+
+.code-example {
     background: #f8f9fa;
     border: 1px solid #e1e4e5;
     border-radius: 5px;
-    margin: 20px 0;
+    margin: 15px 0;
 }
 
 .code-header {
     background: #e9ecef;
     padding: 10px 15px;
     border-bottom: 1px solid #dee2e6;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.copy-btn {
-    background: #2980b9;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.copy-btn:hover {
-    background: #2471a3;
-}
-
-#generated-code {
-    margin: 0;
-    padding: 20px;
-    background: #f8f9fa;
-    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
 }
 
 @media (max-width: 768px) {
-    .input-row {
+    .file-header {
         flex-direction: column;
-        gap: 10px;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .parameter {
+        padding: 10px;
     }
 }
 </style>
-
-<script>
-function updateCode() {
-    const orcaFile = document.getElementById('orca_file').value;
-    const phononFile = document.getElementById('phonon_file').value;
-    const d1File = document.getElementById('d1_file').value;
-    const d2File = document.getElementById('d2_file').value;
-    const g2File = document.getElementById('g2_file').value;
-    const magneticField = document.getElementById('magnetic_field').value;
-    const spin = document.getElementById('spin').value;
-    const temperature = document.getElementById('temperature').value;
-    const broadening = document.getElementById('broadening').value;
-    const totalTime = document.getElementById('total_time').value;
-    const timeStep = document.getElementById('time_step').value;
-    const initType = document.getElementById('init_type').value;
-    const polarization = document.getElementById('polarization').value;
-    const rotationMatrix = document.getElementById('rotation_matrix').value;
-    const rotationAxis = document.getElementById('rotation_axis').value;
-    const rotationAngle = document.getElementById('rotation_angle').value;
-    const unitCells = document.getElementById('unit_cells').value;
-
-    const code = `# Generated SpinVibe Example Script
-import spin_phonon
-import numpy as np
-from mpi4py import MPI
-import sys
-import read_files
-import math_func
-
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-size = comm.Get_size()
-
-# Input files
-orca_file = '${orcaFile}'
-phonon_file = '${phononFile}'
-d1_file = '${d1File}'
-disp1 = np.linspace(-0.05, 0.05, 10)
-
-d2_file = '${d2File}'
-g2_file = '${g2File}'
-disp2 = np.array([-0.05, -0.0278, -0.0056, 0.0056, 0.0278, 0.05])
-
-atoms_file = 'Sn_otolyl_4_atoms.h5'
-indices_file = 'molecule_indices.h5'
-mol_mass = 'mol_mass.h5'
-
-if rank == 0:
-    print("Input files to load:")
-    print("  Unperturbed g and d tensors: ", orca_file)
-    print("  Phonon frequencies and eigenvectors: ", phonon_file)
-    print("  First derivatives of d and g tensors: ", d1_file)
-    print("  Second derivatives of d and g tensors: ", d2_file, g2_file)
-    print("  Atomic positions and reciprocal vectors: ", atoms_file)
-    print("  Indices of atoms in the molecule in the crystal: ", indices_file)
-    print("  Atomic masses: ", mol_mass)
-
-file_reader = read_files.Read_files(orca_file, phonon_file, d1_file, d2_file, g2_file, atoms_file, indices_file, mol_mass, disp1, disp2)
-
-# Input parameters
-B = np.array(${magneticField})  # External magnetic field in T
-S = ${spin}  # Spin
-
-init_type = '${initType}'  # Spin density initialization
-R_type = None
-Delta_alpha_q = ${broadening}  # Broadening parameter in cm-1
-T = ${temperature}  # Temperature in Kelvin
-Ncells = ${unitCells}
-
-# Rotation matrix
-rot_mat = np.array(${rotationMatrix})
-
-# Polarization
-pol = np.array(${polarization})
-axis = np.array(${rotationAxis})
-theta = np.deg2rad(${rotationAngle})
-R = math_func.rotate_polarization(axis, theta)
-pol = np.dot(R, pol)
-
-# Time parameters
-tf = ${totalTime}  # Total time in seconds
-dt = ${timeStep}  # Time step in seconds
-
-save_file = f'Spin_phonon_{T}K_{Delta_alpha_q}_{Ncells}_{theta}.h5'
-
-# Run simulation
-spin_phonon.spin_phonon(B, S, Ncells, Delta_alpha_q, rot_mat, pol, T, tf, dt, file_reader, save_file, init_type, R_type)
-
-if rank == 0:
-    print("Job completed.")`;
-
-    document.getElementById('generated-code').textContent = code;
-}
-
-function copyCode() {
-    const code = document.getElementById('generated-code').textContent;
-    navigator.clipboard.writeText(code).then(() => {
-        const btn = document.querySelector('.copy-btn');
-        const originalText = btn.textContent;
-        btn.textContent = 'Copied!';
-        setTimeout(() => {
-            btn.textContent = originalText;
-        }, 2000);
-    });
-}
-
-// Add event listeners to all inputs
-document.querySelectorAll('input, select, textarea').forEach(input => {
-    input.addEventListener('input', updateCode);
-    input.addEventListener('change', updateCode);
-});
-
-// Initialize code
-updateCode();
-</script>
-
-<hr>

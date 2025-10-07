@@ -1,5 +1,5 @@
 import numpy as np
-from constants import hbar_SI, c
+from .constants import hbar_SI, c
 from . import hamiltonian
 from . import math_func
 from mpi4py import MPI

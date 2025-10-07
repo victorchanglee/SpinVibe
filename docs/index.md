@@ -17,61 +17,6 @@
             color: #404040;
         }
 
-        /* Top Navigation Bar */
-        .top-nav {
-            background: #2980b9;
-            color: white;
-            padding: 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .nav-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            padding: 0 20px;
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .project-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: white;
-            text-decoration: none;
-        }
-
-        .version-selector {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 3px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .search-box {
-            background: rgba(255,255,255,0.9);
-            border: none;
-            padding: 6px 12px;
-            border-radius: 3px;
-            width: 250px;
-            font-size: 14px;
-        }
 
         /* Main Container */
         .container {

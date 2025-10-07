@@ -101,11 +101,11 @@ class spin_phonon:
             print("Initialize simulation")
             print("=====================")
             if self.R_type == None:
-                print("Computing Orbach and Raman process")
+                print("Computing linear and quadratic coupling")
             if self.R_type == 'R1':
-                print("Computing ONLY Orbach process")
+                print("Computing ONLY linear coupling")
             if self.R_type == 'R2':
-                print("Computing ONLY Raman process")
+                print("Computing ONLY quadratic coupling)
 
         # Linear response spin-phonon coupling
         self.V_alpha = np.zeros([self.Nq, self.Nomega, self.hdim, self.hdim], dtype=np.complex128)
@@ -128,7 +128,7 @@ class spin_phonon:
         if self.R_type in (None, 'R1'):
 
             if rank == 0:
-                print("Initializing R1 tensor (Orbach process)")
+                print("Initializing R1 tensor (Linear coupling)")
 
             timer_R1 = time.perf_counter()
             self.R1 = init_R.R1_tensor(self.V_alpha)
@@ -149,7 +149,7 @@ class spin_phonon:
         
         if self.R_type in (None, 'R2'):
             if rank == 0:
-                print("Initializing R2 tensor (Raman process)")
+                print("Initializing R2 tensor (Quadratic coupling)")
 
             timer_R2 = time.perf_counter()
             self.R2 = init_R.R2_tensor(init_Vq)
@@ -166,20 +166,8 @@ class spin_phonon:
                 print(eigenvalues)
                 print("\n")
 
-
-        #timer_R4 = time.perf_counter()
-        #self.R4 = init_R.R4_tensor(self.V_alpha)
-        #hours_R4, minutes_R4, seconds_R4 = self.timer(timer_R4)
-
-        #eigenvalues = np.linalg.eigvals(self.R4.reshape((self.hdim**2, self.hdim**2)))
-
-        #if rank == 0:
-        #    print("Eigenvalues of the R4 tensor")
-        #    print(eigenvalues)
-        #    print(f"Build R4: {hours_R4}h {minutes_R4}m {seconds_R4:.2f}s")
-        #    print("\n")
         if self.R_type == None:
-            self.R = self.R1 + self.R2 #+ self.R4
+            self.R = self.R1 + self.R2
 
         if self.R_type == 'R1':
             self.R = self.R1

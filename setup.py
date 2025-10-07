@@ -11,10 +11,10 @@ setup(
     packages=["spinvibe"], 
     package_dir={"spinvibe": "src"},            
     install_requires=[
-        "numpy",
-        "scipy",
-        "mpi4py",
-        "h5py"
+        "numpy==1.26.4",
+        "scipy==1.13.1",
+        "mpi4py==4.0.2",
+        "h5py==3.12.1",
     ],
     entry_points={
         "console_scripts": [

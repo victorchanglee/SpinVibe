@@ -4,8 +4,8 @@ import numpy as np
 import math_func
 
 class Read_files:
-    def __init__(self, orca_file, phonon_file, d1_file, d2_file, g2_file, atoms_file, indices_file, mol_mass, disp1, disp2):
-        self.orca_file = orca_file
+    def __init__(self, spin_file, phonon_file, d1_file, d2_file, g2_file, atoms_file, indices_file, mol_mass, disp1, disp2):
+        self.spin_file = spin_file
         self.phonon_file = phonon_file
         self.d1_file = d1_file
         self.d2_file = d2_file
@@ -16,8 +16,8 @@ class Read_files:
         self.disp1 = disp1
         self.disp2 = disp2
 
-    def read_orca(self):
-        with h5py.File(self.orca_file, 'r') as f:
+    def read_spin(self):
+        with h5py.File(self.spin_file, 'r') as f:
             g_tensor = f['g_tensor'][:]
             d_tensor = f['d_tensor'][:]
 

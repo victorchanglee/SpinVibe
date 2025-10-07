@@ -271,53 +271,6 @@
 
 <hr>
 
-<h2>Input File Generation</h2>
-
-<p>Here's an example Python script to generate the required HDF5 input files:</p>
-
-<div class="code-example">
-    <div class="code-header">generate_inputs.py</div>
-    <pre><code class="python">import h5py
-import numpy as np
-
-# Generate ORCA output file
-with h5py.File('Cr_otolyl_4.h5', 'w') as f:
-    # Example g-tensor (isotropic)
-    g_tensor = np.array([[2.0023, 0.0000, 0.0000],
-                         [0.0000, 2.0023, 0.0000],
-                         [0.0000, 0.0000, 2.0023]])
-    f.create_dataset('g_tensor', data=g_tensor)
-    
-    # Example D-tensor
-    d_tensor = np.array([[0.500, 0.000, 0.000],
-                         [0.000, 0.500, 0.000],
-                         [0.000, 0.000, -1.000]])
-    f.create_dataset('d_tensor', data=d_tensor)
-    
-    # Electronic energy
-    f.create_dataset('energy', data=-1250.45)
-
-# Generate phonon file
-with h5py.File('Sn_otolyl_4_223.h5', 'w') as f:
-    n_phonons = 100
-    n_atoms = 20
-    
-    frequencies = np.linspace(10, 500, n_phonons)  # cm⁻¹
-    eigenvectors = np.random.random((n_atoms, 3, n_phonons))
-    q_points = np.random.random((50, 3))
-    
-    f.create_dataset('frequencies', data=frequencies)
-    f.create_dataset('eigenvectors', data=eigenvectors)
-    f.create_dataset('q_points', data=q_points)
-
-print("Input files generated successfully!")</code></pre>
-</div>
-
-<div class="note">
-    <div class="note-title">File Validation</div>
-    <p>Use the <code>read_files.py</code> module to validate your input files before running simulations.</p>
-</div>
-
 <style>
 .input-file {
     background: #f8f9fa;

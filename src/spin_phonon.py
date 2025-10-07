@@ -67,7 +67,7 @@ class spin_phonon:
         self.Nomega = len(self.q_vector)  # Number of phonon modes
         self.Nq = self.q_vector.shape[0]  # Number of q points
         
-        g_tensor, d_tensor = self.file_reader.read_orca() #Read g-matrix and zero field splitting D-tensor
+        g_tensor, d_tensor = self.file_reader.read_spin() #Read g-matrix and zero field splitting D-tensor
 
         #Rotate cartesian tensors to crystal coordinates
         self.g_tensor = self.rot_mat @ g_tensor @ self.rot_mat.T 

@@ -166,29 +166,6 @@
             margin: 30px 0;
         }
 
-        /* Footer Navigation */
-        .footer-nav {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid #e1e4e5;
-        }
-
-        .footer-nav a {
-            color: #2980b9;
-            text-decoration: none;
-            padding: 10px 15px;
-            border: 1px solid #2980b9;
-            border-radius: 3px;
-            transition: all 0.2s;
-        }
-
-        .footer-nav a:hover {
-            background: #2980b9;
-            color: white;
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {

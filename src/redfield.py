@@ -4,7 +4,6 @@ import math_func
 import coupling
 from mpi4py import MPI
 from matplotlib import pyplot as plt
-from tqdm import tqdm
 
 class Redfield:
 
@@ -194,10 +193,6 @@ class Redfield:
 
       R2_local = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
-      # Setup progress bar only for rank 0
-      #if rank == 0:
-      #   pbar = tqdm(total=len(all_tasks), desc="Computing R2 tensor", unit="tasks", ncols=100)
-
       for q1, q2, alpha, beta in all_tasks:
          # Get V matrix for this (alpha, beta) pair
          V_alpha_beta = init_Vq.compute_V_alpha_beta_q(q1, q2, alpha, beta)
@@ -252,103 +247,9 @@ class Redfield:
                         
                         # Apply prefactor and add to result
                         R2_local[a, b, c, d] += prefactor * term_sum
-            # Update progress bar only for rank 0
-        # if rank == 0:
-        #       pbar.update(1)
-
-      # Close progress bar for rank 0
-      #if rank == 0:
-      #   pbar.close()
 
       # Gather results from all processes
       R2_tensor = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
       comm.Allreduce(R2_local, R2_tensor, op=MPI.SUM)
       
       return R2_tensor
-
-   def R4_tensor(self, V_alpha):
-      comm = MPI.COMM_WORLD
-      rank = comm.Get_rank()
-      size = comm.Get_size()
-
-      hdim = V_alpha.shape[2]
-      Nq = V_alpha.shape[0]
-      Nomega = V_alpha.shape[1]
-
-      all_tasks = []
-      for q in range(self.Nq):
-         for alpha in range(self.Nomega):
-               all_tasks.append((q, alpha))
-
-      all_tasks = np.array_split(all_tasks, size)[rank]
-
-      # Precompute matrix elements M[q, alpha]
-      M = np.zeros((Nq, Nomega, hdim, hdim), dtype=np.complex128)
-      for q, alpha in all_tasks:
-         V = V_alpha[q, alpha]
-         M[q, alpha] = self.eigenvectors.conj().T @ V @ self.eigenvectors
-
-      # Energy differences and tensor initialization
-      omega_ij = math_func.energy_diff(self.eigenvalues)
-      R4_local = np.zeros((hdim, hdim, hdim, hdim), dtype=np.complex128)
-
-      for q, alpha in all_tasks:
-         for beta in range(Nomega):
-            if alpha >= beta:
-               continue
-            delta_alpha_beta = 1 if alpha == beta else 0
-
-            M_alpha = M[q, alpha]
-            M_beta = M[q, beta]
-
-            omega_q_alpha = self.omega_q[q, alpha]
-            omega_q_beta = self.omega_q[q, beta]
-
-            # Compute all W terms
-            term1 = M_alpha @ (M_beta.T / (omega_ij - omega_q_beta))
-            term2 = M_beta @ (M_alpha.T / (omega_ij - omega_q_alpha))
-            W_mm = np.abs(term1 + term2)**2
-
-            term3 = M_alpha @ (M_beta.T / (omega_ij + omega_q_beta))
-            term4 = M_beta @ (M_alpha.T / (omega_ij + omega_q_alpha))
-            W_pp = np.abs(term3 + term4)**2
-
-            term5 = M_alpha @ (M_beta.T / (omega_ij + omega_q_beta))
-            term6 = M_beta @ (M_alpha.T / (omega_ij - omega_q_alpha))
-            W_pm = np.abs(term5 + term6)**2
-
-            term7 = M_alpha @ (M_beta.T / (omega_ij - omega_q_beta))
-            term8 = M_beta @ (M_alpha.T / (omega_ij + omega_q_alpha))
-            W_mp = np.abs(term7 + term8)**2
-
-            # Bose factors
-            n_alpha = math_func.bose_einstein(omega_q_alpha, self.T)
-            n_beta  = math_func.bose_einstein(omega_q_beta, self.T)
-
-            bose_mm = (n_alpha + 1) * n_beta
-            bose_pp = (n_alpha + 1) * (n_beta + 1)
-            bose_pm = n_alpha * n_beta
-            bose_mp = (n_alpha + 1) * n_beta
-
-            # Lorentzian factors
-            lorentz_mm = math_func.lorentzian(omega_ij - omega_q_alpha - omega_q_beta, self.Delta_alpha_q)
-            lorentz_pp = math_func.lorentzian(omega_ij + omega_q_alpha + omega_q_beta, self.Delta_alpha_q)
-            lorentz_pm = math_func.lorentzian(omega_ij - omega_q_alpha + omega_q_beta, self.Delta_alpha_q)
-            lorentz_mp = math_func.lorentzian(omega_ij + omega_q_alpha - omega_q_beta, self.Delta_alpha_q)
-
-            # Final W's
-            W_mm *= bose_mm * lorentz_mm
-            W_pp *= bose_pp * lorentz_pp
-            W_pm *= bose_pm * lorentz_pm
-            W_mp *= bose_mp * lorentz_mp
-
-            A = 1 - (0.75 * delta_alpha_beta)
-            B = 1 - (0.5 * delta_alpha_beta)
-
-            R4_local += (np.pi / (2 * hbar)) * (A * W_mm + A * W_pp + B * W_pm + A * W_mp)
-
-      # Combine results from all ranks
-      R4_total = np.zeros_like(R4_local)
-      comm.Allreduce(R4_local, R4_total, op=MPI.SUM)
-
-      return R4_total

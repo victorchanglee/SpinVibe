@@ -1,7 +1,7 @@
 import h5py
 from .constants import avogadro
 import numpy as np
-import math_func
+from . import math_func
 
 class Read_files:
     def __init__(self, spin_file, phonon_file, d1_file, d2_file, g2_file, atoms_file, indices_file, mol_mass, disp1, disp2):

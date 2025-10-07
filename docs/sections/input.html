@@ -203,25 +203,14 @@
            <strong>Example:</strong> <code>1</code><br>
            <strong>Description:</strong> Phonon linewidth broadening parameter.</p>
     </div>
-    
+
     <div class="parameter">
-        <h4>tf = Total Time</h4>
-        <p><strong>Type:</strong> float<br>
-           <strong>Unit:</strong> seconds<br>
-           <strong>Example:</strong> <code>1E-3</code> (1 millisecond)<br>
-           <strong>Description:</strong> Total simulation time.</p>
-    </div>
-    
-    <div class="parameter">
-        <h4>dt = Time Step</h4>
-        <p><strong>Type:</strong> float<br>
-           <strong>Unit:</strong> seconds<br>
-           <strong>Example:</strong> <code>1E-6</code> (1 microsecond)<br>
-           <strong>Description:</strong> Time step for numerical integration.</p>
+        <h4>Ncells = Number of Unit Cells (Ncells)</h4>
+        <p><strong>Type:</strong> integer<br>
+           <strong>Example:</strong> <code>50</code><br>
+           <strong>Description:</strong> Number of unit cells to include in supercell calculation.</p>
     </div>
 
-
-    
     <div class="parameter">
         <h4>Initial State Type</h4>
         <p><strong>Type:</strong> string<br>
@@ -246,19 +235,27 @@
            <strong>Description:</strong> Define the order of the Redfield operator to be computed (R1=linear coupling, R2=quadratic coupling).</p>
     </div>
 
-    
     <div class="parameter">
         <h4>rot_mat = Rotation Matrix</h4>
         <p><strong>Type:</strong> 3×3 numpy array<br>
            <strong>Example:</strong> <code>np.array([[0,0,1], [1,0,0], [0,1,0]])</code><br>
            <strong>Description:</strong> Matrix to align molecular frame with crystal frame.</p>
     </div>
+
+    <div class="parameter">
+        <h4>tf = Total Time</h4>
+        <p><strong>Type:</strong> float<br>
+           <strong>Unit:</strong> seconds<br>
+           <strong>Example:</strong> <code>1E-3</code> (1 millisecond)<br>
+           <strong>Description:</strong> Total simulation time.</p>
+    </div>
     
     <div class="parameter">
-        <h4>Ncells = Number of Unit Cells (Ncells)</h4>
-        <p><strong>Type:</strong> integer<br>
-           <strong>Example:</strong> <code>1</code><br>
-           <strong>Description:</strong> Number of unit cells to include in supercell calculation.</p>
+        <h4>dt = Time Step</h4>
+        <p><strong>Type:</strong> float<br>
+           <strong>Unit:</strong> seconds<br>
+           <strong>Example:</strong> <code>1E-6</code> (1 microsecond)<br>
+           <strong>Description:</strong> Time step for numerical integration.</p>
     </div>
     
     <div class="parameter">

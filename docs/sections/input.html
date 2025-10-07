@@ -58,6 +58,17 @@
 
 <div class="input-file">
     <div class="file-header">
+        <span class="file-format">Numpy array</span>
+    </div>
+    <h4>Required Datasets:</h4>
+    <ul>
+        <li><code>disp1</code> - Atomic displacements for the first derivative
+        <p><strong>Type:</strong> numpy array<br></li>
+    </ul>
+</div>
+
+<div class="input-file">
+    <div class="file-header">
         <span class="filename">d1.h5</span>
         <span class="file-format">HDF5 Format</span>
     </div>
@@ -67,8 +78,6 @@
     <ul>
         <li><code>/D_d1</code> - First derivatives of D-tensor</li>
         <li><code>/G_d1</code> - First derivatives of g-tensor</li>
-        <li><code>disp1</code> - Atomic displacements for the first derivative
-        <p><strong>Type:</strong> integer<br></li>
     </ul>
     
     <div class="code-example">
@@ -82,6 +91,16 @@
 
 <div class="input-file">
     <div class="file-header">
+        <span class="file-format">Numpy array</span>
+    </div>
+    <h4>Required Datasets:</h4>
+    <ul>
+        <li><code>disp2</code> - Atomic displacements for the second derivative
+        <p><strong>Type:</strong> numpy array<br></li>
+    </ul>
+</div>
+<div class="input-file">
+    <div class="file-header">
         <span class="filename">d2.h5, g2.h5</span>
         <span class="file-format">HDF5 Format</span>
     </div>
@@ -90,8 +109,6 @@
     <h4>Required Datasets:</h4>
     <ul>
         <li><code>/second_derivatives</code> - Second derivative tensors</li>
-        <li><code>disp2</code> - Atomic displacements for the second derivative
-        <p><strong>Type:</strong> integer<br></li>
     </ul>
     
     <div class="code-example">

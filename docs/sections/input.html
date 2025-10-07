@@ -22,11 +22,10 @@
     
     <div class="code-example">
         <div class="code-header">Example Structure</div>
-        <pre><code class="python">import h5py
-
+        <pre><code class="python">
 with h5py.File('spin.h5', 'r') as f:
-    g_tensor = f['g_tensor'][:]        # shape: (3, 3)
-    d_tensor = f['d_tensor'][:]        # shape: (3, 3)
+    g_tensor = f['g_tensor'][:]      
+    d_tensor = f['d_tensor'][:]      
 
     </div>
 </div>
@@ -48,7 +47,8 @@ with h5py.File('spin.h5', 'r') as f:
     
     <div class="code-example">
         <div class="code-header">Example Structure</div>
-        <pre><code class="python">with h5py.File('phonon.h5', 'r') as f:
+        <pre><code class="python">
+            with h5py.File('phonon.h5', 'r') as f:
             q_points = f['q_points'][1:, :]
             frequencies_cm = f['frequencies_cm'][1:, :]
             eigenvectors = f['eigenvectors'][1:, :]

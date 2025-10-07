@@ -1,5 +1,5 @@
 import h5py
-from constants import avogadro
+from .constants import avogadro
 import numpy as np
 import math_func
 

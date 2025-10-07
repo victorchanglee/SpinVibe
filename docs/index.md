@@ -256,10 +256,6 @@
             <p>Install the code with the command:</p>
             <pre><code>pip install -e .</code></pre>
 
-            <div class="note">
-                <div class="note-title">Tip</div>
-                <p>The <code>-e</code> flag installs the package in editable mode, allowing you to modify the source code without reinstalling.</p>
-            </div>
 
             <h2 id="example">Example</h2>
             <p>Example</p>

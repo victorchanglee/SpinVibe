@@ -7,6 +7,8 @@
 **SpinVibe** is an open-source Python package for simulating **spin–phonon coupling in molecular qubits** using first-principles calculations.  
 It is desgin to study molecular qubits in solid-state systems.
 
+Please take a look at the  [Documentation](https://victorchanglee.github.io/SpinVibe/)
+
 ---
 
 ## Inputs

@@ -49,10 +49,6 @@
             font-weight: 600;
         }
 
-        .sidebar ul {
-            list-style: none;
-            margin: 0 0 15px 0;
-        }
 
         .sidebar li {
             margin: 5px 0;

@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load content based on URL hash on page load
     function loadInitialContent() {
         const hash = window.location.hash.substring(1);
-        const validSections = ['overview', 'inputs', 'output', 'requirements', 'installation', 'example', 'changelog', 'license'];
+        const validSections = ['overview', 'input', 'output', 'requirements', 'installation', 'example', 'changelog', 'license'];
         
         if (hash && validSections.includes(hash)) {
             loadContent(hash);

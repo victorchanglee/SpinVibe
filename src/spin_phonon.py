@@ -105,7 +105,7 @@ class spin_phonon:
             if self.R_type == 'R1':
                 print("Computing ONLY linear coupling")
             if self.R_type == 'R2':
-                print("Computing ONLY quadratic coupling)
+                print("Computing ONLY quadratic coupling")
 
         # Linear response spin-phonon coupling
         self.V_alpha = np.zeros([self.Nq, self.Nomega, self.hdim, self.hdim], dtype=np.complex128)

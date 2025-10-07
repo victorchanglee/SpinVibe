@@ -8,7 +8,8 @@ setup(
     description="Spin-phonon dynamics for molecular qubits in a crystal lattice",
     long_description=open("README.md").read(),
     url="https://victorchanglee.github.io/SpinVibe/",
-    packages=find_packages(),
+    packages=["spinvibe"], 
+    package_dir={"spinvibe": "src"},            
     install_requires=[
         "numpy",
         "scipy",
@@ -17,7 +18,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "spinvibe-run = spinvibe.cli:main",
+            "spinvibe = spinvibe.cli:main",
         ],
     },
     python_requires=">=3.9",

@@ -7,28 +7,29 @@
 <h2>Required Input Files</h2>
 
 <h3>1. Molecular spin hamiltonian calculation Output</h3>
-<div class="input-file">
-    <div class="file-header">
-        <span class="filename">spin.h5</span>
-        <span class="file-format">HDF5 Format</span>
-    </div>
-    <p>Contains unperturbed g-tensor and zero-field splitting (D) tensor from quantum chemistry calculations.</p>
+    <div class="input-file">
+        <div class="file-header">
+            <span class="filename">spin.h5</span>
+            <span class="file-format">HDF5 Format</span>
+        </div>
+        <p>Contains unperturbed g-tensor and zero-field splitting (D) tensor from quantum chemistry calculations.</p>
+        
+        <h4>Required Datasets:</h4>
+        <ul>
+            <li><code>/g_tensor</code> - 3×3 g-tensor matrix</li>
+            <li><code>/d_tensor</code> - 3×3 zero-field splitting tensor</li>
+        </ul>
+        
+        <div class="code-example">
+            <div class="code-header">Example Structure</div>
+            <pre><code class="python">
+                
+            with h5py.File('spin.h5', 'r') as f:
+                g_tensor = f['g_tensor'][:]      
+                d_tensor = f['d_tensor'][:]      
     
-    <h4>Required Datasets:</h4>
-    <ul>
-        <li><code>/g_tensor</code> - 3×3 g-tensor matrix</li>
-        <li><code>/d_tensor</code> - 3×3 zero-field splitting tensor</li>
-    </ul>
-    
-    <div class="code-example">
-        <div class="code-header">Example Structure</div>
-        <pre><code class="python">
-with h5py.File('spin.h5', 'r') as f:
-    g_tensor = f['g_tensor'][:]      
-    d_tensor = f['d_tensor'][:]      
-
+        </div>
     </div>
-</div>
 
 <h3>2. Phonon Data</h3>
 <div class="input-file">

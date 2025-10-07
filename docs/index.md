@@ -25,4 +25,17 @@ The code was written using the following Python Libraries:
 - scipy                     1.13.1
 - mpi4py                    4.0.2
 - h5py                      3.12.1
-- tqdm                      4.67.1 (optional for tracking parallerization performance)
+
+## Installation
+
+Download SpinVibe source code using the command:
+
+
+git clone https://github.com/victorchanglee/SpinVibe.git
+
+Navigate to root directory:
+
+cd SpinVice
+Install the code with the command:
+
+pip install -e .

@@ -299,11 +299,6 @@
 
             </ul>
 
-            <!-- Footer Navigation -->
-            <div class="footer-nav">
-                <a href="#overview">← Introduction</a>
-                <a href="#inputs">User Guide →</a>
-            </div>
         </main>
     </div>
 </body>

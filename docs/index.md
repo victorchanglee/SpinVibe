@@ -201,7 +201,7 @@
                 <h3>Additional Resources</h3>
                 <ul>
                     <li><a href="#change log">Change Log</a></li>
-                    <li><a href="#license">License</a></li>
+                    <li><a href="#license" data-section="license">License</a></li>
                 </ul>
             </div>
         </aside>
@@ -269,11 +269,6 @@
             <h2 id="change log">Change Log</h2>
             <p>Contributors</p>
 
-            <h2 id="license">License</h2>
-            <p>Example</p>
-            <ul>
-
-            </ul>
 
         </main>
     </div>

@@ -6,8 +6,8 @@
 
 <h2>Required Input Files</h2>
 
-<h3>Molecular spin hamiltonian calculation Output</h3>
-<div class="spin_file">
+<h3>1. Molecular spin hamiltonian calculation Output</h3>
+<div class="input-file">
     <div class="file-header">
         <span class="filename">spin.h5</span>
         <span class="file-format">HDF5 Format</span>
@@ -27,14 +27,14 @@
 with h5py.File('Cr_otolyl_4.h5', 'r') as f:
     g_tensor = f['g_tensor'][:]        # shape: (3, 3)
     d_tensor = f['d_tensor'][:]        # shape: (3, 3)
-    energy = f['energy'][()]           # scalar value</code></pre>
+
     </div>
 </div>
 
 <h3>2. Phonon Data</h3>
 <div class="input-file">
     <div class="file-header">
-        <span class="filename">Sn_otolyl_4_223.h5</span>
+        <span class="filename">phonon.h5</span>
         <span class="file-format">HDF5 Format</span>
     </div>
     <p>Contains phonon frequencies and eigenvectors from solid-state calculations.</p>
@@ -48,10 +48,10 @@ with h5py.File('Cr_otolyl_4.h5', 'r') as f:
     
     <div class="code-example">
         <div class="code-header">Example Structure</div>
-        <pre><code class="python">with h5py.File('Sn_otolyl_4_223.h5', 'r') as f:
-    frequencies = f['frequencies'][:]      # shape: (n_phonons,)
-    eigenvectors = f['eigenvectors'][:]    # shape: (n_atoms, 3, n_phonons)
-    q_points = f['q_points'][:]            # shape: (n_q, 3)</code></pre>
+        <pre><code class="python">with h5py.File('phonon.h5', 'r') as f:
+            q_points = f['q_points'][1:, :]
+            frequencies_cm = f['frequencies_cm'][1:, :]
+            eigenvectors = f['eigenvectors'][1:, :]
     </div>
 </div>
 
@@ -59,31 +59,34 @@ with h5py.File('Cr_otolyl_4.h5', 'r') as f:
 
 <div class="input-file">
     <div class="file-header">
-        <span class="filename">Cr_otolyl_4_d1.h5</span>
+        <span class="filename">d1.h5</span>
         <span class="file-format">HDF5 Format</span>
     </div>
     <p>First derivatives of g and D tensors with respect to atomic displacements.</p>
     
-    <h4>Required Datasets:</h4>
-    <ul>
-        <li><code>/d_tensor_derivatives</code> - First derivatives of D-tensor</li>
-        <li><code>/g_tensor_derivatives</code> - First derivatives of g-tensor</li>
-        <li><code>/displacements</code> - Displacement values used for derivatives</li>
-    </ul>
+    <div class="code-example">
+        <div class="code-header">Example Structure</div>
+        <pre><code class="python">with h5py.File(self.d1_file, 'r') as f:
+            D_d1 = f['d_tensor'][:]
+            G_d1 = f['g_matrix'][:]
+    </div>
 </div>
 
 <div class="input-file">
     <div class="file-header">
-        <span class="filename">d_predict.h5, g_predict.h5</span>
+        <span class="filename">d2.h5, g2.h5</span>
         <span class="file-format">HDF5 Format</span>
     </div>
-    <p>Second derivatives of D and g tensors (optional, for higher accuracy).</p>
+    <p>Second derivatives of D and g tensors</p>
     
-    <h4>Required Datasets:</h4>
-    <ul>
-        <li><code>/second_derivatives</code> - Second derivative tensors</li>
-        <li><code>/displacement_range</code> - Displacement range for fitting</li>
-    </ul>
+    <div class="code-example">
+        <div class="code-header">Example Structure</div>
+        <pre><code class="python">with h5py.File(self.d2_file, 'r') as f:
+            D_d2 = f['d_tensor'][:]
+
+        with h5py.File(self.g2_file, 'r') as f:
+            G_d2 = f['g_tensor'][:]
+    </div>
 </div>
 
 <h3>4. Structural Information</h3>

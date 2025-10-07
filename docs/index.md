@@ -212,9 +212,6 @@
                 <h3>Getting Started</h3>
                     <li><a href="#overview">Overview</a></li>
                     <li><a href="#installation">Installation</a></li>
-                    <li class="sub-item"><a href="#step-1">Download Source</a></li>
-                    <li class="sub-item"><a href="#step-2">Navigate Directory</a></li>
-                    <li class="sub-item"><a href="#step-3">Install Code</a></li>
 
                 <h3>User Guide</h3>
 
@@ -224,7 +221,6 @@
                     <li><a href="#example">Example</a></li>
 
                 <h3>Additional Resources</h3>
-                    <li><a href="#examples">Examples</a></li>
                     <li><a href="#contributing">Contributing</a></li>
                     <li><a href="#license">License</a></li>
             </div>
@@ -272,14 +268,14 @@
 
             <h2 id="installation">Installation Guide</h2>
 
-            <h3 id="step-1">Step 1: Download Source Code</h3>
+               Step 1: Download Source Code
             <p>Download SpinVibe source code using the command:</p>
             <pre><code>git clone https://github.com/victorchanglee/SpinVibe.git</code></pre>
 
-            <h3 id="step-2">Step 2: Navigate to Root Directory</h3>
+            Step 2: Navigate to Root Directory
             <pre><code>cd SpinVibe</code></pre>
 
-            <h3 id="step-3">Step 3: Install the Code</h3>
+            Step 3: Install the Code
             <p>Install the code with the command:</p>
             <pre><code>pip install -e .</code></pre>
 

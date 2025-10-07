@@ -18,7 +18,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "spinvibe = spinvibe.cli:main",
+            "spinvibe = spinvibe.run:main",
         ],
     },
     python_requires=">=3.9",

@@ -1,7 +1,7 @@
 import numpy as np
 from constants import hbar_SI, c
-import hamiltonian
-import math_func
+from . import hamiltonian
+from . import math_func
 from mpi4py import MPI
 
 class coupling:

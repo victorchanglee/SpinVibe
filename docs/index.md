@@ -48,6 +48,10 @@
             margin: 20px 0 10px 0;
             font-weight: 600;
         }
+        .sidebar ul {
+            list-style: none;
+            margin: 0 0 15px 0;
+        }
 
 
         .sidebar li {
@@ -183,19 +187,22 @@
         <aside class="sidebar">
             <div class="sidebar-content">
                 <h3>Getting Started</h3>
+                <ul>
                     <li><a href="#overview">Overview</a></li>
                     <li><a href="#installation">Installation</a></li>
-
+                </ul>
                 <h3>User Guide</h3>
-
+                <ul>
                     <li><a href="#inputs">Inputs</a></li>
                     <li><a href="#output">Output</a></li>
                     <li><a href="#requirements">Requirements</a></li>
                     <li><a href="#example">Example</a></li>
-
+                </ul>
                 <h3>Additional Resources</h3>
+                <ul>
                     <li><a href="#change log">Change Log</a></li>
                     <li><a href="#license">License</a></li>
+                </ul>
             </div>
         </aside>
 
@@ -241,7 +248,7 @@
 
             <h2 id="installation">Installation Guide</h2>
 
-               Step 1: Download Source Code
+            Step 1: Download Source Code
             <p>Download SpinVibe source code using the command:</p>
             <pre><code>git clone https://github.com/victorchanglee/SpinVibe.git</code></pre>
 

@@ -1,11 +1,11 @@
 import numpy as np
-import hamiltonian
-import coupling
-import math_func
-import redfield
-import measure
+from . import hamiltonian
+from . import coupling
+from . import math_func
+from . import redfield
+from . import measure
 import h5py as h5
-from constants import Bohrmagneton, k_B
+from .constants import Bohrmagneton, k_B
 import time
 from mpi4py import MPI
 import scipy.linalg

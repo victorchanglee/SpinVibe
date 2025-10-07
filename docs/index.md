@@ -210,33 +210,23 @@
         <aside class="sidebar">
             <div class="sidebar-content">
                 <h3>Getting Started</h3>
-                <ul>
                     <li><a href="#overview">Overview</a></li>
                     <li><a href="#installation">Installation</a></li>
                     <li class="sub-item"><a href="#step-1">Download Source</a></li>
                     <li class="sub-item"><a href="#step-2">Navigate Directory</a></li>
                     <li class="sub-item"><a href="#step-3">Install Code</a></li>
-                </ul>
 
                 <h3>User Guide</h3>
-                <ul>
+
                     <li><a href="#inputs">Inputs</a></li>
                     <li><a href="#output">Output</a></li>
                     <li><a href="#requirements">Requirements</a></li>
-                </ul>
-
-                <h3>API Reference</h3>
-                <ul>
-                    <li><a href="#api">Core Functions</a></li>
-                    <li><a href="#api">Classes</a></li>
-                </ul>
+                    <li><a href="#example">Example</a></li>
 
                 <h3>Additional Resources</h3>
-                <ul>
                     <li><a href="#examples">Examples</a></li>
                     <li><a href="#contributing">Contributing</a></li>
                     <li><a href="#license">License</a></li>
-                </ul>
             </div>
         </aside>
 
@@ -297,6 +287,21 @@
                 <div class="note-title">Tip</div>
                 <p>The <code>-e</code> flag installs the package in editable mode, allowing you to modify the source code without reinstalling.</p>
             </div>
+
+            <h2 id="example">Example</h2>
+            <p>Example</p>
+            <ul>
+
+            </ul>
+
+            <h2 id="contributing">Contributing</h2>
+            <p>Contributors</p>
+
+            <h2 id="license">License</h2>
+            <p>Example</p>
+            <ul>
+
+            </ul>
 
             <!-- Footer Navigation -->
             <div class="footer-nav">

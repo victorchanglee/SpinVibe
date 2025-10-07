@@ -1,5 +1,5 @@
 [![status](https://joss.theoj.org/papers/6cd884ec29554707741cd8e700542a68/status.svg)](https://joss.theoj.org/papers/6cd884ec29554707741cd8e700542a68)
-[![Documentation](https://victorchanglee.github.io/SpinVibe/)](https://victorchanglee.github.io/SpinVibe/)
+[![Documentation Status]](https://victorchanglee.github.io/SpinVibe/)](https://victorchanglee.github.io/SpinVibe/)
 
 # SpinVibe
 

@@ -14,8 +14,8 @@ def main():
     d1_file = 'Cr_otolyl_4_d1.h5'
     disp1 = np.linspace(-0.05, 0.05, 10)
 
-    d2_file = 'd_predict.h5'
-    g2_file = 'g_predict.h5'
+    d2_file = 'd_16.h5'
+    g2_file = 'g_16.h5'
     disp2 = np.array([-0.05, -0.0278, -0.0056, 0.0056, 0.0278, 0.05])
 
     atoms_file = 'Sn_otolyl_4_atoms.h5'

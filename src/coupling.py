@@ -31,7 +31,7 @@ class coupling:
         self.rot_mat = rot_mat # Rotational matrix for hte molecule to match the coordinates in the crystal
         
         
-        d_tensor, g_tensor = self.file_reader.read_orca() # g-matrix and ZFS D-tensor
+        d_tensor, g_tensor = self.file_reader.read_spin() # g-matrix and ZFS D-tensor
 
         #Rotate the molecular cartesian matrices to match the crystal coordinates
         self.g_tensor = self.rot_mat @ g_tensor @ self.rot_mat.T

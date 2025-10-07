@@ -26,16 +26,30 @@ The code was written using the following Python Libraries:
 - mpi4py                    4.0.2
 - h5py                      3.12.1
 
-## Installation
+## SpinVibe Installation Guide
+
+### Step 1: Download Source Code
 
 Download SpinVibe source code using the command:
 
-
+```bash
 git clone https://github.com/victorchanglee/SpinVibe.git
+```
 
-Navigate to root directory:
+---
 
-cd SpinVice
+### Step 2: Navigate to Root Directory
+
+```bash
+cd SpinVibe
+```
+
+---
+
+### Step 3: Install the Code
+
 Install the code with the command:
 
+```bash
 pip install -e .
+```

@@ -1,7 +1,7 @@
 import numpy as np
 from constants import hbar, c, hbar_SI, cm2J
-import math_func
-import coupling
+from . import math_func
+from . import coupling
 from mpi4py import MPI
 from matplotlib import pyplot as plt
 

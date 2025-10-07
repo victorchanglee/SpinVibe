@@ -1,5 +1,5 @@
 import numpy as np
-import sys
+import json
 from mpi4py import MPI
 from . import spin_phonon, read_files, math_func
 
@@ -8,64 +8,70 @@ def main():
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
 
-    # Input files
-    spin_file = 'Cr_otolyl_4.h5'
-    phonon_file = 'Sn_otolyl_4_223.h5'
-    d1_file = 'Cr_otolyl_4_d1.h5'
-    disp1 = np.linspace(-0.05, 0.05, 10)
+    # Parse command-line argument for input file
+    import sys
+    if len(sys.argv) < 2:
+        if rank == 0:
+            print("Usage: spinvibe-run <input.json>")
+        sys.exit(1)
 
-    d2_file = 'd_16.h5'
-    g2_file = 'g_16.h5'
-    disp2 = np.array([-0.05, -0.0278, -0.0056, 0.0056, 0.0278, 0.05])
-
-    atoms_file = 'Sn_otolyl_4_atoms.h5'
-    indices_file = 'molecule_indices.h5'
-    mol_mass = 'mol_mass.h5'
+    input_file = sys.argv[1]
 
     if rank == 0:
-        print("Input files to load:")
-        print("  Unperturbed g and d tensors: ", spin_file)
-        print("  Phonon frequencies and eigenvectors: ", phonon_file)
-        print("  First derivatives of d and g tensors: ", d1_file)
-        print("  Second derivatives of d and g tensors: ", d2_file, g2_file)
-        print("  Atomic positions and reciprocal vectors: ", atoms_file)
-        print("  Indices of atoms in the molecule in the crystal: ", indices_file)
-        print("  Atomic masses: ", mol_mass)
+        print(f"Reading input parameters from: {input_file}")
 
+    with open(input_file, "r") as f:
+        params = json.load(f)
+
+    # Convert lists to numpy arrays where needed
+    B = np.array(params["B"])
+    disp1 = np.array(params["disp1"])
+    disp2 = np.array(params["disp2"])
+    rot_mat = np.array(params["rotation_matrix"])
+    pol = np.array(params["polarization_axis"])
+    axis = np.array(params["rotation_axis"])
+    theta = np.deg2rad(params["rotation_angle_deg"])
+
+    # Rotate polarization
+    R = math_func.rotate_polarization(axis, theta)
+    pol = np.dot(R, pol)
+
+    if rank == 0:
+        print("Initializing input files...")
+        for key in [
+            "orca_file", "phonon_file", "d1_file",
+            "d2_file", "g2_file", "atoms_file",
+            "indices_file", "mol_mass"
+        ]:
+            print(f"  {key}: {params[key]}")
+
+    # Create file reader
     file_reader = read_files.Read_files(
-        spin_file, phonon_file, d1_file, d2_file, g2_file,
-        atoms_file, indices_file, mol_mass, disp1, disp2
+        params["orca_file"], params["phonon_file"], params["d1_file"],
+        params["d2_file"], params["g2_file"],
+        params["atoms_file"], params["indices_file"],
+        params["mol_mass"], disp1, disp2
     )
 
-    # Input parameters
-    B = np.array([0.0, 0.0, 0.410])
-    S = 1
-    init_type = 'pure'
-    R_type = None
-    Delta_alpha_q = 1  # Broadening
-    T = 5             # Temperature
-    Ncells = 50
-
-    rot_mat = np.array([
-        [0, 0, 1],
-        [1, 0, 0],
-        [0, 1, 0]
-    ])
-
-    pol = np.array([0, 0, 1])
-
-    tf = 1E-3
-    dt = 1E-6
-    save_file = f'Spin_phonon_{T}K_{Delta_alpha_q}_{Ncells}_{theta}.h5'
-
+    # Run simulation
     spin_phonon.spin_phonon(
-        B, S, Ncells, Delta_alpha_q, rot_mat, pol,
-        T, tf, dt, file_reader, save_file, init_type, R_type
+        B=B,
+        S=params["S"],
+        Ncells=params["Ncells"],
+        Delta_alpha_q=params["Delta_alpha_q"],
+        rot_mat=rot_mat,
+        pol=pol,
+        T=params["T"],
+        tf=params["tf"],
+        dt=params["dt"],
+        file_reader=file_reader,
+        save_file=params["save_file"],
+        init_type=params["init_type"],
+        R_type=params["R_type"]
     )
 
     if rank == 0:
-        print("Job completed.")
-
+        print(f"Job completed. Results saved to {params['save_file']}")
 
 if __name__ == "__main__":
     main()

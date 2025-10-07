@@ -209,18 +209,18 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-content">
-                <h3>Getting Started</h3>
+                Getting Started
                     <li><a href="#overview">Overview</a></li>
                     <li><a href="#installation">Installation</a></li>
 
-                <h3>User Guide</h3>
+                User Guide
 
                     <li><a href="#inputs">Inputs</a></li>
                     <li><a href="#output">Output</a></li>
                     <li><a href="#requirements">Requirements</a></li>
                     <li><a href="#example">Example</a></li>
 
-                <h3>Additional Resources</h3>
+                Additional Resources
                     <li><a href="#contributing">Contributing</a></li>
                     <li><a href="#license">License</a></li>
             </div>

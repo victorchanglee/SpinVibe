@@ -175,12 +175,9 @@
 <hr>
 
 <h2>Simulation Parameters</h2>
-
-<div class="parameter-section">
-    <h3>Physical Parameters</h3>
     
     <div class="parameter">
-        <h4>Magnetic Field (B)</h4>
+        <h4>B = Magnetic Field</h4>
         <p><strong>Type:</strong> numpy array<br>
            <strong>Format:</strong> <code>[Bx, By, Bz]</code> in Tesla<br>
            <strong>Example:</strong> <code>np.array([0.0, 0.0, 0.410])</code><br>
@@ -188,34 +185,30 @@
     </div>
     
     <div class="parameter">
-        <h4>Spin Quantum Number (S)</h4>
+        <h4>S = Spin Quantum Number</h4>
         <p><strong>Type:</strong> integer or half-integer<br>
            <strong>Example:</strong> <code>1</code> (for S=1 system)<br>
            <strong>Description:</strong> Total spin quantum number of the molecular qubit.</p>
     </div>
     
     <div class="parameter">
-        <h4>Temperature (T)</h4>
+        <h4>T = Temperature</h4>
         <p><strong>Type:</strong> float<br>
            <strong>Unit:</strong> Kelvin<br>
-           <strong>Example:</strong> <code>300.0</code><br>
+           <strong>Example:</strong> <code>5.0</code><br>
            <strong>Description:</strong> Simulation temperature.</p>
     </div>
     
     <div class="parameter">
-        <h4>Broadening Parameter (Δα_q)</h4>
+        <h4>Delta_alpha_q = Phonon Broadening Parameter</h4>
         <p><strong>Type:</strong> float<br>
            <strong>Unit:</strong> cm⁻¹<br>
-           <strong>Example:</strong> <code>0.1</code><br>
+           <strong>Example:</strong> <code>1</code><br>
            <strong>Description:</strong> Phonon linewidth broadening parameter.</p>
     </div>
-</div>
-
-<div class="parameter-section">
-    <h3>Time Parameters</h3>
     
     <div class="parameter">
-        <h4>Total Time (tf)</h4>
+        <h4>tf = Total Time</h4>
         <p><strong>Type:</strong> float<br>
            <strong>Unit:</strong> seconds<br>
            <strong>Example:</strong> <code>1E-3</code> (1 millisecond)<br>
@@ -223,21 +216,19 @@
     </div>
     
     <div class="parameter">
-        <h4>Time Step (dt)</h4>
+        <h4>dt = Time Step</h4>
         <p><strong>Type:</strong> float<br>
            <strong>Unit:</strong> seconds<br>
            <strong>Example:</strong> <code>1E-6</code> (1 microsecond)<br>
            <strong>Description:</strong> Time step for numerical integration.</p>
     </div>
-</div>
 
-<div class="parameter-section">
-    <h3>Initial State Parameters</h3>
+
     
     <div class="parameter">
         <h4>Initial State Type</h4>
         <p><strong>Type:</strong> string<br>
-           <strong>Options:</strong> <code>'pure'</code>, <code>'polarized'</code>, <code>'boltzmann'</code>, <code>'photon'</code><br>
+           <strong>Options:</strong> <code>'pure'</code>, <code>'polarized'</code>, <code>'boltzmann'</code><br>
            <strong>Default:</strong> <code>'pure'</code><br>
            <strong>Description:</strong> Method for initializing the spin density matrix.</p>
     </div>
@@ -247,28 +238,39 @@
         <p><strong>Type:</strong> numpy array<br>
            <strong>Format:</strong> <code>[px, py, pz]</code><br>
            <strong>Example:</strong> <code>np.array([0, 0, 1])</code><br>
-           <strong>Description:</strong> Initial spin polarization direction.</p>
+           <strong>Description:</strong> Initial spin polarization direction and final and magnetization measurement vector.</p>
     </div>
-</div>
 
-<div class="parameter-section">
-    <h3>Crystal Structure Parameters</h3>
+    <div class="parameter">
+        <h4>R_type = Redfield order</h4>
+        <p><strong>Type:</strong>  string<br>
+           <strong>Options:</strong> <code>'R1'</code>, <code>'R2'</code>, <code>'both'</code><br>
+           <strong>Default:</strong> <code>'both'</code><br>
+           <strong>Description:</strong> Define the order of the Redfield operator to be computed (R1=linear coupling, R2=quadratic coupling).</p>
+    </div>
+
     
     <div class="parameter">
-        <h4>Rotation Matrix</h4>
+        <h4>rot_mat = Rotation Matrix</h4>
         <p><strong>Type:</strong> 3×3 numpy array<br>
            <strong>Example:</strong> <code>np.array([[0,0,1], [1,0,0], [0,1,0]])</code><br>
            <strong>Description:</strong> Matrix to align molecular frame with crystal frame.</p>
     </div>
     
     <div class="parameter">
-        <h4>Number of Unit Cells (Ncells)</h4>
+        <h4>Ncells = Number of Unit Cells (Ncells)</h4>
         <p><strong>Type:</strong> integer<br>
            <strong>Example:</strong> <code>1</code><br>
            <strong>Description:</strong> Number of unit cells to include in supercell calculation.</p>
     </div>
+    
+    <div class="parameter">
+        <h4>save_file = Filename</h4>
+        <p><strong>Type:</strong>  string<br>
+           <strong>Default:</strong> <code>'both'</code><br>
+           <strong>Description:</strong> Define the name of the file to store the time evolution.</p>
+    </div>
 </div>
-
 <hr>
 
 <style>

@@ -53,10 +53,6 @@ def main():
     ])
 
     pol = np.array([0, 0, 1])
-    axis = np.array([1, 0, 0])
-    theta = np.deg2rad(0)
-    R = math_func.rotate_polarization(axis, theta)
-    pol = np.dot(R, pol)
 
     tf = 1E-3
     dt = 1E-6

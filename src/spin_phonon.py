@@ -128,7 +128,6 @@ class spin_phonon:
         self.R = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
         self.R1 = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
         self.R2 = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
-        #self.R4 = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
         if self.R_type in (None, 'R1'):
 
@@ -149,8 +148,6 @@ class spin_phonon:
             if rank == 0:
                 print("Eigenvalues of the R1 matrix")
                 print(eigenvalues)
-                print("T1 from R1 eigenvalues")
-                print("T1 = ", t1 , "s")
                 print("\n")
                 
         
@@ -171,8 +168,6 @@ class spin_phonon:
             if rank == 0:
                 print("Eigenvalues of the R2 matrix")
                 print(eigenvalues)
-                print("T1 from R2 eigenvalues")
-                print("T1 = ", t1 , "s")
                 print("\n")
 
 
@@ -208,9 +203,6 @@ class spin_phonon:
         if rank == 0:
             print("Eigenvalues of the Redfield matrix")
             print(eigenvalues)
-            print("\n")
-            print("T1 from Redfield eigenvalues")
-            print("T1 = ", t1 , "s")
             print("\n")
 
         

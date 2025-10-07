@@ -1,5 +1,5 @@
 import numpy as np
-from constants import k_B, kB_SI
+from .constants import k_B, kB_SI
 from numpy.polynomial.polynomial import polyfit, polyval2d, Polynomial
 
 def lorentzian(x, eta):

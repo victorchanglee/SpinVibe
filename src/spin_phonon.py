@@ -270,7 +270,6 @@ class spin_phonon:
                 print(f"Build R1: {hours_R1}h {minutes_R1}m {seconds_R1:.2f}s")
             if self.R_type in (None, 'R2'):
                 print(f"Build R2: {hours_R2}h {minutes_R2}m {seconds_R2:.2f}s")
-            #print(f"Build R4: {hours_R4}h {minutes_R4}m {seconds_R4:.2f}s")
             print(f"Time evolution: {hours_evol}h {minutes_evol}m {seconds_evol:.2f}s")
             print(f"Measuring Time: {hours_measure}h {minutes_measure}m {seconds_measure:.2f}s")
             print(f"Total Run Time: {hours}h {minutes}m {seconds:.2f}s")
@@ -341,38 +340,6 @@ class spin_phonon:
             weight = 1.0 / len(degenerate_indices)
             for idx in degenerate_indices:
                 rho0[idx, idx] = weight 
-
-        elif self.init_type == 'photon':
-            # Photon-induced initialization
-            pol = getattr(self, "photon_pol", "pi")  # 'sigma+', 'sigma-', 'pi'
-
-            # Define ladder operators from stored S_operator tensor
-            Sx = self.S_operator[:,:,0]
-            Sy = self.S_operator[:,:,1]  
-            Sz = self.S_operator[:,:,2]
-            Sp = Sx + 1j * Sy
-            Sm = Sx - 1j * Sy
-
-            # Photon operator
-            if pol == "sigma+":
-                O = Sp
-            elif pol == "sigma-":
-                O = Sm
-            elif pol == "pi":
-                O = Sz
-
-            m_init = np.argmin(self.eigenvalues)  # ground state index
-            psi_i = np.zeros(self.hdim, dtype=complex)
-            psi_i[m_init] = 1.0
-
-            # Apply photon operator
-            psi_f = O @ psi_i
-            norm = np.linalg.norm(psi_f)
-            if norm < 1e-12:
-                rho0 = np.zeros((self.hdim, self.hdim), dtype=complex)
-            else:
-                psi_f /= norm
-                rho0 = np.outer(psi_f, psi_f.conj())
         
         if rank == 0:   
             print("Initial spin population:")

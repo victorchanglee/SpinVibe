@@ -4,3 +4,4 @@ To run this test, simply run
 spinvibe input.json
 ```
 
+The expected output for a serial run is in test.out

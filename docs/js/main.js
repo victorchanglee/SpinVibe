@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
       mainContent.innerHTML = html;
       updateActiveLink(section);
 
-      // ✅ Re-render MathJax for the newly loaded content
       if (window.MathJax) {
         MathJax.typesetPromise([mainContent]);
       }

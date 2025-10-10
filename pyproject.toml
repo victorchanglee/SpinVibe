@@ -26,7 +26,7 @@ Homepage = "https://victorchanglee.github.io/SpinVibe/"
 Repository = "https://github.com/victorchanglee/SpinVibe"
 
 [project.scripts]
-spinvibe = "spinvibe.run:main"
+spinvibe = "src.run:main"
 
 [tool.setuptools]
 package-dir = { "spinvibe" = "src" }

@@ -166,8 +166,8 @@ class coupling:
             tmp1_part = np.zeros(self.N, dtype=np.complex128)
             for atom in range(self.N):
                 freq = 2 * np.pi * self.omega_q[q, omega] * c # Convert to radian/s
-                # Handle cases where freq might be zero or very small to avoid division by zero
-                if freq == 0:
+
+                if freq <= 0:
                     prefactor = 0.0 # Or some other appropriate handling
                 else:
                     prefactor = np.sqrt(hbar_SI / (self.Nq * freq * self.masses[atom]))
@@ -224,10 +224,12 @@ class coupling:
         for nq in range(self.Nq):
             for nomega in range(self.Nomega):
                 w_val = self.w[nq, nomega]
-                # Each atom has its own prefactor
-                self.prefactor[nq, nomega, :] = base_factor / np.sqrt(w_val * self.masses) 
-                self.prefactor[nq, nomega, :] *= 1 / np.sqrt(self.Ncells)
-                self.prefactor[nq, nomega, :] *= 1E10  # Convert to A units
+                if w_val <= 0:
+                    self.prefactor[nq, nomega, :] = 0.0
+                else:
+                    self.prefactor[nq, nomega, :] = base_factor / np.sqrt(w_val * self.masses) 
+                    self.prefactor[nq, nomega, :] *= 1 / np.sqrt(self.Ncells)
+                    self.prefactor[nq, nomega, :] *= 1E10  # Convert to A units
         
         self.exp = np.zeros((self.Nq, self.N), dtype=np.complex128)
         

@@ -26,10 +26,7 @@ Homepage = "https://victorchanglee.github.io/SpinVibe/"
 Repository = "https://github.com/victorchanglee/SpinVibe"
 
 [project.scripts]
-spinvibe = "src.run:main"
-
-[tool.setuptools]
-package-dir = { "spinvibe" = "src" }
+spinvibe = "spinvibe.run:main"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]

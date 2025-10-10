@@ -9,8 +9,7 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://victorchanglee.github.io/SpinVibe/",
-    packages=["spinvibe"], 
-    package_dir={"spinvibe": "spinvibe"},
+    packages=find_packages(where="."),
     install_requires=[
         "numpy==1.26.4",
         "scipy==1.13.1",
@@ -22,5 +21,5 @@ setup(
             "spinvibe = spinvibe.run:main",
         ],
     },
-    python_requires=="==3.9.*",
+    python_requires=">=3.9",
 )

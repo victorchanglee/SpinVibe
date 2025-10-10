@@ -26,7 +26,7 @@
         }
         .equation {
             background-color: #ecf0f1;
-            padding: 15px;
+            padding: 20px;
             border-left: 4px solid #3498db;
             margin: 20px 0;
             overflow-x: auto;
@@ -46,7 +46,7 @@
     <p>Our code implements the theoretical framework developed by Lunghi and Sanvito, where in the weak-coupling regime the interaction between the spin Hamiltonian and the phonons is expanded as a Taylor series truncated at the quadratic term:</p>
 
     <div class="equation">
-        $$\hat{H}_{sph} = \sum_{\alpha q} \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha q}} \right) \hat{Q}_{\alpha q}(t) + \sum_{\alpha q} \sum_{\beta q'} \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha q} \partial Q_{\beta q'}} \right) \hat{Q}_{\alpha q}(t) \hat{Q}_{\beta q'}(t)$$
+        \[\hat{H}_{sph} = \sum_{\alpha q} \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha q}} \right) \hat{Q}_{\alpha q}(t) + \sum_{\alpha q} \sum_{\beta q'} \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha q} \partial Q_{\beta q'}} \right) \hat{Q}_{\alpha q}(t) \hat{Q}_{\beta q'}(t)\]
     </div>
 
     <p>In the equation above, the first order term represents the interaction of the spin with a single phonon Q<sub>αq</sub>. The second order term describes the interaction of the spin with two phonons Q<sub>αq</sub> and Q<sub>βq'</sub>.</p>
@@ -56,19 +56,19 @@
     <p>To describe the time evolution of the system, we employ the secular Redfield equation under the Born-Markov approximation:</p>
 
     <div class="equation">
-        $$\frac{\partial \rho^{s}_{ab} (t)}{\partial t} = \sum_{cd} e^{i(\omega_{ac} + \omega_{db})t} R_{ab,cd} \rho^{s}_{cd} (t)$$
+        \[\frac{\partial \rho^{s}_{ab} (t)}{\partial t} = \sum_{cd} e^{i(\omega_{ac} + \omega_{db})t} R_{ab,cd} \rho^{s}_{cd} (t)\]
     </div>
 
     <p>where R<sub>ab,cd</sub> denotes the Redfield superoperator. The single-phonon contribution to the Redfield tensor, under the secular approximation, is:</p>
 
     <div class="equation">
-        $$R^{1\text{-ph}}_{ab,cd} = -\frac{\pi}{2 \hbar^2} \sum_{\alpha} \Bigg\{ \sum_{j} \delta_{bd} V^{\alpha}_{aj} V^{\alpha}_{jc} G^{1\text{-ph}}(\omega_{jc}, \omega_{\alpha}) - V^{\alpha}_{ac} V^{\alpha}_{db} G^{1\text{-ph}}(\omega_{ac}, \omega_{\alpha}) - V^{\alpha}_{ac} V^{\alpha}_{db} G^{1\text{-ph}}(\omega_{bd}, \omega_{\alpha}) + \sum_{j} \delta_{ca} V^{\alpha}_{dj} V^{\alpha}_{jb} G^{1\text{-ph}}(\omega_{jd}, \omega_{\alpha}) \Bigg\}$$
+        \[R^{1\text{-ph}}_{ab,cd} = -\frac{\pi}{2 \hbar^2} \sum_{\alpha} \Bigg\{ \sum_{j} \delta_{bd} V^{\alpha}_{aj} V^{\alpha}_{jc} G^{1\text{-ph}}(\omega_{jc}, \omega_{\alpha}) - V^{\alpha}_{ac} V^{\alpha}_{db} G^{1\text{-ph}}(\omega_{ac}, \omega_{\alpha}) - V^{\alpha}_{ac} V^{\alpha}_{db} G^{1\text{-ph}}(\omega_{bd}, \omega_{\alpha}) + \sum_{j} \delta_{ca} V^{\alpha}_{dj} V^{\alpha}_{jb} G^{1\text{-ph}}(\omega_{jd}, \omega_{\alpha}) \Bigg\}\]
     </div>
 
     <p>where V<sup>α</sup> = (∂Ĥ<sub>s</sub>/∂Q<sub>α</sub>) and:</p>
 
     <div class="equation">
-        $$G^{1\text{-ph}}(\omega_{ij}, \omega_{\alpha q}) = \frac{1}{\pi} \left[ \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} - \omega_{\alpha q})^{2}} \bar{n}_{\alpha q} + \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} + \omega_{\alpha q})^{2}} (\bar{n}_{\alpha q}+1) \right]$$
+        \[G^{1\text{-ph}}(\omega_{ij}, \omega_{\alpha q}) = \frac{1}{\pi} \left[ \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} - \omega_{\alpha q})^{2}} \bar{n}_{\alpha q} + \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} + \omega_{\alpha q})^{2}} (\bar{n}_{\alpha q}+1) \right]\]
     </div>
 
     <p>This is the phonon correlation function in the presence of anharmonic terms that leads to a decay in the phonon lifetime with a rate Δ<sub>αq</sub>.</p>
@@ -78,13 +78,13 @@
     <p>The two-phonon contribution is given by:</p>
 
     <div class="equation">
-        $$R^{2\text{-ph}}_{ab,cd} = -\frac{\pi}{4 \hbar^2} \sum_{\alpha \geq \beta } \Bigg\{ \sum_j  \delta_{bd} V^{\alpha \beta}_{aj} V^{\alpha \, \beta }_{jc} G^{2\text{-ph}}(\omega_{jc}, \omega_{\alpha }, \omega_{\beta}) - V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db} G^{2\text{-ph}}(\omega_{ac}, \omega_{\alpha}, \omega_{\beta}) - V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db} G^{2\text{-ph}}(\omega_{bd}, \omega_{\alpha }, \omega_{\beta }) + \sum_j  \delta_{ca} V^{\alpha \beta}_{dj} V^{\alpha \, \beta}_{jb} G^{2\text{-ph}}(\omega_{jd}, \omega_{\alpha}, \omega_{\beta}) \Bigg\}$$
+        \[R^{2\text{-ph}}_{ab,cd} = -\frac{\pi}{4 \hbar^2} \sum_{\alpha \geq \beta } \Bigg\{ \sum_j  \delta_{bd} V^{\alpha \beta}_{aj} V^{\alpha \, \beta }_{jc} G^{2\text{-ph}}(\omega_{jc}, \omega_{\alpha }, \omega_{\beta}) - V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db} G^{2\text{-ph}}(\omega_{ac}, \omega_{\alpha}, \omega_{\beta}) - V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db} G^{2\text{-ph}}(\omega_{bd}, \omega_{\alpha }, \omega_{\beta }) + \sum_j  \delta_{ca} V^{\alpha \beta}_{dj} V^{\alpha \, \beta}_{jb} G^{2\text{-ph}}(\omega_{jd}, \omega_{\alpha}, \omega_{\beta}) \Bigg\}\]
     </div>
 
     <p>where V<sup>αβ</sup> = (∂<sup>2</sup>Ĥ<sub>s</sub>/∂Q<sub>α</sub>∂Q<sub>β</sub>) and:</p>
 
     <div class="equation">
-        $$G^{2\text{-ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'}) = \frac{1}{\pi} \Bigg[ \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} - \omega_{\beta q'})^{2}} \bar{n}_{\alpha q}\bar{n}_{\beta q'} + \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} + \omega_{\beta q'})^{2}} (\bar{n}_{\alpha q}+1)(\bar{n}_{\beta q'}+1) + \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} + \omega_{\beta q'})^{2}} \bar{n}_{\alpha q}(\bar{n}_{\beta q'}+1) + \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} - \omega_{\beta q'})^{2}} (\bar{n}_{\alpha q}+1)\bar{n}_{\beta q'} \Bigg]$$
+        \[G^{2\text{-ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'}) = \frac{1}{\pi} \Bigg[ \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} - \omega_{\beta q'})^{2}} \bar{n}_{\alpha q}\bar{n}_{\beta q'} + \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} + \omega_{\beta q'})^{2}} (\bar{n}_{\alpha q}+1)(\bar{n}_{\beta q'}+1) + \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} + \omega_{\beta q'})^{2}} \bar{n}_{\alpha q}(\bar{n}_{\beta q'}+1) + \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} - \omega_{\beta q'})^{2}} (\bar{n}_{\alpha q}+1)\bar{n}_{\beta q'} \Bigg]\]
     </div>
 
     <h2>Magnetization and T<sub>1</sub> Analysis</h2>
@@ -92,13 +92,13 @@
     <p>Once the time-evolution is performed, we can study the time-evolution of the magnetization of the system:</p>
 
     <div class="equation">
-        $$\vec{M}(t) = \text{Tr} (\vec{S} \hat{\rho} (t))$$
+        \[\vec{M}(t) = \text{Tr} (\vec{S} \hat{\rho} (t))\]
     </div>
 
     <p>from which the T<sub>1</sub> can be extracted by fitting the decay to:</p>
 
     <div class="equation">
-        $$M_z(t) = \big[ M_z(t=0) - M_z^{\mathrm{eq}} \big] e^{-t/T_1} + M_z^{\mathrm{eq}}$$
+        \[M_z(t) = \big[ M_z(t=0) - M_z^{\mathrm{eq}} \big] e^{-t/T_1} + M_z^{\mathrm{eq}}\]
     </div>
 
 </body>

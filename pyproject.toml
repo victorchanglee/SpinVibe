@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spinvibe"
+version = "1.0"
+description = "Spin-phonon dynamics for molecular qubits in a crystal lattice"
+readme = "README.md"
+authors = [
+    { name = "Victor Chang Lee", email = "victor.changlee@northwestern.edu" },
+]
+requires-python = ">=3.9"
+license = { text = "MIT" }  # or whatever your license is
+keywords = ["spin", "phonon", "molecular qubits", "crystal", "dynamics"]
+
+dependencies = [
+    "numpy==1.26.4",
+    "scipy==1.13.1",
+    "mpi4py==4.0.2",
+    "h5py==3.12.1",
+]
+
+[project.urls]
+Homepage = "https://victorchanglee.github.io/SpinVibe/"
+Repository = "https://github.com/victorchanglee/SpinVibe"
+
+[project.scripts]
+spinvibe = "spinvibe.run:main"
+
+[tool.setuptools]
+package-dir = { "spinvibe" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]

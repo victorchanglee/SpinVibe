@@ -4,7 +4,164 @@
     All input files are required to be formated in HDF5 format for universal compatibility.</p>
 
 
-<h2>Required Input Files</h2>
+
+
+<h2>Simulation Parameters</h2>
+
+    <p>SpinVibe reads all input parameters as well as input file names from a json file.</p>
+
+    <div class="parameter">
+        <h4>spin_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>d1_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>d2_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>g2_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>atoms_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>indices_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>mol_mass</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>disp1 = first order displacement</h4>
+        <p><strong>Type:</strong> list<br>
+           <strong>Format:</strong> <code>[x<sub>1</sub>,x<sub>2</sub>,...,x<sub>n</sub>]</code> in Angstroms<br>
+           <strong>Description:</strong> Atomic displacement for the first order perturbation.</p>
+    </div>
+
+    <div class="parameter">
+        <h4>disp2 = second order displacement</h4>
+        <p><strong>Type:</strong> list<br>
+           <strong>Format:</strong> <code>[x<sub>1</sub>,x<sub>2</sub>,...,x<sub>n</sub>]</code> in Angstroms<br>
+           <strong>Description:</strong> Atomic displacement for the second order perturbation.</p>
+    </div>
+
+    <div class="parameter">
+        <h4>B = Magnetic Field</h4>
+        <p><strong>Type:</strong> numpy array<br>
+           <strong>Format:</strong> <code>[Bx, By, Bz]</code> in Tesla<br>
+           <strong>Example:</strong> <code>np.array([0.0, 0.0, 0.410])</code><br>
+           <strong>Description:</strong> External magnetic field vector applied to the system.</p>
+    </div>
+
+    <div class="parameter">
+        <h4>B = Magnetic Field</h4>
+        <p><strong>Type:</strong> numpy array<br>
+           <strong>Format:</strong> <code>[Bx, By, Bz]</code> in Tesla<br>
+           <strong>Example:</strong> <code>np.array([0.0, 0.0, 0.410])</code><br>
+           <strong>Description:</strong> External magnetic field vector applied to the system.</p>
+    </div>
+    
+    <div class="parameter">
+        <h4>S = Spin Quantum Number</h4>
+        <p><strong>Type:</strong> integer or half-integer<br>
+           <strong>Example:</strong> <code>1</code> (for S=1 system)<br>
+           <strong>Description:</strong> Total spin quantum number of the molecular qubit.</p>
+    </div>
+    
+    <div class="parameter">
+        <h4>T = Temperature</h4>
+        <p><strong>Type:</strong> float<br>
+           <strong>Unit:</strong> Kelvin<br>
+           <strong>Example:</strong> <code>5.0</code><br>
+           <strong>Description:</strong> Simulation temperature.</p>
+    </div>
+    
+    <div class="parameter">
+        <h4>Delta_alpha_q = Phonon Broadening Parameter</h4>
+        <p><strong>Type:</strong> float<br>
+           <strong>Unit:</strong> cm⁻¹<br>
+           <strong>Example:</strong> <code>1</code><br>
+           <strong>Description:</strong> Phonon linewidth broadening parameter.</p>
+    </div>
+
+    <div class="parameter">
+        <h4>Ncells = Number of Unit Cells (Ncells)</h4>
+        <p><strong>Type:</strong> integer<br>
+           <strong>Example:</strong> <code>50</code><br>
+           <strong>Description:</strong> Number of unit cells to include in supercell calculation.</p>
+    </div>
+
+    <div class="parameter">
+        <h4>init_type = Initial State Type</h4>
+        <p><strong>Type:</strong> string<br>
+           <strong>Options:</strong> <code>'pure'</code>, <code>'polarized'</code>, <code>'boltzmann'</code><br>
+           <strong>Default:</strong> <code>'pure'</code><br>
+           <strong>Description:</strong> Method for initializing the spin density matrix.</p>
+    </div>
+    
+    <div class="parameter">
+        <h4>pol = Polarization Vector</h4>
+        <p><strong>Type:</strong> numpy array<br>
+           <strong>Format:</strong> <code>[px, py, pz]</code><br>
+           <strong>Example:</strong> <code>np.array([0, 0, 1])</code><br>
+           <strong>Description:</strong> Initial spin polarization direction and final and magnetization measurement vector.</p>
+    </div>
+
+    <div class="parameter">
+        <h4>R_type = Redfield order</h4>
+        <p><strong>Type:</strong>  string<br>
+           <strong>Options:</strong> <code>'R1'</code>, <code>'R2'</code>, <code>'both'</code><br>
+           <strong>Default:</strong> <code>'both'</code><br>
+           <strong>Description:</strong> Define the order of the Redfield operator to be computed (R1=linear coupling, R2=quadratic coupling).</p>
+    </div>
+
+    <div class="parameter">
+        <h4>rot_mat = Rotation Matrix</h4>
+        <p><strong>Type:</strong> 3×3 numpy array<br>
+           <strong>Example:</strong> <code>np.array([[0,0,1], [1,0,0], [0,1,0]])</code><br>
+           <strong>Description:</strong> Matrix to align molecular frame with crystal frame.</p>
+    </div>
+
+    <div class="parameter">
+        <h4>tf = Total Time</h4>
+        <p><strong>Type:</strong> float<br>
+           <strong>Unit:</strong> seconds<br>
+           <strong>Example:</strong> <code>1E-3</code> (1 millisecond)<br>
+           <strong>Description:</strong> Total simulation time.</p>
+    </div>
+    
+    <div class="parameter">
+        <h4>dt = Time Step</h4>
+        <p><strong>Type:</strong> float<br>
+           <strong>Unit:</strong> seconds<br>
+           <strong>Example:</strong> <code>1E-6</code> (1 microsecond)<br>
+           <strong>Description:</strong> Time step for numerical integration.</p>
+    </div>
+    
+    <div class="parameter">
+        <h4>save_file = Filename</h4>
+        <p><strong>Type:</strong>  string<br>
+           <strong>Default:</strong> <code>'both'</code><br>
+           <strong>Description:</strong> Define the name of the file to store the time evolution.</p>
+    </div>
+</div>
+<hr>
+
+<h2>Input Files</h2>
 
 <h3>1. Molecular spin hamiltonian calculation Output</h3>
     <div class="input-file">
@@ -190,161 +347,6 @@
     </div>
 </div>
 
-<hr>
-
-<h2>Simulation Parameters</h2>
-
-    <p>SpinVibe reads all input parameters as well as input file names from a json file.</p>
-
-    <div class="parameter">
-        <h4>spin_file</h4>
-        <p><strong>Type:</strong> str<br>
-    </div>
-
-    <div class="parameter">
-        <h4>d1_file</h4>
-        <p><strong>Type:</strong> str<br>
-    </div>
-
-    <div class="parameter">
-        <h4>d2_file</h4>
-        <p><strong>Type:</strong> str<br>
-    </div>
-
-    <div class="parameter">
-        <h4>g2_file</h4>
-        <p><strong>Type:</strong> str<br>
-    </div>
-
-    <div class="parameter">
-        <h4>atoms_file</h4>
-        <p><strong>Type:</strong> str<br>
-    </div>
-
-    <div class="parameter">
-        <h4>indices_file</h4>
-        <p><strong>Type:</strong> str<br>
-    </div>
-
-    <div class="parameter">
-        <h4>mol_mass</h4>
-        <p><strong>Type:</strong> str<br>
-    </div>
-
-    <div class="parameter">
-        <h4>disp1 = first order displacement</h4>
-        <p><strong>Type:</strong> list<br>
-           <strong>Format:</strong> <code>[x<sub>1</sub>,x<sub>2</sub>,...,x<sub>n</sub>]</code> in Angstroms<br>
-           <strong>Description:</strong> Atomic displacement for the first order perturbation.</p>
-    </div>
-
-    <div class="parameter">
-        <h4>disp2 = second order displacement</h4>
-        <p><strong>Type:</strong> list<br>
-           <strong>Format:</strong> <code>[x<sub>1</sub>,x<sub>2</sub>,...,x<sub>n</sub>]</code> in Angstroms<br>
-           <strong>Description:</strong> Atomic displacement for the second order perturbation.</p>
-    </div>
-
-    <div class="parameter">
-        <h4>B = Magnetic Field</h4>
-        <p><strong>Type:</strong> numpy array<br>
-           <strong>Format:</strong> <code>[Bx, By, Bz]</code> in Tesla<br>
-           <strong>Example:</strong> <code>np.array([0.0, 0.0, 0.410])</code><br>
-           <strong>Description:</strong> External magnetic field vector applied to the system.</p>
-    </div>
-
-    <div class="parameter">
-        <h4>B = Magnetic Field</h4>
-        <p><strong>Type:</strong> numpy array<br>
-           <strong>Format:</strong> <code>[Bx, By, Bz]</code> in Tesla<br>
-           <strong>Example:</strong> <code>np.array([0.0, 0.0, 0.410])</code><br>
-           <strong>Description:</strong> External magnetic field vector applied to the system.</p>
-    </div>
-    
-    <div class="parameter">
-        <h4>S = Spin Quantum Number</h4>
-        <p><strong>Type:</strong> integer or half-integer<br>
-           <strong>Example:</strong> <code>1</code> (for S=1 system)<br>
-           <strong>Description:</strong> Total spin quantum number of the molecular qubit.</p>
-    </div>
-    
-    <div class="parameter">
-        <h4>T = Temperature</h4>
-        <p><strong>Type:</strong> float<br>
-           <strong>Unit:</strong> Kelvin<br>
-           <strong>Example:</strong> <code>5.0</code><br>
-           <strong>Description:</strong> Simulation temperature.</p>
-    </div>
-    
-    <div class="parameter">
-        <h4>Delta_alpha_q = Phonon Broadening Parameter</h4>
-        <p><strong>Type:</strong> float<br>
-           <strong>Unit:</strong> cm⁻¹<br>
-           <strong>Example:</strong> <code>1</code><br>
-           <strong>Description:</strong> Phonon linewidth broadening parameter.</p>
-    </div>
-
-    <div class="parameter">
-        <h4>Ncells = Number of Unit Cells (Ncells)</h4>
-        <p><strong>Type:</strong> integer<br>
-           <strong>Example:</strong> <code>50</code><br>
-           <strong>Description:</strong> Number of unit cells to include in supercell calculation.</p>
-    </div>
-
-    <div class="parameter">
-        <h4>init_type = Initial State Type</h4>
-        <p><strong>Type:</strong> string<br>
-           <strong>Options:</strong> <code>'pure'</code>, <code>'polarized'</code>, <code>'boltzmann'</code><br>
-           <strong>Default:</strong> <code>'pure'</code><br>
-           <strong>Description:</strong> Method for initializing the spin density matrix.</p>
-    </div>
-    
-    <div class="parameter">
-        <h4>pol = Polarization Vector</h4>
-        <p><strong>Type:</strong> numpy array<br>
-           <strong>Format:</strong> <code>[px, py, pz]</code><br>
-           <strong>Example:</strong> <code>np.array([0, 0, 1])</code><br>
-           <strong>Description:</strong> Initial spin polarization direction and final and magnetization measurement vector.</p>
-    </div>
-
-    <div class="parameter">
-        <h4>R_type = Redfield order</h4>
-        <p><strong>Type:</strong>  string<br>
-           <strong>Options:</strong> <code>'R1'</code>, <code>'R2'</code>, <code>'both'</code><br>
-           <strong>Default:</strong> <code>'both'</code><br>
-           <strong>Description:</strong> Define the order of the Redfield operator to be computed (R1=linear coupling, R2=quadratic coupling).</p>
-    </div>
-
-    <div class="parameter">
-        <h4>rot_mat = Rotation Matrix</h4>
-        <p><strong>Type:</strong> 3×3 numpy array<br>
-           <strong>Example:</strong> <code>np.array([[0,0,1], [1,0,0], [0,1,0]])</code><br>
-           <strong>Description:</strong> Matrix to align molecular frame with crystal frame.</p>
-    </div>
-
-    <div class="parameter">
-        <h4>tf = Total Time</h4>
-        <p><strong>Type:</strong> float<br>
-           <strong>Unit:</strong> seconds<br>
-           <strong>Example:</strong> <code>1E-3</code> (1 millisecond)<br>
-           <strong>Description:</strong> Total simulation time.</p>
-    </div>
-    
-    <div class="parameter">
-        <h4>dt = Time Step</h4>
-        <p><strong>Type:</strong> float<br>
-           <strong>Unit:</strong> seconds<br>
-           <strong>Example:</strong> <code>1E-6</code> (1 microsecond)<br>
-           <strong>Description:</strong> Time step for numerical integration.</p>
-    </div>
-    
-    <div class="parameter">
-        <h4>save_file = Filename</h4>
-        <p><strong>Type:</strong>  string<br>
-           <strong>Default:</strong> <code>'both'</code><br>
-           <strong>Description:</strong> Define the name of the file to store the time evolution.</p>
-    </div>
-</div>
 <hr>
 
 <style>

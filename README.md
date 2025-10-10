@@ -12,7 +12,7 @@ different factors, including temperature, crystal/molecule orientation
 and applied magnetic fields. The code is written in Python3 and is
 MPI-parallelized over phonon modes and $q$-points using `mpi4py`.
 
-![docs\label{fig:spinvibe}](spinvibe.png)
+![spinvibe](docs/spinvibe.png)
 
 Please take a look at the  [Documentation](https://victorchanglee.github.io/SpinVibe/)
 

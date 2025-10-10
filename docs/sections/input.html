@@ -193,7 +193,66 @@
 <hr>
 
 <h2>Simulation Parameters</h2>
-    
+
+    <p>SpinVibe reads all input parameters as well as input file names from a json file.</p>
+
+    <div class="parameter">
+        <h4>spin_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>d1_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>d2_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>g2_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>atoms_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>indices_file</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>mol_mass</h4>
+        <p><strong>Type:</strong> str<br>
+    </div>
+
+    <div class="parameter">
+        <h4>disp1 = first order displacement</h4>
+        <p><strong>Type:</strong> list<br>
+           <strong>Format:</strong> <code>[x<sub>1</sub>,x<sub>2</sub>,...,x<sub>n</sub>]</code> in Angstroms<br>
+           <strong>Description:</strong> Atomic displacement for the first order perturbation.</p>
+    </div>
+
+    <div class="parameter">
+        <h4>disp2 = second order displacement</h4>
+        <p><strong>Type:</strong> list<br>
+           <strong>Format:</strong> <code>[x<sub>1</sub>,x<sub>2</sub>,...,x<sub>n</sub>]</code> in Angstroms<br>
+           <strong>Description:</strong> Atomic displacement for the second order perturbation.</p>
+    </div>
+
+    <div class="parameter">
+        <h4>B = Magnetic Field</h4>
+        <p><strong>Type:</strong> numpy array<br>
+           <strong>Format:</strong> <code>[Bx, By, Bz]</code> in Tesla<br>
+           <strong>Example:</strong> <code>np.array([0.0, 0.0, 0.410])</code><br>
+           <strong>Description:</strong> External magnetic field vector applied to the system.</p>
+    </div>
+
     <div class="parameter">
         <h4>B = Magnetic Field</h4>
         <p><strong>Type:</strong> numpy array<br>

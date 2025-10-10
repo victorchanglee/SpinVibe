@@ -26,9 +26,9 @@ class Read_files:
     def read_phonons(self):
 
         with h5py.File(self.phonon_file, 'r') as f:
-            q_points = f['q_points'][1:, :]
-            frequencies_cm = f['frequencies_cm'][1:, :]
-            eigenvectors = f['eigenvectors'][1:, :]
+            q_points = f['q_points'][:, :]
+            frequencies_cm = f['frequencies_cm'][:, :]
+            eigenvectors = f['eigenvectors'][:, :]
 
         omega_q = frequencies_cm
         eigenvectors = eigenvectors

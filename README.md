@@ -51,10 +51,21 @@ cd SpinVibe
 
 ---
 
-### Step 3: Install the Code
+### Step 3-a: Install the Code from setup.py
 
 Install the code with the command:
 
 ```bash
 pip install -e .
 ```
+alternatively
+
+### Step 3-a: Install the Code from pyproject.toml
+
+
+```bash
+python -m build
+pip install dist/spinvibe-1.0-py3-none-any.whl
+```
+
+

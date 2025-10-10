@@ -6,15 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpinVibe Documentation</title>
     <link rel="stylesheet" href="css/style.css">
-    <script>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+
+  <script async src="js/tex-mml-chtml.js"></script>
+
+  <script>
     document.addEventListener("DOMContentLoaded", () => {
       if (window.MathJax) {
         MathJax.typesetPromise();
       }
     });
-    </script>
-
-  <script async src="js/tex-mml-chtml.js"></script>
+  </script>
 </head>
 <body>
     <!-- Main Container -->

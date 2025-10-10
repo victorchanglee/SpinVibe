@@ -10,7 +10,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://victorchanglee.github.io/SpinVibe/",
     packages=["spinvibe"], 
-    package_dir={"spinvibe": "src"},
+    package_dir={"spinvibe": "spinvibe"},
     install_requires=[
         "numpy==1.26.4",
         "scipy==1.13.1",

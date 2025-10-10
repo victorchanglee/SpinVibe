@@ -3,9 +3,16 @@
 
 # SpinVibe
 
+`SpinVibe` is a Python package for simulating spin-phonon coupling and
+calculating $T_1$ of molecular qubits in a crystal lattice from
+first-principles calculations. This is achieved by connecting periodic
+lattice dynamics and molecular electronic structure calculations. In
+addition, `SpinVibe` enables the parametric analysis of $T_1$ under
+different factors, including temperature, crystal/molecule orientation
+and applied magnetic fields. The code is written in Python3 and is
+MPI-parallelized over phonon modes and $q$-points using `mpi4py`.
 
-**SpinVibe** is an open-source Python package for simulating **spin–phonon coupling in molecular qubits** using first-principles calculations.  
-It is desgin to study molecular qubits in solid-state systems.
+![.docs\label{fig:spinvibe}](spinvibe.png)
 
 Please take a look at the  [Documentation](https://victorchanglee.github.io/SpinVibe/)
 

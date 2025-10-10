@@ -1,6 +1,6 @@
 {
   "spin_file": "Cr_otolyl_4.h5",
-  "phonon_file": "Sn_otolyl_4_223.h5",
+  "phonon_file": "phonon.h5",
   "d1_file": "Cr_otolyl_4_d1.h5",
   "disp1": [-0.05, -0.0389, -0.0278, -0.0167, -0.0056, 0.0056, 0.0167, 0.0278, 0.0389, 0.05],
   "d2_file": "d_16.h5",

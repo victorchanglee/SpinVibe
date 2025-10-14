@@ -24,7 +24,7 @@ class coupling:
         self.Ncells = Ncells
         self.L_vectors = L_vectors # Phonon eigenvectors
         self.R_vectors = R_vectors # Atomic position vectors
-        self.R_vectors_mol = R_vectors[self.indices,:] # Position vectors of the molecule in the crystal
+        self.R_vectors_mol = R_vectors[self.indices,:] 
         self.L_vectors_mol = np.zeros((self.Nq, self.Nomega, self.N, 3), dtype=np.complex128) # Eigenvectors of the molecule in the crystal
         self.L_vectors_mol = L_vectors[:,:,self.indices,:] 
         self.N_atoms = R_vectors.shape[0]  # Number of atoms in the crystal

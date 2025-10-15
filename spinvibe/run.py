@@ -29,7 +29,7 @@ def main():
     disp2 = np.array(params["disp2"])
     rot_mat = np.array(params["rotation_matrix"])
     pol = np.array(params["polarization_axis"])
-
+    supercell = np.array(params["supercell"])
     if rank == 0:
         print("Initializing input files...")
         for key in [
@@ -51,7 +51,7 @@ def main():
     spin_phonon.spin_phonon(
         B=B,
         S=params["S"],
-        Ncells=params["Ncells"],
+        supercell=supercell,
         Delta_alpha_q=params["Delta_alpha_q"],
         rot_mat=rot_mat,
         pol=pol,

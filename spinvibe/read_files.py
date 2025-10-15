@@ -64,7 +64,7 @@ class Read_files:
 
 
         with h5py.File(self.atoms_file, 'r') as f:
-            R_vectors = f['positions'][:]
+            R_vectors = f['lattice_vectors'][:]
             reciprocal_vectors = f['reciprocal_vectors'][:]
 
         return R_vectors, reciprocal_vectors

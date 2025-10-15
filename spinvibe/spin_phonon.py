@@ -8,12 +8,13 @@ import scipy.linalg
 from datetime import datetime
 
 class spin_phonon:
-    def __init__(self, B, S, Ncells, Delta_alpha_q, rot_mat, pol, T, tf, dt, file_reader,save_file,init_type='polarized',R_type=None):
+    def __init__(self, B, S, supercell, Delta_alpha_q, rot_mat, pol, T, tf, dt, file_reader,save_file,init_type='polarized',R_type=None):
         
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
         size = comm.Get_size()
-        
+
+
         init_time = time.perf_counter()
 
         if rank == 0:
@@ -34,7 +35,8 @@ class spin_phonon:
         self.T = T  # Temperature in Kelvin
         self.init_type = init_type
         self.R_type = R_type
-        self.Ncells = Ncells  # Number of unit cells 
+        self.supercell = supercell
+        self.Ncells = supercell[0] * supercell[1] * supercell[2]  # Number of unit cells 
         self.save_file = save_file
         if rank == 0:
             print("Input Parameters")
@@ -42,6 +44,7 @@ class spin_phonon:
             print("Magnetic field:", self.B_T)
             print("S:", self.S)
             print("T:", self.T)
+            print("Supercell:", self.supercell)
             print("Number of unit cells:", self.Ncells)
             print("Broadening:", self.Delta_alpha_q)
             print("Population type:", self.init_type)
@@ -60,6 +63,7 @@ class spin_phonon:
         self.file_reader = file_reader
         self.q_vector, self.omega_q, self.L_vectors = self.file_reader.read_phonons()
         self.R_vectors, self.reciprocal_vectors = self.file_reader.read_atoms()
+        self.R_vectors = self.R_vectors * self.supercell
         self.q_vector = self.q_vector @ self.reciprocal_vectors # Convert q vectors to A^-1
 
         # More parameter setup (ALL ranks)
@@ -100,6 +104,29 @@ class spin_phonon:
         if rank == 0:
             print("Initialize simulation")
             print("=====================")
+
+                    
+            # Create a flattened list of (q, omega) pairs
+            all_q_omega_pairs = []
+            for q_idx in range(self.Nq):
+                for omega_idx in range(self.Nomega):
+                    all_q_omega_pairs.append((q_idx, omega_idx))
+            
+            # Distribute the (q, omega) pairs across processes
+            local_q_omega_pairs = np.array_split(np.array(all_q_omega_pairs, dtype=object), size)[rank]
+            N_local_pairs = len(local_q_omega_pairs)
+
+            if size > 1:
+                print("Parallelizing computation across processes...")
+                print(f"Number of processes: {size}")
+                print(f"Number of task: {len(all_q_omega_pairs)}")
+                print(f"Number of tasks per process: {N_local_pairs}")
+                print("\n")
+            else:
+                print("Running in serial mode.")
+                print("\n")
+        
+
             if self.R_type == None:
                 print("Computing linear and quadratic coupling")
             if self.R_type == 'R1':
@@ -107,12 +134,7 @@ class spin_phonon:
             if self.R_type == 'R2':
                 print("Computing ONLY quadratic coupling")
 
-        # Linear response spin-phonon coupling
-        self.V_alpha = np.zeros([self.Nq, self.Nomega, self.hdim, self.hdim], dtype=np.complex128)
-    
         init_Vq = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors,self.rot_mat,self.Ncells,self.file_reader)
-
-        self.V_alpha = init_Vq.V_alpha
 
         #Initialize Redfield superoperator
 
@@ -131,15 +153,11 @@ class spin_phonon:
                 print("Initializing R1 tensor (Linear coupling)")
 
             timer_R1 = time.perf_counter()
-            self.R1 = init_R.R1_tensor(self.V_alpha)
+            self.R1 = init_R.R1_tensor(init_Vq)
             hours_R1, minutes_R1, seconds_R1 = self.timer(timer_R1)
             R1_mat = self.R1.reshape((self.hdim**2, self.hdim**2)) #Transform into matrix form
 
             eigenvalues, eigenvectors = np.linalg.eig(R1_mat)
-
-            #Redfield operator must have one zero value (steady state) and the rest are negative eigenvalues (relaxation process)
-            nonzero_eigs = eigenvalues[np.abs(eigenvalues) > 1e-8]
-            t1 = 1/np.min(np.abs(nonzero_eigs))
 
             if rank == 0:
                 print("Eigenvalues of the R1 matrix")
@@ -157,9 +175,6 @@ class spin_phonon:
             eigenvalues, eigenvectors = np.linalg.eig(R2_mat)
 
             hours_R2, minutes_R2, seconds_R2 = self.timer(timer_R2)        
-
-            nonzero_eigs = eigenvalues[np.abs(eigenvalues) > 1e-8]
-            t1 = 1/np.min(np.abs(nonzero_eigs))
 
             if rank == 0:
                 print("Eigenvalues of the R2 matrix")
@@ -179,10 +194,7 @@ class spin_phonon:
         self.R_mat = self.R.reshape((self.hdim**2, self.hdim**2))
 
         eigenvalues, eigenvectors = np.linalg.eig(self.R_mat)
-        
-
-        nonzero_eigs = eigenvalues[np.abs(eigenvalues) > 1e-8]
-        t1 = 1/np.min(np.abs(nonzero_eigs))
+    
 
         if rank == 0:
             print("Eigenvalues of the Redfield matrix")

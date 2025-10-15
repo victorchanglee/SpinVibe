@@ -23,11 +23,9 @@ class coupling:
         self.Nomega = L_vectors.shape[1] # Number of phonons at q
         self.Ncells = Ncells
         self.L_vectors = L_vectors # Phonon eigenvectors
-        self.R_vectors = R_vectors # Atomic position vectors
-        self.R_vectors_mol = R_vectors[self.indices,:] 
+        self.R_vectors = R_vectors # Lattice vectors
         self.L_vectors_mol = np.zeros((self.Nq, self.Nomega, self.N, 3), dtype=np.complex128) # Eigenvectors of the molecule in the crystal
         self.L_vectors_mol = L_vectors[:,:,self.indices,:] 
-        self.N_atoms = R_vectors.shape[0]  # Number of atoms in the crystal
         self.rot_mat = rot_mat # Rotational matrix for hte molecule to match the coordinates in the crystal
         
         
@@ -52,10 +50,6 @@ class coupling:
 
         self.dH2_dxdx = np.zeros((self.N,self.N,3,3,self.hdim,self.hdim), dtype=np.complex128)
         self.compute_d2H_dxdx() #Compute d2H/dxdx'
-
-        #Compute linear spin-phonon coupling
-        self.V_alpha = np.zeros((self.Nq, self.Nomega,self.hdim, self.hdim), dtype=np.complex128)
-        self.V_alpha = self.compute_V_alpha_q()
 
         #Initizialize quadratic spin-phonon coupling
         self.pre_compute_V_alpha_beta_q()
@@ -127,89 +121,32 @@ class coupling:
                             sH = hamiltonian.hamiltonian( self.B, self.S, d2g_dxij, d2D_dxij)
                             self.dH2_dxdx[atom1,atom2,i,j,:,:] = sH.Hs
 
-    def compute_V_alpha_q(self):
+    def compute_V_alpha_q(self, q, omega):
         """
         Compute the interaction matrix elements V^{alpha q}_{aj}.
         """
-        comm = MPI.COMM_WORLD
-        rank = comm.Get_rank()
-        size = comm.Get_size()
-
-        # Create a flattened list of (q, omega) pairs
-        all_q_omega_pairs = []
-        for q_idx in range(self.Nq):
-            for omega_idx in range(self.Nomega):
-                all_q_omega_pairs.append((q_idx, omega_idx))
-        
-        # Distribute the (q, omega) pairs across processes
-        local_q_omega_pairs = np.array_split(np.array(all_q_omega_pairs, dtype=object), size)[rank]
-        N_local_pairs = len(local_q_omega_pairs)
-
-        if rank == 0:
-            if size > 1:
-                print("Parallelizing computation across processes...")
-                print(f"Number of processes: {size}")
-                print(f"Number of task: {len(all_q_omega_pairs)}")
-                print(f"Number of tasks per process: {N_local_pairs}")
-                print("\n")
-            else:
-                print("Running in serial mode.")
-                print("\n")
 
         # Initialize local temporary array
-        tmp_local = np.zeros((N_local_pairs, self.hdim, self.hdim), dtype=np.complex128)
+        tmp = np.zeros((self.N,3), dtype=np.complex128)
 
-        term = np.einsum('ijkl,klab -> ijkab', self.L_vectors_mol, self.dH_dx)  # shape: (Nq, Nomega, N, hdim, hdim)
+        exp = np.exp(1j * self.R_vectors @ self.q_vector[q])
 
-        # Fill tmp_local with local (q, omega) computations
-        for local_idx, (q, omega) in enumerate(local_q_omega_pairs):
-            tmp1_part = np.zeros(self.N, dtype=np.complex128)
-            for atom in range(self.N):
-                freq = 2 * np.pi * self.omega_q[q, omega] * c # Convert to radian/s
+        for atom in range(self.N):
+            freq = 2 * np.pi * self.omega_q[q, omega] * c # Convert to radian/s
 
-                if freq <= 0:
-                    prefactor = 0.0 # Or some other appropriate handling
-                else:
-                    prefactor = np.sqrt(hbar_SI / (self.Nq * freq * self.masses[atom]))
-                    prefactor *= 1 / np.sqrt(self.Ncells)
-                    prefactor *= 1E10  # Convert to A units
-                    
-                q_dot_R = np.dot(self.q_vector[q], self.R_vectors_mol[atom])
-                exponential = np.exp(1j * q_dot_R)
-                tmp1_part[atom] = prefactor * exponential
+            if freq <= 0:
+                prefactor = 0.0 # Or some other appropriate handling
+            else:
+                prefactor = np.sqrt(hbar_SI / (self.Nq * freq * self.masses[atom]))
+                prefactor *= 1 / np.sqrt(self.Ncells)
+                prefactor *= 1E10  # Convert to A units
+            
+            tmp[atom] = prefactor * exp * self.L_vectors_mol[q, omega, atom]
 
-            # Slice 'term' for the current q and omega
-            current_term_slice = term[q, omega]  # shape: (N, hdim, hdim)
+        coupling = np.einsum('il,ilab -> ab', tmp, self.dH_dx,optimize=True)
 
-            # Perform the einsum for this (q, omega) pair
-            tmp_local[local_idx] = np.einsum('k,kab->ab', tmp1_part, current_term_slice)
-
-
-        # Flatten local array for Gatherv
-        tmp_local_flat = tmp_local.ravel()
-
-        # Calculate sendcounts and displs for Gatherv
-        # Each process sends N_local_pairs * hdim * hdim elements
-        sendcounts = np.array([len(chunk) * self.hdim * self.hdim for chunk in np.array_split(np.array(all_q_omega_pairs, dtype=object), size)])
-        displs = np.insert(np.cumsum(sendcounts), 0, 0)[0:-1]
-
-        recvbuf = None
-        if rank == 0:
-            recvbuf = np.empty(self.Nq * self.Nomega * self.hdim * self.hdim, dtype=np.complex128)
-
-        # Gather all data to root
-        comm.Gatherv(sendbuf=tmp_local_flat, recvbuf=(recvbuf, sendcounts, displs, MPI.COMPLEX16), root=0)
-
-        V_alpha = None
-        if rank == 0:
-            tmp_full = recvbuf.reshape((self.Nq, self.Nomega, self.hdim, self.hdim))
-            H_herm = np.conj(np.transpose(tmp_full, axes=(0, 1, 3, 2)))
-            V_alpha = 0.5 * (tmp_full + H_herm)
-        else:
-            V_alpha = np.empty((self.Nq, self.Nomega, self.hdim, self.hdim), dtype=np.complex128)
-
-        # Broadcast result to all processes
-        comm.Bcast(V_alpha, root=0)
+        H_herm = np.conj(coupling.T)
+        V_alpha = 0.5 * (coupling + H_herm)
 
         return V_alpha
 
@@ -231,19 +168,18 @@ class coupling:
                     self.prefactor[nq, nomega, :] *= 1 / np.sqrt(self.Ncells)
                     self.prefactor[nq, nomega, :] *= 1E10  # Convert to A units
         
-        self.exp = np.zeros((self.Nq, self.N), dtype=np.complex128)
+        self.exp = np.zeros((self.Nq,3), dtype=np.complex128)
         
         for nq in range(self.Nq):
-            # R_vectors_mol @ q_vector[nq] gives dot product for each atom
-            # Shape: (N,) = (N, 3) @ (3,)
-            self.exp[nq, :] = np.exp(1j * self.R_vectors_mol @ self.q_vector[nq])
+            for i in range(3):
+                self.exp[nq,i] = np.exp(1j * self.R_vectors[i] @ self.q_vector[nq])
 
-        #Ignore when atom1 = atom2 
         i_indices = np.arange(self.N)
         self.valid_i = np.repeat(i_indices, self.N-1)
         self.valid_j = np.concatenate([np.arange(i) for i in range(self.N)] + 
                                 [np.arange(i+1, self.N) for i in range(self.N)])
 
+        return
 
     def compute_V_alpha_beta_q(self, Nq1, Nq2, Nomega1, Nomega2):
 
@@ -254,17 +190,15 @@ class coupling:
         L1 = self.L_vectors_mol[Nq1, Nomega1, :, :] 
         L2 = self.L_vectors_mol[Nq2, Nomega2, :, :]  
     
-        combined_factors = (prefactor1[self.valid_i] * prefactor2[self.valid_j] * 
-                           exp1[self.valid_i] * exp2[self.valid_j])
+        combined_factors1 = np.einsum('n,i -> ni',prefactor1,exp1)
+        combined_factors2 = np.einsum('n,i -> ni',prefactor2,exp2)
         
-        L1_valid = L1[self.valid_i]  # shape: (num_pairs, hdim)
-        L2_valid = L2[self.valid_j]  # shape: (num_pairs, hdim)
+        tmp1 = np.einsum('ni,ni->ni', combined_factors1, L1, optimize=True)
+        tmp2 = np.einsum('ni,ni->ni', combined_factors2, L2, optimize=True)
         
         H2_valid = self.dH2_dxdx[self.valid_i, self.valid_j]  # shape: (num_pairs, hdim, hdim, hdim, hdim)
         
-        V_alpha_beta = np.einsum('p,pa,pb,pabmn->mn', 
-                                  combined_factors, L1_valid, L2_valid, H2_valid,
-                                  optimize=True)
+        V_alpha_beta = np.einsum('pa,pb,pabmn->mn',tmp1[self.valid_i], tmp2[self.valid_j], H2_valid, optimize=True)
         
         V_alpha_beta += V_alpha_beta.conj().T
         V_alpha_beta *= 0.5

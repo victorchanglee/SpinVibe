@@ -32,14 +32,6 @@
            <strong>Example:</strong> <code>np.array([0.0, 0.0, 0.410])</code><br>
            <strong>Description:</strong> External magnetic field vector applied to the system.</p>
     </div>
-
-    <div class="parameter">
-        <h4>B = Magnetic Field</h4>
-        <p><strong>Type:</strong> numpy array<br>
-           <strong>Format:</strong> <code>[Bx, By, Bz]</code> in Tesla<br>
-           <strong>Example:</strong> <code>np.array([0.0, 0.0, 0.410])</code><br>
-           <strong>Description:</strong> External magnetic field vector applied to the system.</p>
-    </div>
     
     <div class="parameter">
         <h4>S = Spin Quantum Number</h4>
@@ -65,10 +57,11 @@
     </div>
 
     <div class="parameter">
-        <h4>Ncells = Number of Unit Cells (Ncells)</h4>
-        <p><strong>Type:</strong> integer<br>
-           <strong>Example:</strong> <code>50</code><br>
-           <strong>Description:</strong> Number of unit cells to include in supercell calculation.</p>
+        <h4>supercell = Crystal supercell</h4>
+        <p><strong>Type:</strong> numpy array<br>
+           <strong>Format:</strong> <code>[x, y, z]</code> in Tesla<br>
+           <strong>Example:</strong> <code>np.array([4, 4, 3])</code><br>
+           <strong>Description:</strong> Define the size of the supercell approximated in the calculation.</p>
     </div>
 
     <div class="parameter">

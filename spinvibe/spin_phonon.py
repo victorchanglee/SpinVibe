@@ -105,22 +105,9 @@ class spin_phonon:
             print("Initialize simulation")
             print("=====================")
 
-                    
-            # Create a flattened list of (q, omega) pairs
-            all_q_omega_pairs = []
-            for q_idx in range(self.Nq):
-                for omega_idx in range(self.Nomega):
-                    all_q_omega_pairs.append((q_idx, omega_idx))
-            
-            # Distribute the (q, omega) pairs across processes
-            local_q_omega_pairs = np.array_split(np.array(all_q_omega_pairs, dtype=object), size)[rank]
-            N_local_pairs = len(local_q_omega_pairs)
-
             if size > 1:
                 print("Parallelizing computation across processes...")
                 print(f"Number of processes: {size}")
-                print(f"Number of task: {len(all_q_omega_pairs)}")
-                print(f"Number of tasks per process: {N_local_pairs}")
                 print("\n")
             else:
                 print("Running in serial mode.")

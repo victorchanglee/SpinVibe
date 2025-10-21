@@ -93,18 +93,21 @@ class Redfield:
       
       # Create all (q, alpha) tasks for parallelization
       all_tasks = []
+      task_counter = 0
       for q in range(self.Nq):
          for alpha in range(self.Nomega):
+            if task_counter % size == rank:
                all_tasks.append((q, alpha))
-
-      # Distribute tasks across processes
-      tasks = np.array_split(all_tasks, size)[rank]
+            task_counter += 1
+            
+      if rank == 0:
+         print(f"Number of tasks per process: {len(all_tasks)}")
 
       # Initialize local contribution
       R1_local = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
       # Process assigned (q, alpha) pairs
-      for q, alpha in tasks:
+      for q, alpha in all_tasks:
          # Initialize contribution for this (q, alpha) pair
          R1_qa = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
          V_alpha = init_Vq.compute_V_alpha_q(q, alpha)

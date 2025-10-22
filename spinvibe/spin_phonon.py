@@ -63,7 +63,6 @@ class spin_phonon:
         self.file_reader = file_reader
         self.q_vector, self.omega_q, self.L_vectors = self.file_reader.read_phonons()
         self.R_vectors, self.reciprocal_vectors = self.file_reader.read_atoms()
-        self.R_vectors = self.R_vectors * self.supercell
         self.q_vector = self.q_vector @ self.reciprocal_vectors # Convert q vectors to A^-1
 
         # More parameter setup (ALL ranks)

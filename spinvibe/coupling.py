@@ -1,11 +1,11 @@
 import numpy as np
-from .constants import hbar_SI, c
+from .constants import hbar_SI, c_cms
 from . import hamiltonian
 from . import math_func
 from mpi4py import MPI
 
 class coupling:
-    def __init__(self, B, S, T, eigenvectors, q_vector, omega_q, R_vectors, L_vectors,rot_mat,Ncells, file_reader):
+    def __init__(self, B, S, T, eigenvectors, q_vector, omega_q, R_vectors, L_vectors,rot_mat, file_reader):
     
         self.file_reader = file_reader
         self.B = B # Magnetic field in cm-1
@@ -20,8 +20,7 @@ class coupling:
         self.q_vector = q_vector # Phonon mode index and wave vector q 
         self.omega_q = omega_q # Phonon frequencies in cm-1
         self.Nq = L_vectors.shape[0] # Number of q points
-        self.Nomega = L_vectors.shape[1] # Number of phonons at q
-        self.Ncells = Ncells
+        self.Nomega = L_vectors.shape[1] # Number of phonons at q 
         self.L_vectors = L_vectors # Phonon eigenvectors
         self.R_vectors = R_vectors # Lattice vectors
         self.L_vectors_mol = np.zeros((self.Nq, self.Nomega, self.N, 3), dtype=np.complex128) # Eigenvectors of the molecule in the crystal
@@ -129,16 +128,16 @@ class coupling:
         # Initialize local temporary array
         tmp = np.zeros((self.N,3), dtype=np.complex128)
 
-        exp = np.exp(1j * self.R_vectors @ self.q_vector[q])
+        #exp = np.exp(1j * self.R_vectors @ self.q_vector[q])
+        exp = 1
 
         for atom in range(self.N):
-            freq = 2 * np.pi * self.omega_q[q, omega] * c # Convert to radian/s
+            freq = 2 * np.pi * self.omega_q[q, omega] * c_cms # Convert to radian/s
 
             if freq <= 0:
                 prefactor = 0.0 # Or some other appropriate handling
             else:
-                prefactor = np.sqrt(hbar_SI / (self.Nq * freq * self.masses[atom]))
-                prefactor *= 1 / np.sqrt(self.Ncells)
+                prefactor = np.sqrt(hbar_SI / (self.Nq * freq * self.masses[atom])) 
                 prefactor *= 1E10  # Convert to A units
             
             tmp[atom] = prefactor * exp * self.L_vectors_mol[q, omega, atom]
@@ -152,7 +151,7 @@ class coupling:
 
     def pre_compute_V_alpha_beta_q(self):
         
-        self.w = 2 * np.pi * self.omega_q * c
+        self.w = 2 * np.pi * self.omega_q * c_cms
 
         base_factor = np.sqrt(hbar_SI / (self.Nq )) 
     
@@ -164,15 +163,15 @@ class coupling:
                 if w_val <= 0:
                     self.prefactor[nq, nomega, :] = 0.0
                 else:
-                    self.prefactor[nq, nomega, :] = base_factor / np.sqrt(w_val * self.masses) 
-                    self.prefactor[nq, nomega, :] *= 1 / np.sqrt(self.Ncells)
+                    self.prefactor[nq, nomega, :] = base_factor / np.sqrt(w_val * self.masses)  
                     self.prefactor[nq, nomega, :] *= 1E10  # Convert to A units
         
         self.exp = np.zeros((self.Nq,3), dtype=np.complex128)
         
-        for nq in range(self.Nq):
-            for i in range(3):
-                self.exp[nq,i] = np.exp(1j * self.R_vectors[i] @ self.q_vector[nq])
+        #for nq in range(self.Nq):
+        #    for i in range(3):
+        #        self.exp[nq,i] = np.exp(1j * self.R_vectors[i] @ self.q_vector[nq])
+
 
         i_indices = np.arange(self.N)
         self.valid_i = np.repeat(i_indices, self.N-1)
@@ -185,16 +184,18 @@ class coupling:
 
         prefactor1 = self.prefactor[Nq1, Nomega1, :]  
         prefactor2 = self.prefactor[Nq2, Nomega2, :]  
-        exp1 = self.exp[Nq1, :]  
-        exp2 = self.exp[Nq2, :]  
+        #exp1 = self.exp[Nq1, :]  
+        #exp2 = self.exp[Nq2, :]
+        exp1 = 1.0
+        exp2 = 1.0
         L1 = self.L_vectors_mol[Nq1, Nomega1, :, :] 
         L2 = self.L_vectors_mol[Nq2, Nomega2, :, :]  
     
-        combined_factors1 = np.einsum('n,i -> ni',prefactor1,exp1)
-        combined_factors2 = np.einsum('n,i -> ni',prefactor2,exp2)
+        #combined_factors1 = np.einsum('n,i -> ni',prefactor1,exp1)
+        #combined_factors2 = np.einsum('n,i -> ni',prefactor2,exp2)
         
-        tmp1 = np.einsum('ni,ni->ni', combined_factors1, L1, optimize=True)
-        tmp2 = np.einsum('ni,ni->ni', combined_factors2, L2, optimize=True)
+        tmp1 = np.einsum('n,ni->ni', prefactor1, L1, optimize=True)
+        tmp2 = np.einsum('n,ni->ni', prefactor2, L2, optimize=True)
         
         H2_valid = self.dH2_dxdx[self.valid_i, self.valid_j]  # shape: (num_pairs, hdim, hdim, hdim, hdim)
         

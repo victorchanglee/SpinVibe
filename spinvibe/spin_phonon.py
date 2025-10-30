@@ -8,7 +8,7 @@ import scipy.linalg
 from datetime import datetime
 
 class spin_phonon:
-    def __init__(self, B, S, supercell, Delta_alpha_q, rot_mat, pol, T, tf, dt, file_reader,save_file,init_type='polarized',R_type=None):
+    def __init__(self, B, S, Delta_alpha_q, rot_mat, pol, T, tf, dt, file_reader,save_file,init_type='polarized',R_type=None):
         
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
@@ -35,17 +35,13 @@ class spin_phonon:
         self.T = T  # Temperature in Kelvin
         self.init_type = init_type
         self.R_type = R_type
-        self.supercell = supercell
-        self.Ncells = supercell[0] * supercell[1] * supercell[2]  # Number of unit cells 
         self.save_file = save_file
         if rank == 0:
             print("Input Parameters")
             print("================")
             print("Magnetic field:", self.B_T)
             print("S:", self.S)
-            print("T:", self.T)
-            print("Supercell:", self.supercell)
-            print("Number of unit cells:", self.Ncells)
+            print("T:", self.T)  
             print("Broadening:", self.Delta_alpha_q)
             print("Population type:", self.init_type)
             print("Polarization:", self.pol)
@@ -59,15 +55,13 @@ class spin_phonon:
         self.m = np.arange(-self.S, self.S+1, 1)
         self.hdim = int(2*self.S + 1) 
 
-        # File reading (ALL ranks need this data)
         self.file_reader = file_reader
         self.q_vector, self.omega_q, self.L_vectors = self.file_reader.read_phonons()
-        self.R_vectors, self.reciprocal_vectors = self.file_reader.read_atoms()
-        self.R_vectors = self.R_vectors * self.supercell
+        self.reciprocal_vectors = self.file_reader.read_atoms() 
+        self.R_vectors = np.zeros(3)
         self.q_vector = self.q_vector @ self.reciprocal_vectors # Convert q vectors to A^-1
 
-        # More parameter setup (ALL ranks)
-        self.N_atoms = self.R_vectors.shape[0]  # Number of atoms
+        self.N_atoms = len(self.q_vector)/3  # Number of atoms
         self.Nomega = len(self.q_vector)  # Number of phonon modes
         self.Nq = self.q_vector.shape[0]  # Number of q points
         
@@ -121,7 +115,7 @@ class spin_phonon:
             if self.R_type == 'R2':
                 print("Computing ONLY quadratic coupling")
 
-        init_Vq = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors,self.rot_mat,self.Ncells,self.file_reader)
+        init_Vq = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors,self.rot_mat,self.file_reader)
 
         #Initialize Redfield superoperator
 

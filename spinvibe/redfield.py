@@ -1,5 +1,5 @@
 import numpy as np
-from .constants import hbar, c, hbar_SI, cm2J
+from .constants import hbar, c_cms, hbar_SI, cm2J
 from . import math_func
 from . import coupling
 from mpi4py import MPI
@@ -40,22 +40,13 @@ class Redfield:
       omega_ij =  omega_ij 
       Delta_alpha_q = self.Delta_alpha_q 
 
-      delta = math_func.lorentzian((omega_ij - omega_alpha_q), Delta_alpha_q)
-      n_aq = math_func.bose_einstein(omega_alpha_q, self.T)
-      G_1ph = delta * n_aq + delta * (n_aq + 1)
+      delta_emission = math_func.lorentzian((omega_ij - omega_alpha_q), Delta_alpha_q)
+      delta_absorption = math_func.lorentzian((omega_ij + omega_alpha_q), Delta_alpha_q)
 
-      #term1_numerator = Delta_alpha_q
-      #term1_denominator = Delta_alpha_q**2 + (omega_ij - omega_alpha_q)**2
-      #n_1 = math_func.bose_einstein(omega_alpha_q, self.T)
-      #term1 = (term1_numerator / term1_denominator) * n_1
-      
-      #term2_numerator = Delta_alpha_q
-      #term2_denominator = Delta_alpha_q**2 + (omega_ij + omega_alpha_q)**2
-      #n_2 = math_func.bose_einstein(omega_alpha_q, self.T)
-      #term2 = (term2_numerator / term2_denominator) * (n_2 + 1)
-      
-      #G_1ph = (term1 + term2) 
-      G_1ph = G_1ph / (2* np.pi* c)           
+      n_aq = math_func.bose_einstein(omega_alpha_q, self.T)
+      G_1ph = delta_emission * n_aq + delta_absorption * (n_aq + 1)
+
+          
       return G_1ph
 
    def G_2ph(self, omega_ij, omega_alpha_q, omega_beta_qp):
@@ -65,8 +56,6 @@ class Redfield:
       omega_beta_qp = omega_beta_qp 
       omega_ij = omega_ij 
       Delta = self.Delta_alpha_q
-
-      Delta = self.Delta_alpha_q + self.Delta_alpha_q
       
       n_alpha = math_func.bose_einstein(omega_alpha_q, self.T)
       n_beta = math_func.bose_einstein(omega_beta_qp, self.T)
@@ -76,7 +65,7 @@ class Redfield:
       term3 = math_func.lorentzian(omega_ij + omega_alpha_q - omega_beta_qp, Delta) * (n_alpha + 1) * n_beta
       term4 = math_func.lorentzian(omega_ij - omega_alpha_q + omega_beta_qp, Delta) * n_alpha * (n_beta + 1)
 
-      G2ph = (term1 + term2 + term3 + term4) / (2*np.pi*c)
+      G2ph = (term1 + term2 + term3 + term4) 
 
 
       return G2ph
@@ -89,7 +78,7 @@ class Redfield:
       omega_alpha = self.omega_q
       
 
-      prefactor = -np.pi / (2 * hbar_SI**2)
+      prefactor = -1 / (4 * hbar**2 * c_cms)
       
       # Create all (q, alpha) tasks for parallelization
       all_tasks = []
@@ -111,7 +100,8 @@ class Redfield:
          # Initialize contribution for this (q, alpha) pair
          R1_qa = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
          V_alpha = init_Vq.compute_V_alpha_q(q, alpha)
-         V_alpha = V_alpha * cm2J
+         #V_alpha = V_alpha * cm2J
+         #working in cm-1
          # Loop over tensor indices
          for a in range(self.hdim):
                for b in range(self.hdim):
@@ -164,7 +154,7 @@ class Redfield:
       size = comm.Get_size()
       
       omega_alpha = self.omega_q
-      prefactor = -np.pi / (4 * hbar_SI**2) 
+      prefactor = -1 / (8 * hbar**2  * c_cms) #in cm-1
 
       
       
@@ -189,7 +179,9 @@ class Redfield:
       for q1, q2, alpha, beta in all_tasks:
          # Get V matrix for this (alpha, beta) pair
          V_alpha_beta = init_Vq.compute_V_alpha_beta_q(q1, q2, alpha, beta)
-         V_alpha_beta = V_alpha_beta * cm2J
+         #V_alpha_beta = V_alpha_beta * cm2J
+
+         #working in cm-1
 
          
          

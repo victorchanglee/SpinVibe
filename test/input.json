@@ -15,7 +15,6 @@
   "R_type": null,
   "T": 20.0,
   "Delta_alpha_q": 1.0,
-  "supercell": [4,4,6],
   "rotation_matrix": [[0,0,1],[1,0,0],[0,1,0]],
   "polarization_axis": [0,0,1],
   "tf": 1e-3,

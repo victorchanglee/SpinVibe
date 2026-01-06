@@ -99,9 +99,6 @@ HDF5 files, it is not restricted to specific codes. Any ab-initio
 package can be used to generate the input data, provided that the
 relevant quantities are extracted and saved in this format.
 
-$$\hat{H}
-$$
-
 # First principles spin-phonon coupling 
 
 Our code implements the theoretical framework developed by Lunghi and
@@ -131,10 +128,10 @@ In \autoref{eq:1}, the first order term represents the interaction of the spin w
 
 To describe the time evolution of the system, we employ the secular Redfield equation under the Born-Markov approximation 
 
-
+$$
 \frac{\partial \rho^{s}_{ab} (t)}{\partial t} = 
-\sum_{cd} e^{i(\omega_{ac} + \omega_{db})t} R_{ab,cd} \rho^{s}_{cd} (t)\,, 
-
+\sum_{cd} e^{i(\omega_{ac} + \omega_{db})t} R_{ab,cd} \rho^{s}_{cd} (t)
+$$
 
 where $R_{ab,cd}$ denotes the Redfield superoperator. The single-phonon contribution to the Redfield tensor, under the secular approximation, is
 

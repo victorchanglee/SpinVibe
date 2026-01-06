@@ -149,17 +149,7 @@ is the phonon correlation function in the presence of anharmonic terms that lead
 
 The two-phonon contribution is given by
 $$
-R^{2\text{--ph}}_{ab,cd} 
-= -\frac{\pi}{4 \hbar^2} \sum_{\alpha \geq \beta } \Bigg\{ \,
-& \sum_j  \delta_{bd} V^{\alpha \beta}_{aj} V^{\alpha \, \beta }_{jc} 
-   G^{2\text{--ph}}(\omega_{jc}, \omega_{\alpha }, \omega_{\beta}) \nonumber \\[6pt]
--& V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db}  
-   G^{2\text{--ph}}(\omega_{ac}, \omega_{\alpha}, \omega_{\beta}) \nonumber \\[6pt]
--& V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db}  
-   G^{2\text{--ph}}(\omega_{bd}, \omega_{\alpha }, \omega_{\beta }) \nonumber \\[6pt]
-+& \sum_j  \delta_{ca} V^{\alpha \beta}_{dj} V^{\alpha \, \beta}_{jb} 
-   G^{2\text{--ph}}(\omega_{jd}, \omega_{\alpha}, \omega_{\beta}) 
-\Bigg\}
+R^{2\text{--ph}}_{ab,cd} = -\frac{\pi}{4 \hbar^2} \sum_{\alpha \geq \beta } \\{ \sum_j  \delta_{bd} V^{\alpha \beta}_{aj} V^{\alpha \, \beta }_{jc} G^{2\text{--ph}}(\omega_{jc}, \omega_{\alpha }, \omega_{\beta}) -V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db}  G^{2\text{--ph}}(\omega_{ac}, \omega_{\alpha}, \omega_{\beta}) - V^{\alpha \beta }_{ac} V^{\alpha \, \beta }_{db} G^{2\text{--ph}}(\omega_{bd}, \omega_{\alpha }, \omega_{\beta }) + \sum_j  \delta_{ca} V^{\alpha \beta}_{dj} V^{\alpha \, \beta}_{jb} G^{2\text{--ph}}(\omega_{jd}, \omega_{\alpha}, \omega_{\beta}) \\}
 $$
 
 where $V^{\alpha \beta} = \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha} \partial Q_{\beta}} \right)$ and 

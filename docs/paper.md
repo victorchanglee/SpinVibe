@@ -27,10 +27,10 @@ Molecular qubits have emerged as versatile candidates for quantum
 information technologies. Their appeal lies in the chemical tunability,
 the possibility of large-scale synthetic control and their integration
 with solid-state and solution-phase
-architectures.[@Bayliss2022; @Wojnar2024] In contrast to solid-state
+architectures.[1,2] In contrast to solid-state
 defects or superconducting qubits, molecular qubits can be engineered at
 the atomic level, allowing researchers to systematically tailor their
-electronic, magnetic, and vibrational properties.[@Laorenza2022]
+electronic, magnetic, and vibrational properties.[3]
 However, the practical implementation of molecular qubits is limited by
 decoherence and relaxation processes, which shorten the time window over
 which quantum information can be stored and manipulated.
@@ -44,9 +44,9 @@ decoherence processes and determines how long the molecular spin can
 maintain its initialized state before it returns to thermal equilibrium
 after excitation. Critically, short $T_1$ values impose additional
 constraints on $T_2$, creating interdependent relationships that must be
-carefully managed through molecular design.[@Warner2013; @Mullin2024]
+carefully managed through molecular design.[4,5]
 $T_1$ is limited by the coupling of electronic spins with lattice
-vibrations, commonly known as phonons.[@Laorenza2021] This spin--phonon
+vibrations, commonly known as phonons.[6] This spin--phonon
 coupling governs energy exchange between the spin system and the
 vibrational bath, providing the dominant relaxation pathway in many
 molecular crystals.
@@ -54,10 +54,10 @@ molecular crystals.
 Depending on the phonon spectrum and the local molecular environment,
 different mechanisms such as the ($i$) direct processes, ($ii$) Raman
 processes, and ($iii$) Orbach relaxation can contribute to
-$T_1$.[@abragam2012electron] Recent experimental and theoretical efforts
+$T_1$.[7] Recent experimental and theoretical efforts
 have highlighted how molecular structure, ligand field symmetry, and
 host lattice dynamics dictate the magnitude and anisotropy of
-spin--phonon coupling.[@Lunghi2020; @Bayliss2022; @Laorenza2022]
+spin--phonon coupling.[1,3,8]
 
 `SpinVibe` is a Python package for simulating spin-phonon coupling and
 calculating $T_1$ of molecular qubits in a crystal lattice from
@@ -79,11 +79,11 @@ under various environmental factors.*
 
 Computational approaches based on density functional theory (DFT) have
 proven to be valuable for analyzing phonon modes and lattice dynamics in
-molecular systems.[@baroni2001] Complementarily, multiconfigurational
+molecular systems.[9] Complementarily, multiconfigurational
 electronic structure methods, such as CASSCF combined with NEVPT2,
 provide an accurate description of the spin states and their energy
 splittings, which are essential for modeling qubit
-performance.[@Janicka2022; @Baldinelli2025] Integrating these two
+performance.[10,11] Integrating these two
 perspectives into a unified framework for simulating spin--phonon
 coupling enables a microscopic understanding of the relaxation
 mechanisms in molecular qubits. Such an approach represents a powerful
@@ -102,7 +102,7 @@ relevant quantities are extracted and saved in this format.
 # First principles spin-phonon coupling 
 
 Our code implements the theoretical framework developed by Lunghi and
-Sanvito[@Lunghi2020; @lunghi2022; @Lunghi2023], where in the
+Sanvito[8,12,13], where in the
 weak-coupling regime the interaction between the spin Hamiltonian and
 the phonons is expanded as a Taylor series truncated at the quadratic
 term:
@@ -186,3 +186,44 @@ grants #2138259, #2138286, #2138307, #2137603, and #2138296.
 V. C. L. thanks L. A. Mariano and A. Lunghi for the helpful discussions.
 
 # References
+## References
+
+[1] S. L. Bayliss *et al.*, *Enhancing Spin Coherence in Optically Addressable Molecular Qubits through Host-Matrix Control*,  
+**Phys. Rev. X** 12, 031028 (2022). https://doi.org/10.1103/PhysRevX.12.031028
+
+[2] M. K. Wojnar *et al.*, *Ligand field design enables quantum manipulation of spins in Ni²⁺ complexes*,  
+**Chem. Sci.** 15, 1374–1383 (2024). https://doi.org/10.1039/D3SC04919A
+
+[3] D. W. Laorenza and D. E. Freedman, *Could the Quantum Internet Be Comprised of Molecular Spins with Tunable Optical Interfaces?*,  
+**J. Am. Chem. Soc.** 144, 21810–21825 (2022). https://doi.org/10.1021/jacs.2c07775
+
+[4] M. Warner *et al.*, *Potential for spin-based information processing in a thin-film molecular semiconductor*,  
+**Nature** 503, 504–508 (2013). https://doi.org/10.1038/nature12597
+
+[5] K. R. Mullin *et al.*, *Systems-chart approach to the design of spin relaxation times in molecular qubits*,  
+**Dalton Trans.** 53, 16585–16591 (2024). https://doi.org/10.1039/D4DT02311K
+
+[6] D. W. Laorenza *et al.*, *Tunable Cr⁴⁺ Molecular Color Centers*,  
+**J. Am. Chem. Soc.** 143, 21350–21363 (2021). https://doi.org/10.1021/jacs.1c10145
+
+[7] A. Abragam and B. Bleaney,  
+*Electron Paramagnetic Resonance of Transition Ions*, Oxford University Press (2012).
+
+[8] A. Lunghi and S. Sanvito, *The Limit of Spin Lifetime in Solid-State Electronic Spins*,  
+**J. Phys. Chem. Lett.** 11, 6273–6278 (2020). https://doi.org/10.1021/acs.jpclett.0c01681
+
+[9] S. Baroni, S. de Gironcoli, A. Dal Corso, and P. Giannozzi,  
+*Phonons and related crystal properties from density-functional perturbation theory*,  
+**Rev. Mod. Phys.** 73, 515–562 (2001). https://doi.org/10.1103/RevModPhys.73.515
+
+[10] K. Janicka, A. L. Wysocki, and K. Park, *Computational Insights into Electronic Excitations, Spin–Orbit Coupling Effects, and Spin Decoherence in Cr(IV)-Based Molecular Qubits*,  
+**J. Phys. Chem. A** 126, 8007–8020 (2022). https://doi.org/10.1021/acs.jpca.2c06854
+
+[11] L. Baldinelli *et al.*, *Design Rules to Engineer the Spin Structure of Cr⁴⁺ Molecular Qubits via Matrix Modularity*,  
+**J. Am. Chem. Soc.** 147, 20693–20702 (2025). https://doi.org/10.1021/jacs.5c04004
+
+[12] A. Lunghi, *Toward exact predictions of spin-phonon relaxation times: An ab initio implementation of open quantum systems theory*,  
+**Sci. Adv.** 8, eabn7880 (2022). https://doi.org/10.1126/sciadv.abn7880
+
+[13] A. Lunghi, *Spin-Phonon Relaxation in Magnetic Molecules: Theory, Predictions and Insights*,  
+in **Computational Modelling of Molecular Nanomagnets**, ed. G. Rajaraman, Springer (2023), pp. 219–289. https://doi.org/10.1007/978-3-031-31038-6_6

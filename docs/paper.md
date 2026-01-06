@@ -99,7 +99,11 @@ HDF5 files, it is not restricted to specific codes. Any ab-initio
 package can be used to generate the input data, provided that the
 relevant quantities are extracted and saved in this format.
 
-
+$$
+a
+=
+b
+$$
 
 # First principles spin-phonon coupling 
 

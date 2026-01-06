@@ -107,6 +107,8 @@ weak-coupling regime the interaction between the spin Hamiltonian and
 the phonons is expanded as a Taylor series truncated at the quadratic
 term:
 
+$$ a = x $$
+
 $$ \hat{H}_{sph} = \sum_{\alpha q} \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha q}} \right) 
 \hat{Q}_{\alpha q}(t) 
 + \sum_{\alpha q} \sum_{\beta q'} 

@@ -139,7 +139,9 @@ $$
 R^{1\text{-ph}}_{ab,cd} = - \frac{\pi}{2\hbar^{2}} \sum_{\alpha} \\{ \sum_{j} \delta_{bd} V^{\alpha}_{aj} V^{\alpha}_{jc} G^{1\text{-ph}}(\omega_{jc}, \omega_{\alpha}) - V^{\alpha}_{ac} V^{\alpha}_{db} G^{1\text{-ph}}(\omega_{ac}, \omega_{\alpha}) - V^{\alpha}_{ac} V^{\alpha}_{db} G^{1\text{-ph}}(\omega_{bd}, \omega_{\alpha}) + \sum_{j} \delta_{ca} V^{\alpha}_{dj} V^{\alpha}_{jb} G^{1\text{-ph}}(\omega_{jd}, \omega_{\alpha}) \\}
 $$
 
-where $V^{\alpha} = \frac{\partial \hat{H}_{\mathrm{s}}}{\partial{Q_{\alpha q}}}$ and 
+$\partial Q_{\alpha q}$
+
+where $V^{\alpha} = \frac{\partial \hat{H}_{\mathrm{s}}}{\partial Q_{\alpha q}}$ and 
 
 $$
 G^{1\text{--ph}}(\omega_{ij}, \omega_{\alpha q}) = \frac{1}{\pi} [ \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} - \omega_{\alpha q})^{2}} \bar{n}_{\alpha q} + \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} + \omega_{\alpha q})^{2}} (\bar{n}_{\alpha q}+1) ]

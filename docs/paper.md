@@ -142,7 +142,7 @@ $$
 where $V^{\alpha} = \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha}} \right)$ and 
 
 $$
-G^{1\text{--ph}}(\omega_{ij}, \omega_{\alpha q}) = \frac{1}{\pi} \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} - \omega_{\alpha q})^{2}} \, \bar{n}_{\alpha q} + \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} + \omega_{\alpha q})^{2}} \, (\bar{n}_{\alpha q}+1)
+G^{1\text{--ph}}(\omega_{ij}, \omega_{\alpha q}) = \frac{1}{\pi} \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} - \omega_{\alpha q})^{2}} \bar{n}_{\alpha q} + \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} + \omega_{\alpha q})^{2}} (\bar{n}_{\alpha q}+1)
 $$
 
 is the phonon correlation function in the presence of anharmonic terms that leads to a decay in the phonon lifetime with a rate $\Delta_{\alpha q}$. 

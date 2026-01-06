@@ -107,8 +107,6 @@ weak-coupling regime the interaction between the spin Hamiltonian and
 the phonons is expanded as a Taylor series truncated at the quadratic
 term:
 
-
-
 \hat{H}_{sph} = \sum_{\alpha q} \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha q}} \right) 
 \hat{Q}_{\alpha q}(t) 
 + \sum_{\alpha q} \sum_{\beta q'} 
@@ -118,15 +116,15 @@ term:
 In \autoref{eq:1}, the first order term represents the interaction of the spin with a single phonon $ Q_{\alpha q}$. The second order term describes the interaction of the spin with two phonons $ Q_{\alpha q}$ and $Q_{\beta q'}$. 
 
 To describe the time evolution of the system, we employ the secular Redfield equation under the Born-Markov approximation 
-%
-\begin{equation}
+
+
 \frac{\partial \rho^{s}_{ab} (t)}{\partial t} = 
 \sum_{cd} e^{i(\omega_{ac} + \omega_{db})t} R_{ab,cd} \rho^{s}_{cd} (t)\,, 
-\end{equation}
-%
+
+
 where $R_{ab,cd}$ denotes the Redfield superoperator. The single-phonon contribution to the Redfield tensor, under the secular approximation, is
 
-\begin{align}
+
 R^{1\text{-ph}}_{ab,cd} = -\frac{\pi}{2 \hbar^2} 
 \sum_{\alpha} \Bigg\{ 
 &\sum_{j} \delta_{bd} V^{\alpha}_{aj} V^{\alpha}_{jc} 
@@ -138,25 +136,21 @@ G^{1\text{-ph}}(\omega_{bd}, \omega_{\alpha})
 + \sum_{j} \delta_{ca} V^{\alpha}_{dj} V^{\alpha}_{jb} 
 G^{1\text{-ph}}(\omega_{jd}, \omega_{\alpha}) 
 \Bigg\}\,,
-\end{align}
-%
+
+
 where $V^{\alpha} = \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha}} \right)$ and 
-%
-\begin{equation}
+
+
 G^{1\text{--ph}}(\omega_{ij}, \omega_{\alpha q})
 = \frac{1}{\pi} \left[
 \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} - \omega_{\alpha q})^{2}} \, \bar{n}_{\alpha q}
 + \frac{\Delta_{\alpha q}}{\Delta_{\alpha q}^{2} + (\omega_{ij} + \omega_{\alpha q})^{2}} \, (\bar{n}_{\alpha q}+1)
 \right]
-\end{equation}
-%
-is the phonon correlation function in the presence of anharmonic terms that leads to a decay in the phonon lifetime with a rate $\Delta_{\alpha q}$. 
-%%
 
-%%
+is the phonon correlation function in the presence of anharmonic terms that leads to a decay in the phonon lifetime with a rate $\Delta_{\alpha q}$. 
+
 The two-phonon contribution is given by
-%
-\begin{align}
+
 R^{2\text{--ph}}_{ab,cd} 
 = -\frac{\pi}{4 \hbar^2} \sum_{\alpha \geq \beta } \Bigg\{ \,
 & \sum_j  \delta_{bd} V^{\alpha \beta}_{aj} V^{\alpha \, \beta }_{jc} 
@@ -168,11 +162,9 @@ R^{2\text{--ph}}_{ab,cd}
 +& \sum_j  \delta_{ca} V^{\alpha \beta}_{dj} V^{\alpha \, \beta}_{jb} 
    G^{2\text{--ph}}(\omega_{jd}, \omega_{\alpha}, \omega_{\beta}) 
 \Bigg\}
-\end{align}
-%
+
 where $V^{\alpha \beta} = \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha} \partial Q_{\beta}} \right)$ and 
 
-\begin{align}
 G^{2\text{--ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'}) 
 = \frac{1}{\pi} \Bigg[ \,
 &\frac{\Delta_{\alpha q \beta q'}}
@@ -188,19 +180,19 @@ G^{2\text{--ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'})
        {\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} - \omega_{\beta q'})^{2}}
        (\bar{n}_{\alpha q}+1)\bar{n}_{\beta q'} 
 \Bigg]
-\end{align}
+
 
 Once the time-evolution is performed, we can study the time-evolution of the magnetization of the system 
 
-\begin{equation}
+
     \vec{M}(t) = \text{Tr} (\vec{S} \hat{\rho} (t))
-\end{equation}
+
 
 from which the $T_1$ can be extracted by fitting the decay to
 
-\begin{equation}
+
 M_z(t) = \big[ M_z(t=0) - M_z^{\mathrm{eq}} \big] e^{-t/T_1} + M_z^{\mathrm{eq}}\,.
-\end{equation}
+
 
 # Acknowledgments
 This material is based upon work supported by the U.S. Department of

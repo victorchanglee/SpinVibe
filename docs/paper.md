@@ -118,8 +118,7 @@ term:
 %
 In \autoref{eq:1}, the first order term represents the interaction of the spin with a single phonon $ Q_{\alpha q}$. The second order term describes the interaction of the spin with two phonons $ Q_{\alpha q}$ and $Q_{\beta q'}$. 
 
-To describe the time evolution of the system, we  employ the secular Redfield equation under the the Born-Markov approximation 
-To describe the time evolution of the system, we  employ the secular Redfield equation under the the Born-Markov approximation 
+To describe the time evolution of the system, we employ the secular Redfield equation under the Born-Markov approximation 
 %
 \begin{equation}
 \frac{\partial \rho^{s}_{ab} (t)}{\partial t} = 

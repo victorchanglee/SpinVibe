@@ -99,7 +99,7 @@ HDF5 files, it is not restricted to specific codes. Any ab-initio
 package can be used to generate the input data, provided that the
 relevant quantities are extracted and saved in this format.
 
-$$ a = x $$
+
 
 # First principles spin-phonon coupling 
 
@@ -109,11 +109,13 @@ weak-coupling regime the interaction between the spin Hamiltonian and
 the phonons is expanded as a Taylor series truncated at the quadratic
 term:
 
+$$
 \hat{H}_{sph} = \sum_{\alpha q} \left( \frac{\partial \hat{H}_s}{\partial Q_{\alpha q}} \right) 
 \hat{Q}_{\alpha q}(t) 
 + \sum_{\alpha q} \sum_{\beta q'} 
 \left( \frac{\partial^2 \hat{H}_s}{\partial Q_{\alpha q} \partial Q_{\beta q'}} \right)
 \hat{Q}_{\alpha q}(t) \hat{Q}_{\beta q'}(t)\,
+$$
 
 In \autoref{eq:1}, the first order term represents the interaction of the spin with a single phonon $ Q_{\alpha q}$. The second order term describes the interaction of the spin with two phonons $ Q_{\alpha q}$ and $Q_{\beta q'}$. 
 

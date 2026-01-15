@@ -87,3 +87,7 @@ spinvibe input.json
 
 The expected output for a serial run is in test.out
 
+## Contributing and Support
+
+Please use the [Issue Tracker](https://github.com/victorchanglee/SpinVibe/issues) to report bugs or request new features.  
+Contributions are also welcome! Please use the Fork and Pull workflow to contribute.

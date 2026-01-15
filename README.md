@@ -76,3 +76,14 @@ pip install dist/spinvibe-1.0-py3-none-any.whl
 ```
 
 Once the installation is succesfull, you can test it using the files provided in the test directory.
+
+## Example
+
+An example is included in the test directory. To run the example just run
+
+```bash
+spinvibe input.json
+```
+
+The expected output for a serial run is in test.out
+

@@ -75,7 +75,7 @@ python -m build
 pip install dist/spinvibe-1.0-py3-none-any.whl
 ```
 
-Once the installation is succesfull, you can test it using the files provided in the test directory.
+Once the installation is succesful, you can test it using the files provided in the test directory.
 
 ## Example
 

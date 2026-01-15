@@ -67,7 +67,7 @@ pip install -e .
 ```
 alternatively
 
-### Step 3-a: Install the Code from pyproject.toml
+### Step 3-b: Install the Code from pyproject.toml
 
 
 ```bash

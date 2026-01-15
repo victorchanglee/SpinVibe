@@ -1,5 +1,7 @@
 [![status](https://joss.theoj.org/papers/6cd884ec29554707741cd8e700542a68/status.svg)](https://joss.theoj.org/papers/6cd884ec29554707741cd8e700542a68)
 [![GitHub release](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/victorchanglee/SpinVibe/releases)
+[![Documentation](https://img.shields.io/badge/docs-SpinVibe-blue)](https://victorchanglee.github.io/SpinVibe/)
+
 
 # SpinVibe
 
@@ -10,7 +12,7 @@ lattice dynamics and molecular electronic structure calculations. In
 addition, `SpinVibe` enables the parametric analysis of $T_1$ under
 different factors, including temperature, crystal/molecule orientation
 and applied magnetic fields. The code is written in Python3 and is
-MPI-parallelized over phonon modes and $q$-points using `mpi4py`.
+MPI-parallelized over phonon modes and $q$-points using `mpi4py`. 
 
 ![spinvibe](docs/spinvibe.png)
 

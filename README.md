@@ -12,11 +12,12 @@ lattice dynamics and molecular electronic structure calculations. In
 addition, `SpinVibe` enables the parametric analysis of $T_1$ under
 different factors, including temperature, crystal/molecule orientation
 and applied magnetic fields. The code is written in Python3 and is
-MPI-parallelized over phonon modes and $q$-points using `mpi4py`. 
+MPI-parallelized over phonon modes and $q$-points using `mpi4py`.
+Please take a look at the  [Documentation](https://victorchanglee.github.io/SpinVibe/)
+
 
 ![spinvibe](docs/spinvibe.png)
 
-Please take a look at the  [Documentation](https://victorchanglee.github.io/SpinVibe/)
 
 ---
 

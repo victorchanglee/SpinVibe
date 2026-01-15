@@ -20,7 +20,7 @@ Please take a look at the  [Documentation](https://victorchanglee.github.io/Spin
 
 ## Inputs
 - Solid-state phonons and eigenvectors
-- Molecular spin-hamiltonian parameters (e.g. g-factor, zero-field splitting tensor)
+- Molecular Spin-Hamiltonian parameters (e.g. g-factor, zero-field splitting tensor)
 - Parameters: Temperature, Polarization, external magnetic field, etc.
 
 ## Output

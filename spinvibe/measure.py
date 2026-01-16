@@ -1,6 +1,12 @@
 import numpy as np
 from scipy.optimize import curve_fit
-from mpi4py import MPI
+
+# Try to import MPI, fall back to serial mode if not available
+try:
+    from mpi4py import MPI
+    mpi_on = True
+except ImportError:
+    mpi_on = False
 
 class measure:
     def __init__(self,rho_t,S_operator,tlist,pol,init_type):
@@ -46,21 +52,21 @@ class measure:
 
         return
     
-
-    
-    
     
     def calc_t1(self):
         """
         Compute the T1 time from the Mz(t) signal using exponential fitting.
         Returns T1 and its uncertainty.
         """
+        
+        # Get MPI rank if available, otherwise use rank 0 for serial mode
+        if mpi_on:
+            comm = MPI.COMM_WORLD
+            rank = comm.Get_rank()
+        else:
+            rank = 0
 
-        comm = MPI.COMM_WORLD
-        rank = comm.Get_rank()
-        size = comm.Get_size()
-
-            # polarization axis
+        # polarization axis
         n = np.array(self.pol if self.pol is not None else [0., 0., 1.], dtype=float)
         n_norm = np.linalg.norm(n)
         if n_norm == 0:
@@ -69,7 +75,6 @@ class measure:
 
         
         # Extract Mz(t) data and time points
-
 
         if self.init_type == 'polarized':
             if rank == 0:

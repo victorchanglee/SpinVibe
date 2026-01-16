@@ -3,17 +3,29 @@ from . import hamiltonian, coupling, math_func, redfield, measure
 import h5py as h5
 from .constants import Bohrmagneton, k_B
 import time
-from mpi4py import MPI
 import scipy.linalg
 from datetime import datetime
+
+# Try to import MPI, fall back to serial mode if not available
+try:
+    from mpi4py import MPI
+    mpi_on = True
+except ImportError:
+    mpi_on = False
+    MPI = None
 
 class spin_phonon:
     def __init__(self, B, S, Delta_alpha_q, rot_mat, pol, T, tf, dt, file_reader,save_file,init_type='polarized',R_type=None):
         
-        comm = MPI.COMM_WORLD
-        rank = comm.Get_rank()
-        size = comm.Get_size()
-
+        # Get MPI info if available, otherwise use serial mode
+        if mpi_on:
+            comm = MPI.COMM_WORLD
+            rank = comm.Get_rank()
+            size = comm.Get_size()
+        else:
+            comm = None
+            rank = 0
+            size = 1
 
         init_time = time.perf_counter()
 
@@ -264,9 +276,14 @@ class spin_phonon:
 
     def init_rho(self):
         
-        comm = MPI.COMM_WORLD
-        rank = comm.Get_rank()
-        size = comm.Get_size()
+        # Get MPI info if available, otherwise use serial mode
+        if mpi_on:
+            comm = MPI.COMM_WORLD
+            rank = comm.Get_rank()
+            size = comm.Get_size()
+        else:
+            rank = 0
+            size = 1
     
         if self.init_type == 'polarized':
             # polarization direction (default z-axis)
@@ -379,7 +396,3 @@ class spin_phonon:
         seconds = total_time % 60
 
         return hours,minutes,seconds
-
- 
-
-        

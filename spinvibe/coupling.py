@@ -2,7 +2,7 @@ import numpy as np
 from .constants import hbar_SI, c_cms
 from . import hamiltonian
 from . import math_func
-from mpi4py import MPI
+
 
 class coupling:
     def __init__(self, B, S, T, eigenvectors, q_vector, omega_q, R_vectors, L_vectors,rot_mat, file_reader):
@@ -128,14 +128,13 @@ class coupling:
         # Initialize local temporary array
         tmp = np.zeros((self.N,3), dtype=np.complex128)
 
-        #exp = np.exp(1j * self.R_vectors @ self.q_vector[q])
-        exp = 1
+        exp = 0.0
 
         for atom in range(self.N):
             freq = 2 * np.pi * self.omega_q[q, omega] * c_cms # Convert to radian/s
 
             if freq <= 0:
-                prefactor = 0.0 # Or some other appropriate handling
+                prefactor = 0.0
             else:
                 prefactor = np.sqrt(hbar_SI / (self.Nq * freq * self.masses[atom])) 
                 prefactor *= 1E10  # Convert to A units
@@ -167,11 +166,6 @@ class coupling:
                     self.prefactor[nq, nomega, :] *= 1E10  # Convert to A units
         
         self.exp = np.zeros((self.Nq,3), dtype=np.complex128)
-        
-        #for nq in range(self.Nq):
-        #    for i in range(3):
-        #        self.exp[nq,i] = np.exp(1j * self.R_vectors[i] @ self.q_vector[nq])
-
 
         i_indices = np.arange(self.N)
         self.valid_i = np.repeat(i_indices, self.N-1)

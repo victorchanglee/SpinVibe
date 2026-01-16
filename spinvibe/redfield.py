@@ -2,7 +2,14 @@ import numpy as np
 from .constants import hbar, c_cms, hbar_SI, cm2J
 from . import math_func
 from . import coupling
-from mpi4py import MPI
+
+# Try to import MPI, fall back to serial mode if not available
+try:
+    from mpi4py import MPI
+    mpi_on = True
+except ImportError:
+    mpi_on = False
+
 
 class Redfield:
 
@@ -71,9 +78,15 @@ class Redfield:
       return G2ph
 
    def R1_tensor(self, init_Vq):
-      comm = MPI.COMM_WORLD
-      rank = comm.Get_rank()
-      size = comm.Get_size()
+      # Get MPI info if available, otherwise use serial mode
+      if mpi_on:
+         comm = MPI.COMM_WORLD
+         rank = comm.Get_rank()
+         size = comm.Get_size()
+      else:
+         comm = None
+         rank = 0
+         size = 1
 
       omega_alpha = self.omega_q
       
@@ -143,15 +156,25 @@ class Redfield:
       R1_local *= prefactor
 
       # Gather and sum contributions from all processes
-      R1_tensor = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
-      comm.Allreduce(R1_local, R1_tensor, op=MPI.SUM)
+      if mpi_on:
+         R1_tensor = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
+         comm.Allreduce(R1_local, R1_tensor, op=MPI.SUM)
+      else:
+         # In serial mode, local result is the final result
+         R1_tensor = R1_local
 
       return R1_tensor
    
    def R2_tensor(self, init_Vq):
-      comm = MPI.COMM_WORLD
-      rank = comm.Get_rank()
-      size = comm.Get_size()
+      # Get MPI info if available, otherwise use serial mode
+      if mpi_on:
+         comm = MPI.COMM_WORLD
+         rank = comm.Get_rank()
+         size = comm.Get_size()
+      else:
+         comm = None
+         rank = 0
+         size = 1
       
       omega_alpha = self.omega_q
       prefactor = -1 / (8 * hbar**2  * c_cms) #in cm-1
@@ -237,7 +260,11 @@ class Redfield:
                         R2_local[a, b, c, d] += prefactor * term_sum
 
       # Gather results from all processes
-      R2_tensor = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
-      comm.Allreduce(R2_local, R2_tensor, op=MPI.SUM)
+      if mpi_on:
+         R2_tensor = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
+         comm.Allreduce(R2_local, R2_tensor, op=MPI.SUM)
+      else:
+         # In serial mode, local result is the final result
+         R2_tensor = R2_local
       
       return R2_tensor

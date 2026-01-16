@@ -1,15 +1,24 @@
 import numpy as np
 import json
-from mpi4py import MPI
+import sys
+
+# Try to import MPI, fall back to serial mode if not available
+try:
+    from mpi4py import MPI
+    mpi_on = True
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+except ImportError:
+    mpi_on = False
+    comm = None
+    rank = 0
+    print("Warning: mpi4py not found. Running in serial mode.")
+
 from . import spin_phonon, read_files, math_func
 
 
 def main():
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-
     # Parse command-line argument for input file
-    import sys
     if len(sys.argv) < 2:
         if rank == 0:
             print("Usage: spinvibe-run <input.json>")
@@ -19,6 +28,10 @@ def main():
 
     if rank == 0:
         print(f"Reading input parameters from: {input_file}")
+        if mpi_on:
+            print(f"Running with MPI on rank {rank}")
+        else:
+            print("Running in serial mode (MPI not available)")
 
     with open(input_file, "r") as f:
         params = json.load(f)

@@ -70,13 +70,6 @@ Install the code with the command:
 ```bash
 pip install -e .
 ```
-alternatively
-
-
-```bash
-python -m build
-pip install dist/spinvibe-1.0-py3-none-any.whl
-```
 
 Once the installation is succesful, you can test it using the files provided in the test directory.
 

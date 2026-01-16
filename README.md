@@ -71,6 +71,12 @@ Install the code with the command:
 pip install -e .
 ```
 
+The code is parallelize over mpi using the mpi4py library. If MPI parallelization is available you can use
+
+```bash
+pip install -e ".[mpi]" 
+```
+
 Once the installation is succesful, you can test it using the files provided in the test directory.
 
 ## Example

@@ -11,15 +11,16 @@ authors = [
     { name = "Victor Chang Lee", email = "victor.changlee@northwestern.edu" },
 ]
 requires-python = ">=3.9"
-license = { text = "MIT" }  # or whatever your license is
+license = { text = "MIT" }
 keywords = ["spin", "phonon", "molecular qubits", "crystal", "dynamics"]
-
 dependencies = [
     "numpy==1.26.4",
     "scipy==1.13.1",
-    "mpi4py==4.0.2",
     "h5py==3.12.1",
 ]
+
+[project.optional-dependencies]
+mpi = ["mpi4py==4.0.2"]
 
 [project.urls]
 Homepage = "https://victorchanglee.github.io/SpinVibe/"

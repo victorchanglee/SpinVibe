@@ -63,7 +63,7 @@ cd SpinVibe
 
 ---
 
-### Step 3-a: Install the Code from setup.py
+### Step 3: Installation
 
 Install the code with the command:
 
@@ -71,8 +71,6 @@ Install the code with the command:
 pip install -e .
 ```
 alternatively
-
-### Step 3-b: Install the Code from pyproject.toml
 
 
 ```bash

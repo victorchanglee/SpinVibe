@@ -19,5 +19,5 @@
   "polarization_axis": [0,0,1],
   "tf": 1e-3,
   "dt": 1e-6,
-  "save_file": "Spin_phonon_5K_1.0_50_0.0.h5"
+  "save_file": "Spin_phonon_20K_1.0.h5"
 }

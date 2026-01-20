@@ -62,6 +62,8 @@ class spin_phonon:
             print("\n")
 
             
+        if rank == 0:
+            self.open_output()
 
         self.B = self.B_T * Bohrmagneton  # Convert from T to cm-1
         self.m = np.arange(-self.S, self.S+1, 1)
@@ -127,7 +129,7 @@ class spin_phonon:
             if self.R_type == 'R2':
                 print("Computing ONLY quadratic coupling")
 
-        init_Vq = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors,self.rot_mat,self.file_reader)
+        init_Vq = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors,self.rot_mat,self.file_reader,self.save_file)
 
         #Initialize Redfield superoperator
 
@@ -214,13 +216,11 @@ class spin_phonon:
             self.tlist = np.linspace(0, self.tf, int(self.tf / self.dt))
             self.tsteps = len(self.tlist)
 
-            self.drho_dt = np.zeros([self.tsteps, self.hdim**2], dtype=np.complex128)
-            self.drho_dt = self.RK()
+            self.drho_dt = self.time_evolution()
 
             self.rho_t = np.zeros([self.hdim, self.hdim, self.tsteps], dtype=np.complex128)
 
-            for t in range(self.tsteps):
-                self.rho_t[:, :, t] = self.drho_dt[t].reshape(self.hdim, self.hdim)
+            self.rho_t = self.drho_dt.reshape(self.tsteps, self.hdim, self.hdim).transpose(2, 1, 0)
 
             hours_evol, minutes_evol, seconds_evol = self.timer(timer_evol)
 
@@ -342,27 +342,46 @@ class spin_phonon:
 
         return rho0.flatten()
 
-    def RK(self):
+    def time_evolution(self):
+        """
+        Time evolution using propagator method
+        """
         
-        """
-        Time evolution using 4th order Runge-Kutta method
-        """
-
         nsteps = len(self.tlist)
         hdim = len(self.rho0)
-        rho = np.zeros((nsteps,hdim), dtype=np.complex128)
-        rho[0] = self.rho0.copy()  # Force rho0 to be 1D
+        rho = np.zeros((nsteps, hdim), dtype=np.complex128)
+        rho[0] = self.rho0.copy()  # Initial state
         
-        for i in range(nsteps - 1):
-            # Ensure R is 2D and rho[i] is 1D
-            k1 = self.R_mat @ rho[i]
-            k2 = self.R_mat @ (rho[i] + 0.5 * self.dt * k1)
-            k3 = self.R_mat @ (rho[i] + 0.5 * self.dt * k2)
-            k4 = self.R_mat @ (rho[i] + self.dt * k3)
+        # Diagonalize the Redfield matrix R
+        eigenvalues, eigenvectors = np.linalg.eig(self.R_mat)
+        
+        # Compute inverse of eigenvector matrix (V^{-1} in the equation)
+        V_inv = np.linalg.inv(eigenvectors)
+        
+        # Time evolution loop
+        for i in range(1, nsteps):
+            # Current time
+            t = self.tlist[i]
             
-            rho[i+1] = rho[i] + (self.dt / 6) * (k1 + 2*k2 + 2*k3 + k4)
+            # Construct propagator L(t) according to equation (188)
+            # L_ij(t) = sum_k V_ik * exp(lambda_k * t) * V_kj^{-1}
+            exp_diag = np.exp(eigenvalues * t)  # Exponential of eigenvalues
+            L_t = eigenvectors @ np.diag(exp_diag) @ V_inv
+            
+            # Apply propagator to initial density matrix (equation 189)
+            # rho_i(t) = sum_j L_ij(t) * rho_j(t=0)
+            rho[i] = L_t @ rho[0]
         
         return rho
+    
+    def open_output(self):
+
+        with h5.File(self.save_file, 'w') as f:
+            input = f.create_group('input')
+            output = f.create_group('output')
+
+        return
+
     
     def save_data(self):
 
@@ -375,11 +394,12 @@ class spin_phonon:
             - Mvec: Time evolution of the magnetization
         """
 
-        with h5.File(self.save_file, 'w') as f:
-            input = f.create_group('input')
+        with h5.File(self.save_file, 'a') as f:
+            input = f['input']
+            output = f['output']
+
             input.create_dataset('tlist', data=self.tlist)
 
-            output = f.create_group('output')
             output.create_dataset('redfield_matrix', data=self.R_mat)
             output.create_dataset('rho_t', data=self.rho_t)
             output.create_dataset('M',data=self.Mz)

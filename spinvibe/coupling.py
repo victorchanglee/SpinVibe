@@ -2,10 +2,28 @@ import numpy as np
 from .constants import hbar_SI, c_cms
 from . import hamiltonian
 from . import math_func
+import h5py as h5
 
+# Try to import MPI, fall back to serial mode if not available
+try:
+    from mpi4py import MPI
+    mpi_on = True
+except ImportError:
+    mpi_on = False
+    MPI = None
 
 class coupling:
-    def __init__(self, B, S, T, eigenvectors, q_vector, omega_q, R_vectors, L_vectors,rot_mat, file_reader):
+    def __init__(self, B, S, T, eigenvectors, q_vector, omega_q, R_vectors, L_vectors,rot_mat, file_reader,save_file):
+
+        # Get MPI info if available, otherwise use serial mode
+        if mpi_on:
+            comm = MPI.COMM_WORLD
+            rank = comm.Get_rank()
+            size = comm.Get_size()
+        else:
+            comm = None
+            rank = 0
+            size = 1
     
         self.file_reader = file_reader
         self.B = B # Magnetic field in cm-1
@@ -26,7 +44,6 @@ class coupling:
         self.L_vectors_mol = np.zeros((self.Nq, self.Nomega, self.N, 3), dtype=np.complex128) # Eigenvectors of the molecule in the crystal
         self.L_vectors_mol = L_vectors[:,:,self.indices,:] 
         self.rot_mat = rot_mat # Rotational matrix for hte molecule to match the coordinates in the crystal
-        
         
         d_tensor, g_tensor = self.file_reader.read_spin() # g-matrix and ZFS D-tensor
 
@@ -49,6 +66,10 @@ class coupling:
 
         self.dH2_dxdx = np.zeros((self.N,self.N,3,3,self.hdim,self.hdim), dtype=np.complex128)
         self.compute_d2H_dxdx() #Compute d2H/dxdx'
+
+        if rank == 0:
+            self.save_file = save_file
+            self.save_data()
 
         #Initizialize quadratic spin-phonon coupling
         self.pre_compute_V_alpha_beta_q()
@@ -128,7 +149,7 @@ class coupling:
         # Initialize local temporary array
         tmp = np.zeros((self.N,3), dtype=np.complex128)
 
-        exp = 0.0
+        exp = 1.0
 
         for atom in range(self.N):
             freq = 2 * np.pi * self.omega_q[q, omega] * c_cms # Convert to radian/s
@@ -200,5 +221,19 @@ class coupling:
            
         return V_alpha_beta
 
+    def save_data(self):
 
+            """
+            Save data
+                - couplings
+            """
+
+            with h5.File(self.save_file, 'a') as f:
+
+                output = f['output']
+                output.create_dataset('dH_dx', data=self.dH_dx)
+                output.create_dataset('d2H_dxdx', data=self.dH2_dxdx)
+
+
+            return
 

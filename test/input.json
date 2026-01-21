@@ -12,12 +12,11 @@
   "B": [0.0, 0.0, 0.410],
   "S": 1,
   "init_type": "pure",
-  "R_type": null,
   "T": 20.0,
   "Delta_alpha_q": 1.0,
   "rotation_matrix": [[0,0,1],[1,0,0],[0,1,0]],
   "polarization_axis": [0,0,1],
-  "tf": 1e-3,
-  "dt": 1e-6,
+  "tf": 1e-6,
+  "dt": 1e-9,
   "save_file": "Spin_phonon_20K_1.0.h5"
 }

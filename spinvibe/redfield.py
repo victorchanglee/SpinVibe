@@ -2,6 +2,7 @@ import numpy as np
 from .constants import hbar, c_cms, hbar_SI, cm2J
 from . import math_func
 from . import coupling
+import h5py as h5
 
 # Try to import MPI, fall back to serial mode if not available
 try:
@@ -105,6 +106,8 @@ class Redfield:
       if rank == 0:
          print(f"Number of tasks per process: {len(all_tasks)}")
 
+      self.dH_dq = np.zeros((self.Nq,self.Nomega,self.hdim,self.hdim), dtype=np.complex128)
+
       # Initialize local contribution
       R1_local = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
@@ -113,6 +116,8 @@ class Redfield:
          # Initialize contribution for this (q, alpha) pair
          R1_qa = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
          V_alpha = init_Vq.compute_V_alpha_q(q, alpha)
+
+         self.dH_dq[q,alpha,:,:] = V_alpha
          #V_alpha = V_alpha * cm2J
          #working in cm-1
          # Loop over tensor indices
@@ -178,8 +183,6 @@ class Redfield:
       
       omega_alpha = self.omega_q
       prefactor = -1 / (8 * hbar**2  * c_cms) #in cm-1
-
-      
       
       # Build full list of tasks 
       all_tasks = []
@@ -196,22 +199,20 @@ class Redfield:
 
       if rank == 0:
          print(f"Number of tasks per process: {len(all_tasks)}")
+      
+      self.d2H_dqdq = np.zeros((self.Nq,self.Nq,self.Nomega,self.Nomega,self.hdim,self.hdim),dtype=np.complex128)
 
       R2_local = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
       for q1, q2, alpha, beta in all_tasks:
          # Get V matrix for this (alpha, beta) pair
          V_alpha_beta = init_Vq.compute_V_alpha_beta_q(q1, q2, alpha, beta)
-         #V_alpha_beta = V_alpha_beta * cm2J
-
-         #working in cm-1
-
          
+         self.d2H_dqdq[q1,q2,alpha,beta,:,:] = V_alpha_beta
          
          # Get the frequencies omega_alpha and omega_beta
-         omega_a = omega_alpha[q1, alpha]  # ω_α in the equation
-         omega_b = omega_alpha[q2, beta]   # ω_β in the equation
-         
+         omega_a = omega_alpha[q1, alpha]  
+         omega_b = omega_alpha[q2, beta]   
          # Pre-compute all Green's functions we'll need
          G_cache = {}
          # Cache G functions for all unique frequencies
@@ -268,3 +269,11 @@ class Redfield:
          R2_tensor = R2_local
       
       return R2_tensor
+
+   def save_data(self, filename):
+      
+      with h5.File(filename, 'a') as f:
+            output = f['output']
+
+            output.create_dataset('dH_dq', data=self.dH_dq)
+            output.create_dataset('d2H_dqdq', data=self.d2H_dqdq)

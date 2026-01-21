@@ -133,7 +133,7 @@ class spin_phonon:
 
         #Initialize Redfield superoperator
 
-        init_R = redfield.Redfield(self.S, self.T, self.eigenvectors,self.eigenvalues,self.q_vector, self.omega_q,self.Delta_alpha_q, self.L_vectors)
+        self.init_R = redfield.Redfield(self.S, self.T, self.eigenvectors,self.eigenvalues,self.q_vector, self.omega_q,self.Delta_alpha_q, self.L_vectors)
 
         hours_input, minutes_input, seconds_input = self.timer(timer_input)
 
@@ -148,7 +148,7 @@ class spin_phonon:
                 print("Initializing R1 tensor (Linear coupling)")
 
             timer_R1 = time.perf_counter()
-            self.R1 = init_R.R1_tensor(init_Vq)
+            self.R1 = self.init_R.R1_tensor(init_Vq)
             hours_R1, minutes_R1, seconds_R1 = self.timer(timer_R1)
             R1_mat = self.R1.reshape((self.hdim**2, self.hdim**2)) #Transform into matrix form
 
@@ -165,7 +165,7 @@ class spin_phonon:
                 print("Initializing R2 tensor (Quadratic coupling)")
 
             timer_R2 = time.perf_counter()
-            self.R2 = init_R.R2_tensor(init_Vq)
+            self.R2 = self.init_R.R2_tensor(init_Vq)
             R2_mat = self.R2.reshape((self.hdim**2, self.hdim**2)) #Transform into matrix form
             eigenvalues, eigenvectors = np.linalg.eig(R2_mat)
 
@@ -404,6 +404,7 @@ class spin_phonon:
             output.create_dataset('rho_t', data=self.rho_t)
             output.create_dataset('M',data=self.Mz)
 
+        self.init_R.save_data(self.save_file)
 
         print(f"Data has been saved to {self.save_file}")
 

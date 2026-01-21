@@ -15,7 +15,7 @@ except ImportError:
     MPI = None
 
 class spin_phonon:
-    def __init__(self, B, S, Delta_alpha_q, rot_mat, pol, T, tf, dt, file_reader,save_file,init_type='polarized',R_type=None):
+    def __init__(self, B, S, Delta_alpha_q, rot_mat, pol, T, tf, dt, file_reader,save_file,init_type='polarized'):
         
         # Get MPI info if available, otherwise use serial mode
         if mpi_on:
@@ -46,7 +46,6 @@ class spin_phonon:
         self.pol = pol  # Polarization vector
         self.T = T  # Temperature in Kelvin
         self.init_type = init_type
-        self.R_type = R_type
         self.save_file = save_file
         if rank == 0:
             print("Input Parameters")
@@ -120,14 +119,12 @@ class spin_phonon:
             else:
                 print("Running in serial mode.")
                 print("\n")
-        
 
-            if self.R_type == None:
-                print("Computing linear and quadratic coupling")
-            if self.R_type == 'R1':
-                print("Computing ONLY linear coupling")
-            if self.R_type == 'R2':
-                print("Computing ONLY quadratic coupling")
+        # Initialize spin density
+
+        self.init_occ = np.zeros(self.hdim, dtype=np.complex128)
+        self.rho0 = np.zeros([self.hdim**2], dtype=np.complex128)
+        self.rho0 = self.init_rho()
 
         init_Vq = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors,self.rot_mat,self.file_reader,self.save_file)
 
@@ -142,48 +139,96 @@ class spin_phonon:
         self.R1 = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
         self.R2 = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
-        if self.R_type in (None, 'R1'):
+        if rank == 0:
+            print("Initializing R1 tensor (Linear coupling)")
 
-            if rank == 0:
-                print("Initializing R1 tensor (Linear coupling)")
+        timer_R1 = time.perf_counter()
+        self.R1 = self.init_R.R1_tensor(init_Vq)
+        hours_R1, minutes_R1, seconds_R1 = self.timer(timer_R1)
 
-            timer_R1 = time.perf_counter()
-            self.R1 = self.init_R.R1_tensor(init_Vq)
-            hours_R1, minutes_R1, seconds_R1 = self.timer(timer_R1)
+        if rank == 0:
             R1_mat = self.R1.reshape((self.hdim**2, self.hdim**2)) #Transform into matrix form
 
             eigenvalues, eigenvectors = np.linalg.eig(R1_mat)
+            print("Eigenvalues of the R1 matrix")
+            print(eigenvalues)
+            print("\n")
+            
+            self.tf = tf  # Total time
+            self.dt = dt  # Time step
+            self.tlist = np.linspace(0, self.tf, int(self.tf / self.dt))
+            self.tsteps = len(self.tlist)
 
-            if rank == 0:
-                print("Eigenvalues of the R1 matrix")
-                print(eigenvalues)
-                print("\n")
-                
+            self.drho_dt = self.time_evolution(eigenvalues, eigenvectors)
+
+            self.rho_t = np.zeros([self.hdim, self.hdim, self.tsteps], dtype=np.complex128)
+
+            self.rho_t = self.drho_dt.reshape(self.tsteps, self.hdim, self.hdim).transpose(2, 1, 0)
+
+
+            self.Mz = np.zeros([self.tsteps], dtype=np.complex128)
+
+            measuring = measure.measure(self.rho_t, self.S_operator,self.tlist, self.pol,self.init_type)
+
+            self.Mz = measuring.Mz
+            self.T1 = measuring.T1
+            self.T1_err = measuring.T1_err
         
-        if self.R_type in (None, 'R2'):
-            if rank == 0:
-                print("Initializing R2 tensor (Quadratic coupling)")
+            print("Linear coupling T1")
+            print("T1 = ", self.T1,"s")
+            print("T1_err = ", self.T1_err,"s")
+            if self.T1 == 1 or self.T1_err == 0:
+                print("Warning: T1 likely fitting failed!!! Please check M(t) data")
+            if self.T1 < self.T1_err:
+                print("Warning: T1_err is larger than T1!!! Fitting likely failed!!!")
+            print("\n")
 
-            timer_R2 = time.perf_counter()
-            self.R2 = self.init_R.R2_tensor(init_Vq)
+
+
+        if rank == 0:
+            print("Initializing R2 tensor (Quadratic coupling)")
+
+        timer_R2 = time.perf_counter()
+        self.R2 = self.init_R.R2_tensor(init_Vq)
+        hours_R2, minutes_R2, seconds_R2 = self.timer(timer_R2)        
+
+        if rank == 0:
             R2_mat = self.R2.reshape((self.hdim**2, self.hdim**2)) #Transform into matrix form
+
             eigenvalues, eigenvectors = np.linalg.eig(R2_mat)
+            print("Eigenvalues of the R2 matrix")
+            print(eigenvalues)
+            print("\n")
+    
+            
+            self.tf = tf  # Total time
+            self.dt = dt  # Time step
+            self.tlist = np.linspace(0, self.tf, int(self.tf / self.dt))
+            self.tsteps = len(self.tlist)
 
-            hours_R2, minutes_R2, seconds_R2 = self.timer(timer_R2)        
+            self.drho_dt = self.time_evolution(eigenvalues, eigenvectors)
+            self.rho_t = np.zeros([self.hdim, self.hdim, self.tsteps], dtype=np.complex128)
+            self.rho_t = self.drho_dt.reshape(self.tsteps, self.hdim, self.hdim).transpose(2, 1, 0)
 
-            if rank == 0:
-                print("Eigenvalues of the R2 matrix")
-                print(eigenvalues)
-                print("\n")
+            self.Mz = np.zeros([self.tsteps], dtype=np.complex128)
 
-        if self.R_type == None:
-            self.R = self.R1 + self.R2
+            measuring = measure.measure(self.rho_t, self.S_operator,self.tlist, self.pol,self.init_type)
 
-        if self.R_type == 'R1':
-            self.R = self.R1
+            self.Mz = measuring.Mz
+            self.T1 = measuring.T1
+            self.T1_err = measuring.T1_err
+        
+            print("Quadratic coupling T1")
+            print("T1 = ", self.T1,"s")
+            print("T1_err = ", self.T1_err,"s")
+            if self.T1 == 1 or self.T1_err == 0:
+                print("Warning: T1 likely fitting failed!!! Please check M(t) data")
+            if self.T1 < self.T1_err:
+                print("Warning: T1_err is larger than T1!!! Fitting likely failed!!!")
+            print("\n")
 
-        if self.R_type == 'R2':
-            self.R = self.R2
+
+        self.R = self.R1 + self.R2
             
         self.R_mat = np.zeros((self.hdim**2, self.hdim**2), dtype=np.complex128)
         self.R_mat = self.R.reshape((self.hdim**2, self.hdim**2))
@@ -196,18 +241,8 @@ class spin_phonon:
             print(eigenvalues)
             print("\n")
 
-        
-
-        # Initialize spin density
-
-        self.init_occ = np.zeros(self.hdim, dtype=np.complex128)
-        self.rho0 = np.zeros([self.hdim**2], dtype=np.complex128)
-        self.rho0 = self.init_rho()
-
         # Time evolution and measurement
         if rank == 0:
-            print("Start time evolution")
-            print("\n")
         
             timer_evol = time.perf_counter()
             
@@ -216,7 +251,7 @@ class spin_phonon:
             self.tlist = np.linspace(0, self.tf, int(self.tf / self.dt))
             self.tsteps = len(self.tlist)
 
-            self.drho_dt = self.time_evolution()
+            self.drho_dt = self.time_evolution(eigenvalues, eigenvectors)
 
             self.rho_t = np.zeros([self.hdim, self.hdim, self.tsteps], dtype=np.complex128)
 
@@ -237,7 +272,7 @@ class spin_phonon:
 
             hours_measure, minutes_measure, seconds_measure = self.timer(timer_measure)
         
-            print("T1 from magnetization decay")
+            print("Total T1 from magnetization decay")
             print("T1 = ", self.T1,"s")
             print("T1_err = ", self.T1_err,"s")
             if self.T1 == 1 or self.T1_err == 0:
@@ -254,11 +289,8 @@ class spin_phonon:
         if rank == 0:
             hours, minutes, seconds = self.timer(init_time)
             print(f"Initiate simulation: {hours_input}h {minutes_input}m {seconds_input:.2f}s")
-
-            if self.R_type in (None, 'R1'):
-                print(f"Build R1: {hours_R1}h {minutes_R1}m {seconds_R1:.2f}s")
-            if self.R_type in (None, 'R2'):
-                print(f"Build R2: {hours_R2}h {minutes_R2}m {seconds_R2:.2f}s")
+            print(f"Build R1: {hours_R1}h {minutes_R1}m {seconds_R1:.2f}s")
+            print(f"Build R2: {hours_R2}h {minutes_R2}m {seconds_R2:.2f}s")
             print(f"Time evolution: {hours_evol}h {minutes_evol}m {seconds_evol:.2f}s")
             print(f"Measuring Time: {hours_measure}h {minutes_measure}m {seconds_measure:.2f}s")
             print(f"Total Run Time: {hours}h {minutes}m {seconds:.2f}s")
@@ -342,7 +374,7 @@ class spin_phonon:
 
         return rho0.flatten()
 
-    def time_evolution(self):
+    def time_evolution(self,eigenvalues, eigenvectors):
         """
         Time evolution using propagator method
         """
@@ -351,9 +383,6 @@ class spin_phonon:
         hdim = len(self.rho0)
         rho = np.zeros((nsteps, hdim), dtype=np.complex128)
         rho[0] = self.rho0.copy()  # Initial state
-        
-        # Diagonalize the Redfield matrix R
-        eigenvalues, eigenvectors = np.linalg.eig(self.R_mat)
         
         # Compute inverse of eigenvector matrix (V^{-1} in the equation)
         V_inv = np.linalg.inv(eigenvectors)

@@ -72,8 +72,7 @@ def main():
         dt=params["dt"],
         file_reader=file_reader,
         save_file=params["save_file"],
-        init_type=params["init_type"],
-        R_type=params["R_type"]
+        init_type=params["init_type"]
     )
 
     if rank == 0:

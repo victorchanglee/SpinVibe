@@ -87,7 +87,9 @@ An example is included in the test directory. To run the example just run
 spinvibe input.json
 ```
 
-The expected output for a serial run is in test.out
+The expected output for a serial run is in test.out.
+
+Additionally, a Jupyter Notebook Ttutorial is included inside the test directory.
 
 ## Contributing and Support
 

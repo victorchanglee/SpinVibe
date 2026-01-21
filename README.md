@@ -40,8 +40,8 @@ The code was written using the following Python Libraries:
 - python                    3.9.21
 - numpy                     1.26.4
 - scipy                     1.13.1
-- mpi4py                    4.0.2
 - h5py                      3.12.1
+- mpi4py                    4.0.2 (optional for MPI parallelization)
 
 ## SpinVibe Installation Guide
 

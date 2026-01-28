@@ -107,9 +107,11 @@ class Redfield:
          print(f"Number of tasks per process: {len(all_tasks)}")
 
       self.dH_dq = np.zeros((self.Nq,self.Nomega,self.hdim,self.hdim), dtype=np.complex128)
+      dH_local = np.zeros((self.Nq,self.Nomega,self.hdim,self.hdim), dtype=np.complex128)
 
       # Initialize local contribution
       R1_local = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
+
 
       # Process assigned (q, alpha) pairs
       for q, alpha in all_tasks:
@@ -117,7 +119,7 @@ class Redfield:
          R1_qa = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
          V_alpha = init_Vq.compute_V_alpha_q(q, alpha)
 
-         self.dH_dq[q,alpha,:,:] = V_alpha
+         dH_local[q,alpha,:,:] = V_alpha
          #V_alpha = V_alpha * cm2J
          #working in cm-1
          # Loop over tensor indices
@@ -164,9 +166,11 @@ class Redfield:
       if mpi_on:
          R1_tensor = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
          comm.Allreduce(R1_local, R1_tensor, op=MPI.SUM)
+         comm.Reduce(dH_local, self.dH_dq, op=MPI.SUM, root=0)
       else:
          # In serial mode, local result is the final result
          R1_tensor = R1_local
+         self.dH_dq = dH_local
 
       return R1_tensor
    
@@ -202,13 +206,15 @@ class Redfield:
       
       self.d2H_dqdq = np.zeros((self.Nq,self.Nq,self.Nomega,self.Nomega,self.hdim,self.hdim),dtype=np.complex128)
 
+      d2H_local = np.zeros((self.Nq,self.Nq,self.Nomega,self.Nomega,self.hdim,self.hdim),dtype=np.complex128)
+
       R2_local = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
       for q1, q2, alpha, beta in all_tasks:
          # Get V matrix for this (alpha, beta) pair
          V_alpha_beta = init_Vq.compute_V_alpha_beta_q(q1, q2, alpha, beta)
          
-         self.d2H_dqdq[q1,q2,alpha,beta,:,:] = V_alpha_beta
+         d2H_local[q1,q2,alpha,beta,:,:] = V_alpha_beta
          
          # Get the frequencies omega_alpha and omega_beta
          omega_a = omega_alpha[q1, alpha]  
@@ -264,9 +270,11 @@ class Redfield:
       if mpi_on:
          R2_tensor = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
          comm.Allreduce(R2_local, R2_tensor, op=MPI.SUM)
+         comm.Reduce(d2H_local, self.d2H_dqdq, op=MPI.SUM, root=0)
       else:
          # In serial mode, local result is the final result
          R2_tensor = R2_local
+         self.d2H_dqdq = d2H_local
       
       return R2_tensor
 

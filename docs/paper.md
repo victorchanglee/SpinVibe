@@ -227,7 +227,7 @@ V. C. L. thanks L. A. Mariano and A. Lunghi for the helpful discussions.
 
 [12] Lunghi Group. (2024). MolForge (v1.0.3‑T4) [Software]. Zenodo. https://doi.org/10.5281/zenodo.14050193
 
-[13] Chilton Group. (2026). spin‑phonon‑suite (Version 1.14.1) [Computer software]. https://pypi.org/project/spin‑phonon‑suite/
+[13] Chilton Group. (2026). spin‑phonon‑suite (Version 1.14.1) [Computer software]. https://pypi.org/project/spin-phonon-suite/
 
 [14] A. Lunghi, *Toward exact predictions of spin-phonon relaxation times: An ab initio implementation of open quantum systems theory*,  
 **Sci. Adv.** 8, eabn7880 (2022). https://doi.org/10.1126/sciadv.abn7880

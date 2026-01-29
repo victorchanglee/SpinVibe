@@ -93,19 +93,19 @@ long-lived spin states.
 
 To this end, we developed `SpinVibe`, a Python package that is designed
 to be user-friendly, providing streamlined workflows that are readily
-adapted to any *ab initio* code. While several software packages such as
-MolForge [12] and Spin-phonon suite [13] have been developed to address 
-this problem, the objective of our work is to present a code that is designed 
-to emphasize user flexibility by using a Python based framework and allowing 
-the storage of the required data from first-principles calculations as `NumPy` arrays in
-HDF5 files, thus is not restricted to specific codes. Any ab-initio
-package can be used to generate the input data, provided that the
-relevant quantities are extracted and saved in this format.
+adapted to any *ab initio* code. Although the software packages MolForge [12] 
+and Spin-phonon suite [13] have been developed to address this problem, 
+SpinVibe is intentionally designed for user flexibility and increased interoperability. 
+Our code uses a Python based framework, allowing the storage of the required data from 
+first-principles calculations as `NumPy` arrays in HDF5 files, and is not restricted to 
+specific code bases and file formats for the electronic structure and vibrational data. 
+Any ab-initio package can be used to generate the input data, provided that the relevant 
+quantities are extracted and saved in this format.
 
 # First principles spin-phonon coupling 
 
 Our code implements the theoretical framework developed by Lunghi and
-Sanvito [8,12,13], where in the
+Sanvito [8,14,15], where in the
 weak-coupling regime the interaction between the spin Hamiltonian and
 the phonons is expanded as a Taylor series truncated at the quadratic
 term:
@@ -225,8 +225,12 @@ V. C. L. thanks L. A. Mariano and A. Lunghi for the helpful discussions.
 [11] L. Baldinelli *et al.*, *Design Rules to Engineer the Spin Structure of Cr⁴⁺ Molecular Qubits via Matrix Modularity*,  
 **J. Am. Chem. Soc.** 147, 20693–20702 (2025). https://doi.org/10.1021/jacs.5c04004
 
-[12] A. Lunghi, *Toward exact predictions of spin-phonon relaxation times: An ab initio implementation of open quantum systems theory*,  
+[12] Lunghi Group. (2024). MolForge (v1.0.3‑T4) [Software]. Zenodo. https://doi.org/10.5281/zenodo.14050193
+
+[13] Chilton Group. (2026). spin‑phonon‑suite (Version 1.14.1) [Computer software]. https://pypi.org/project/spin‑phonon‑suite/
+
+[14] A. Lunghi, *Toward exact predictions of spin-phonon relaxation times: An ab initio implementation of open quantum systems theory*,  
 **Sci. Adv.** 8, eabn7880 (2022). https://doi.org/10.1126/sciadv.abn7880
 
-[13] A. Lunghi, *Spin-Phonon Relaxation in Magnetic Molecules: Theory, Predictions and Insights*,  
+[15] A. Lunghi, *Spin-Phonon Relaxation in Magnetic Molecules: Theory, Predictions and Insights*,  
 in **Computational Modelling of Molecular Nanomagnets**, ed. G. Rajaraman, Springer (2023), pp. 219–289. https://doi.org/10.1007/978-3-031-31038-6_6

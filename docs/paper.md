@@ -89,13 +89,16 @@ coupling enables a microscopic understanding of the relaxation
 mechanisms in molecular qubits. Such an approach represents a powerful
 tool for the rational design of next-generation molecular qubits, with
 the potential to accelerate the discovery of systems that exhibit
-long-lived spin states.
+long-lived spin states. 
 
 To this end, we developed `SpinVibe`, a Python package that is designed
 to be user-friendly, providing streamlined workflows that are readily
-adapted to any *ab initio* code. Since it only requires the storage of
-minimal data from first-principles calculations as `NumPy` arrays in
-HDF5 files, it is not restricted to specific codes. Any ab-initio
+adapted to any *ab initio* code. While several software packages such as
+MolForge [12] and Spin-phonon suite [13] have been developed to address 
+this problem, the objective of our work is to present a code that is designed 
+to emphasize user flexibility by using a Python based framework and allowing 
+the storage of the required data from first-principles calculations as `NumPy` arrays in
+HDF5 files, thus is not restricted to specific codes. Any ab-initio
 package can be used to generate the input data, provided that the
 relevant quantities are extracted and saved in this format.
 

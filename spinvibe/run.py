@@ -46,18 +46,15 @@ def main():
     if rank == 0:
         print("Initializing input files...")
         for key in [
-            "spin_file", "phonon_file", "d1_file",
-            "d2_file", "g2_file", "atoms_file",
-            "indices_file", "mol_mass"
+            "spin_file", "phonon_file", "derivatives_file",
+             "atoms_file", "indices_file"
         ]:
             print(f"  {key}: {params[key]}")
 
     # Create file reader
     file_reader = read_files.Read_files(
-        params["spin_file"], params["phonon_file"], params["d1_file"],
-        params["d2_file"], params["g2_file"],
-        params["atoms_file"], params["indices_file"],
-        params["mol_mass"], disp1, disp2
+        params["spin_file"], params["phonon_file"], params["derivatives_file"],
+        params["atoms_file"], params["indices_file"]
     )
 
     # Run simulation
@@ -66,6 +63,8 @@ def main():
         S=params["S"],
         Delta_alpha_q=params["Delta_alpha_q"],
         rot_mat=rot_mat,
+        disp1=disp1,
+        disp2=disp2,
         pol=pol,
         T=params["T"],
         tf=params["tf"],

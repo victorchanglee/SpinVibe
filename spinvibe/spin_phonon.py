@@ -15,7 +15,7 @@ except ImportError:
     MPI = None
 
 class spin_phonon:
-    def __init__(self, B, S, Delta_alpha_q, rot_mat, pol, T, tf, dt, file_reader,save_file,init_type='polarized'):
+    def __init__(self, B, S, Delta_alpha_q, rot_mat, disp1, disp2, pol, T, tf, dt, file_reader,save_file,init_type='polarized'):
         
         # Get MPI info if available, otherwise use serial mode
         if mpi_on:
@@ -43,6 +43,8 @@ class spin_phonon:
         self.Delta_alpha_q = Delta_alpha_q  # Broadening parameter
         self.S = S  # Spin quantum number 
         self.rot_mat = rot_mat
+        self.disp1 = disp1  # Displacements for linear coupling
+        self.disp2 = disp2  # Displacements for quadratic coupling
         self.pol = pol  # Polarization vector
         self.T = T  # Temperature in Kelvin
         self.init_type = init_type
@@ -70,8 +72,8 @@ class spin_phonon:
 
         self.file_reader = file_reader
         self.q_vector, self.omega_q, self.L_vectors = self.file_reader.read_phonons()
-        self.reciprocal_vectors = self.file_reader.read_atoms() 
-        self.R_vectors = np.zeros(3)
+        self.R_vectors,self.reciprocal_vectors, self.masses = self.file_reader.read_atoms() 
+
         self.q_vector = self.q_vector @ self.reciprocal_vectors # Convert q vectors to A^-1
 
         self.N_atoms = len(self.q_vector)/3  # Number of atoms
@@ -101,7 +103,7 @@ class spin_phonon:
             print("Spin Hamiltonian")
             print(self.Hs)
             print("\n")
-            print("Eigenvalues of the spin Hamiltonian")
+            print("Eigenvalues of the spin Hamiltonian (cm-1)")
             print(self.eigenvalues)
             print("\n")
 
@@ -126,7 +128,7 @@ class spin_phonon:
         self.rho0 = np.zeros([self.hdim**2], dtype=np.complex128)
         self.rho0 = self.init_rho()
 
-        init_Vq = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors,self.rot_mat,self.file_reader,self.save_file)
+        init_Vq = coupling.coupling(self.B, self.S, self.T, self.eigenvectors,self.q_vector, self.omega_q, self.R_vectors, self.L_vectors,self.masses,self.rot_mat,self.disp1,self.disp2,self.file_reader,self.save_file)
 
         #Initialize Redfield superoperator
 

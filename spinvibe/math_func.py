@@ -68,7 +68,7 @@ def finite_difference(f_plus, f_minus, delta):
     """
     return (f_plus - f_minus) / (2 * delta)
 
-def compute_derivative(x,fx,displacement=0.0,degree=3):
+def compute_derivative(x,fx,displacement=0.0,degree=2):
     """
     Compute the derivative of f_x with reespect to x by polynomial fitting
 
@@ -87,7 +87,7 @@ def compute_derivative(x,fx,displacement=0.0,degree=3):
     return dfdx
 
 
-def compute_second_derivative(x, fx, poly_degree=3):
+def compute_second_derivative(x, fx, poly_degree=2):
     """
     Fit a 2D polynomial to the function values and compute the mixed second derivative at (0, 0).
     

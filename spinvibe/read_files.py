@@ -4,17 +4,13 @@ import numpy as np
 from . import math_func
 
 class Read_files:
-    def __init__(self, spin_file, phonon_file, d1_file, d2_file, g2_file, atoms_file, indices_file, mol_mass, disp1, disp2):
+    def __init__(self, spin_file, phonon_file, derivatives_file, atoms_file, indices_file):
         self.spin_file = spin_file
         self.phonon_file = phonon_file
-        self.d1_file = d1_file
-        self.d2_file = d2_file
-        self.g2_file = g2_file
+        self.derivative_file = derivatives_file
         self.atoms_file = atoms_file
         self.indices_file = indices_file
-        self.mol_mass = mol_mass
-        self.disp1 = disp1
-        self.disp2 = disp2
+
 
     def read_spin(self):
         with h5py.File(self.spin_file, 'r') as f:
@@ -35,39 +31,29 @@ class Read_files:
                 
         return q_points, omega_q, eigenvectors
 
-    def read_d1(self):
+    def read_derivatives(self):
 
-        with h5py.File(self.d1_file, 'r') as f:
-            D_d1 = f['d_tensor'][:]
-            G_d1 = f['g_matrix'][:]
-        
-        disp1 = self.disp1
-
-        return D_d1, G_d1, disp1
-
-    def read_d2(self):
+        with h5py.File(self.derivative_file, 'r') as f:
+            D_d1 = f['d1'][:]
+            G_d1 = f['g1'][:]
+            D_d2 = f['d2'][:]
+            G_d2 = f['g2'][:]
 
 
-        disp = self.disp2
-        disp2 = np.stack([disp, disp], axis=0)
+        return D_d1, G_d1, D_d2, G_d2
 
-
-        with h5py.File(self.d2_file, 'r') as f:
-            D_d2 = f['d_tensor'][:]
-
-        with h5py.File(self.g2_file, 'r') as f:
-            G_d2 = f['g_tensor'][:]
-    
-        return D_d2, G_d2, disp2
 
     def read_atoms(self):
 
 
         with h5py.File(self.atoms_file, 'r') as f:
-            R_vectors = f['lattice_vectors'][:]
+            R_vectors = f['positions'][:]
             reciprocal_vectors = f['reciprocal_vectors'][:]
-
-        return R_vectors, reciprocal_vectors
+            masses = f['masses'][:]
+        
+        masses = masses*(1E-3/avogadro) #masses in kg
+            
+        return R_vectors, reciprocal_vectors, masses
 
     def read_indices(self):
 
@@ -77,12 +63,3 @@ class Read_files:
 
         return indices
 
-    def read_mol_masses(self):
-
-
-        with h5py.File(self.mol_mass, 'r') as f:
-            masses = f['atomic_masses'][:]
-
-        masses = masses*(1E-3/avogadro) #masses in kg
-        masses = np.concatenate(([masses[-1]], masses[:-1]))
-        return masses

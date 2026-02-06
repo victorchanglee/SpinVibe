@@ -43,9 +43,6 @@ class Redfield:
          float: Value of G^{1-ph}.
       """
 
-      #cm-1 to rad/s conversion
-      omega_alpha_q = omega_alpha_q 
-      omega_ij =  omega_ij 
       Delta_alpha_q = self.Delta_alpha_q 
 
       delta_emission = math_func.lorentzian((omega_ij - omega_alpha_q), Delta_alpha_q)
@@ -59,10 +56,6 @@ class Redfield:
 
    def G_2ph(self, omega_ij, omega_alpha_q, omega_beta_qp):
 
-      #cm-1 to rad/s conversion
-      omega_alpha_q = omega_alpha_q
-      omega_beta_qp = omega_beta_qp 
-      omega_ij = omega_ij 
       Delta = self.Delta_alpha_q
       
       n_alpha = math_func.bose_einstein(omega_alpha_q, self.T)
@@ -186,7 +179,7 @@ class Redfield:
          size = 1
       
       omega_alpha = self.omega_q
-      prefactor = -1 / (8 * hbar**2  * c_cms) #in cm-1
+      prefactor = - 1 / (8 * hbar**2  * c_cms) #in cm-1
       
       # Build full list of tasks 
       all_tasks = []

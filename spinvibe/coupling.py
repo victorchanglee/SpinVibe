@@ -13,7 +13,7 @@ except ImportError:
     MPI = None
 
 class coupling:
-    def __init__(self, B, S, T, eigenvectors, q_vector, omega_q, R_vectors, L_vectors,rot_mat, file_reader,save_file):
+    def __init__(self, B, S, T, eigenvectors, q_vector, omega_q, R_vectors, L_vectors,masses, rot_mat, disp1, disp2, file_reader,save_file):
 
         # Get MPI info if available, otherwise use serial mode
         if mpi_on:
@@ -34,16 +34,20 @@ class coupling:
         self.eigenvectors = eigenvectors # Eigenvectors of the spin Hamiltonian
         self.indices = self.file_reader.read_indices() # Mapping of the molecule indices in the crystal
         self.N = len(self.indices) # Number of atoms in the molecule
-        self.masses = self.file_reader.read_mol_masses() # Atomic mass of the molecule
+        self.masses = masses[self.indices] # Atomic mass of the molecule
+
         self.q_vector = q_vector # Phonon mode index and wave vector q 
         self.omega_q = omega_q # Phonon frequencies in cm-1
         self.Nq = L_vectors.shape[0] # Number of q points
         self.Nomega = L_vectors.shape[1] # Number of phonons at q 
-        self.L_vectors = L_vectors # Phonon eigenvectors
-        self.R_vectors = R_vectors # Lattice vectors
+
+        self.R_vectors_mol = np.zeros((self.N, 3), dtype=np.complex128)
+        self.R_vectors_mol = R_vectors[self.indices,:] # Lattice vectors
         self.L_vectors_mol = np.zeros((self.Nq, self.Nomega, self.N, 3), dtype=np.complex128) # Eigenvectors of the molecule in the crystal
         self.L_vectors_mol = L_vectors[:,:,self.indices,:] 
         self.rot_mat = rot_mat # Rotational matrix for hte molecule to match the coordinates in the crystal
+        self.disp1 = disp1
+        self.disp2 = np.stack([disp2,disp2], axis=0) # Displacements for finite difference
         
         d_tensor, g_tensor = self.file_reader.read_spin() # g-matrix and ZFS D-tensor
 
@@ -51,18 +55,16 @@ class coupling:
         self.g_tensor = self.rot_mat @ g_tensor @ self.rot_mat.T
         self.d_tensor = self.rot_mat @ d_tensor @ self.rot_mat.T
 
-        self.dH_dx = np.zeros((self.N,3,self.hdim,self.hdim), dtype=np.complex128)
-
         #Read linear displacement g-matrix and ZFS D-tensor
-        D_d1, G_d1,self.disp1 = self.file_reader.read_d1()
+        D_d1, G_d1, D_d2, G_d2 = self.file_reader.read_derivatives()
+
         self.G_d1 = self.rot_mat @ G_d1 @ self.rot_mat
         self.D_d1 = self.rot_mat @ D_d1 @ self.rot_mat
-        self.compute_dH_dx() #Compute dH/dx
-
-        #Read quadratic displacement g-matrix and ZFS D-tensor
-        D_d2, G_d2, self.disp2 = self.file_reader.read_d2()
         self.G_d2 = self.rot_mat @ G_d2 @ self.rot_mat
         self.D_d2 = self.rot_mat @ D_d2 @ self.rot_mat
+
+        self.dH_dx = np.zeros((self.N,3,self.hdim,self.hdim), dtype=np.complex128)
+        self.compute_dH_dx() #Compute dH/dx
 
         self.dH2_dxdx = np.zeros((self.N,self.N,3,3,self.hdim,self.hdim), dtype=np.complex128)
         self.compute_d2H_dxdx() #Compute d2H/dxdx'
@@ -95,7 +97,7 @@ class coupling:
                         #Pass matrix entries as a function of the atomic displacement to compute the derivatives
                         dg[i,atom,j,k] = math_func.compute_derivative(self.disp1, g_x)
                         dd[i,atom,j,k] = math_func.compute_derivative(self.disp1, d_x)
-
+                            
         #Compute the derivative of the Hamiltonian
         for n in range( self.N):
             for i in range(3):
@@ -149,17 +151,19 @@ class coupling:
         # Initialize local temporary array
         tmp = np.zeros((self.N,3), dtype=np.complex128)
 
-        exp = 1.0
+         # Phase factor from the lattice vectors
 
         for atom in range(self.N):
-            freq = 2 * np.pi * self.omega_q[q, omega] * c_cms # Convert to radian/s
+            freq = 2 * np.pi * self.omega_q[q,omega] * c_cms # Convert to radian/s
 
             if freq <= 0:
                 prefactor = 0.0
             else:
                 prefactor = np.sqrt(hbar_SI / (self.Nq * freq * self.masses[atom])) 
                 prefactor *= 1E10  # Convert to A units
-            
+
+            exp = np.exp(1j * np.dot(self.q_vector[q,:], self.R_vectors_mol[atom,:]))
+
             tmp[atom] = prefactor * exp * self.L_vectors_mol[q, omega, atom]
 
         coupling = np.einsum('il,ilab -> ab', tmp, self.dH_dx,optimize=True)
@@ -185,8 +189,6 @@ class coupling:
                 else:
                     self.prefactor[nq, nomega, :] = base_factor / np.sqrt(w_val * self.masses)  
                     self.prefactor[nq, nomega, :] *= 1E10  # Convert to A units
-        
-        self.exp = np.zeros((self.Nq,3), dtype=np.complex128)
 
         i_indices = np.arange(self.N)
         self.valid_i = np.repeat(i_indices, self.N-1)
@@ -197,12 +199,17 @@ class coupling:
 
     def compute_V_alpha_beta_q(self, Nq1, Nq2, Nomega1, Nomega2):
 
-        prefactor1 = self.prefactor[Nq1, Nomega1, :]  
-        prefactor2 = self.prefactor[Nq2, Nomega2, :]  
-        #exp1 = self.exp[Nq1, :]  
-        #exp2 = self.exp[Nq2, :]
-        exp1 = 1.0
-        exp2 = 1.0
+        
+
+        q1_dot_R1 = np.dot(self.R_vectors_mol, self.q_vector[Nq1,:])
+        q2_dot_R2 = np.dot(self.R_vectors_mol, self.q_vector[Nq2,:])
+
+        exp1 = np.exp(1j * q1_dot_R1)
+        exp2 = np.exp(1j * q2_dot_R2)
+
+        prefactor1 = self.prefactor[Nq1, Nomega1, :]  * exp1
+        prefactor2 = self.prefactor[Nq2, Nomega2, :]  * exp2
+
         L1 = self.L_vectors_mol[Nq1, Nomega1, :, :] 
         L2 = self.L_vectors_mol[Nq2, Nomega2, :, :]  
     

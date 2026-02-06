@@ -6,7 +6,7 @@ Initializing input files...
   derivatives_file: Cr_otolyl_4_derivatives.h5
   atoms_file: Sn_otolyl_4_atoms.h5
   indices_file: molecule_indices.h5
-2026-02-06 16:43:56
+2026-02-06 17:14:06
 ---------------------------------------
 |Start Spin-phonon coupling simulation|
 ---------------------------------------
@@ -53,66 +53,66 @@ Initial spin population:
 Initializing R1 tensor (Linear coupling)
 Number of tasks per process: 342
 Eigenvalues of the R1 matrix
-[-1.75915077e+05-1.89378343e-12j -1.34748933e+05-1.28321946e-13j
-  6.36826375e-11-4.46314275e-12j -1.24140567e+04+3.77528387e-12j
- -8.24081160e+04-4.93846524e-13j -7.43723227e+04+6.75541614e-12j
- -3.66032941e+04+3.77456874e-12j -4.67857712e+04-9.66671551e-14j
- -4.60974657e+04-1.77253873e-12j]
+[-1.71887308e+11+4.00583665e-06j -1.35665171e+11+1.62088590e-07j
+  4.30592887e-05+1.06517612e-06j -7.91102923e+10+4.40895954e-07j
+ -7.32150390e+10+1.51466501e-06j -1.17020723e+10-2.50599902e-06j
+ -3.28999927e+10-1.61538728e-06j -4.18243722e+10+7.61222767e-07j
+ -3.92098324e+10+1.43533640e-06j]
 
 
-Equilibrium M_parallel: 0.42256989463302125
+Equilibrium M_parallel: 0.018647543890898687
 Initial Magnetization: 1.0000
-Fitted Equilibrium Magnetization: 0.4226
+Fitted Equilibrium Magnetization: 0.0186
 R² = 1.0000
 Linear coupling T1
-T1 =  1.0787375495404788e-05 s
-T1_err =  5.189824846511381e-09 s
+T1 =  1.4329807668094683e-09 s
+T1_err =  6.798365068079218e-13 s
 
 
 Initializing R2 tensor (Quadratic coupling)
 Number of tasks per process: 58653
 Eigenvalues of the R2 matrix
-[-1.87086610e+07-4.42922681e-10j -1.62243583e+07+2.89798715e-10j
-  8.55466878e-08+1.90780424e-10j -1.19933279e+07-2.37100493e-11j
- -1.05264923e+07-7.14386841e-10j -7.04627424e+06+4.40799683e-10j
- -5.39641063e+06-5.24871037e-10j -2.56786530e+06+3.26115210e-10j
- -3.04158754e+06+8.00467799e-11j]
+[-1.97547497e+13+2.13811216e-04j -1.79534633e+13-3.27175915e-04j
+  5.29367771e-02+5.62457642e-05j -1.29908460e+13+6.70329449e-04j
+ -1.13375476e+13-1.47039607e-04j -9.30142823e+11-3.64716282e-04j
+ -3.48176465e+12+3.85614919e-04j -7.51781351e+12+5.36146415e-04j
+ -6.56733009e+12-5.65452287e-04j]
 
 
-Equilibrium M_parallel: 0.00021314276486854614
+Equilibrium M_parallel: 0.00026232695818716764
 Initial Magnetization: 1.0000
-Fitted Equilibrium Magnetization: 0.0002
-R² = 0.9991
+Fitted Equilibrium Magnetization: 0.0003
+R² = 1.0000
 Quadratic coupling T1
-T1 =  9.623115451655431e-08 s
-T1_err =  1.8318571011326223e-10 s
+T1 =  1.428236210632704e-09 s
+T1_err =  6.643903086522237e-13 s
 
 
 Eigenvalues of the Redfield matrix
-[-1.87560879e+07+9.25726996e-11j -1.62571162e+07+2.56232530e-10j
-  8.62806240e-08+2.29245934e-10j -1.21303733e+07-9.41431678e-11j
- -1.06244493e+07+8.31335170e-11j -7.16633005e+06+9.96063456e-10j
- -5.48804195e+06+3.59420929e-10j -2.60646703e+06-3.92915531e-10j
- -3.08545655e+06-2.19937996e-10j]
+[-1.98644236e+13+2.12502514e-04j -1.80593059e+13-3.98258915e-04j
+  4.89604400e-02-1.39207481e-04j -1.30979087e+13+2.53129658e-04j
+ -1.13605653e+13-3.80404526e-04j -9.67926159e+11-8.34804704e-04j
+ -3.55717057e+12+1.64266387e-04j -7.59365576e+12-1.81901116e-05j
+ -6.61821571e+12-5.68017197e-04j]
 
 
-Equilibrium M_parallel: 0.0003656070713202197
+Equilibrium M_parallel: 0.00040111605639797475
 Initial Magnetization: 1.0000
 Fitted Equilibrium Magnetization: 0.0004
-R² = 0.9992
+R² = 1.0000
 Total T1 from magnetization decay
-T1 =  9.532040893890932e-08 s
-T1_err =  1.7535741520934423e-10 s
+T1 =  1.4306212807742467e-09 s
+T1_err =  6.721236162651919e-13 s
 
 
 Saving data
 Data has been saved to Spin_phonon_20K_1.0.h5
 
 
-Initiate simulation: 0h 0m 30.24s
-Build R1: 0h 0m 0.67s
-Build R2: 0h 1m 55.09s
+Initiate simulation: 0h 0m 31.74s
+Build R1: 0h 0m 0.68s
+Build R2: 0h 1m 53.56s
 Time evolution: 0h 0m 0.01s
 Measuring Time: 0h 0m 0.02s
-Total Run Time: 0h 2m 26.10s
+Total Run Time: 0h 2m 26.12s
 Job completed. Results saved to Spin_phonon_20K_1.0.h5

@@ -3,13 +3,10 @@ Running with MPI on rank 0
 Initializing input files...
   spin_file: Cr_otolyl_4.h5
   phonon_file: phonon.h5
-  d1_file: Cr_otolyl_4_d1.h5
-  d2_file: d_16.h5
-  g2_file: g_16.h5
+  derivatives_file: Cr_otolyl_4_derivatives.h5
   atoms_file: Sn_otolyl_4_atoms.h5
   indices_file: molecule_indices.h5
-  mol_mass: mol_mass.h5
-2026-01-21 16:24:25
+2026-02-06 16:43:56
 ---------------------------------------
 |Start Spin-phonon coupling simulation|
 ---------------------------------------
@@ -20,7 +17,7 @@ Input Parameters
 Magnetic field: [0.   0.   0.41]
 S: 1
 T: 20.0
-Broadening: 1.0
+Broadening: 1
 Population type: pure
 Polarization: [0 0 1]
 Rotational matrix:
@@ -38,7 +35,7 @@ Spin Hamiltonian
    3.95478874e-01+0.00000000e+00j]]
 
 
-Eigenvalues of the spin Hamiltonian
+Eigenvalues of the spin Hamiltonian (cm-1)
 [-0.36481853 -0.03410225  0.39892077]
 
 
@@ -56,66 +53,66 @@ Initial spin population:
 Initializing R1 tensor (Linear coupling)
 Number of tasks per process: 342
 Eigenvalues of the R1 matrix
-[-4.32928403e+05+8.87601118e-12j -3.73096574e+05+5.37370454e-12j
- -2.51849298e+05-2.57225740e-11j -2.08380892e+05-7.72032805e-12j
- -2.07571515e-10+8.55220869e-12j -3.67404673e+04-1.05524586e-12j
- -5.45373231e+04-1.53666756e-11j -8.53366127e+04+2.11214278e-11j
- -9.73847207e+04+1.68554078e-11j]
+[-1.75915077e+05-1.89378343e-12j -1.34748933e+05-1.28321946e-13j
+  6.36826375e-11-4.46314275e-12j -1.24140567e+04+3.77528387e-12j
+ -8.24081160e+04-4.93846524e-13j -7.43723227e+04+6.75541614e-12j
+ -3.66032941e+04+3.77456874e-12j -4.67857712e+04-9.66671551e-14j
+ -4.60974657e+04-1.77253873e-12j]
 
 
-Equilibrium M_parallel: 0.7897269333597502
+Equilibrium M_parallel: 0.42256989463302125
 Initial Magnetization: 1.0000
-Fitted Equilibrium Magnetization: 0.7897
+Fitted Equilibrium Magnetization: 0.4226
 R² = 1.0000
 Linear coupling T1
-T1 =  3.0357876118786204e-06 s
-T1_err =  6.385465914483043e-10 s
+T1 =  1.0787375495404788e-05 s
+T1_err =  5.189824846511381e-09 s
 
 
 Initializing R2 tensor (Quadratic coupling)
 Number of tasks per process: 58653
 Eigenvalues of the R2 matrix
-[-2.08534136e+08+1.57641106e-08j -2.00838125e+08+2.60960742e-09j
- -1.87097051e+08+8.08624383e-09j -1.84273465e+08+8.26727677e-09j
- -1.40143977e+07+9.57071339e-09j -1.23104329e+07-3.87725813e-09j
-  8.30111004e-07-2.61653084e-09j -3.21323375e+06-2.06520018e-09j
- -5.74226878e+06-1.11753300e-08j]
+[-1.87086610e+07-4.42922681e-10j -1.62243583e+07+2.89798715e-10j
+  8.55466878e-08+1.90780424e-10j -1.19933279e+07-2.37100493e-11j
+ -1.05264923e+07-7.14386841e-10j -7.04627424e+06+4.40799683e-10j
+ -5.39641063e+06-5.24871037e-10j -2.56786530e+06+3.26115210e-10j
+ -3.04158754e+06+8.00467799e-11j]
 
 
-Equilibrium M_parallel: 0.000530339574769037
+Equilibrium M_parallel: 0.00021314276486854614
 Initial Magnetization: 1.0000
-Fitted Equilibrium Magnetization: 0.0005
-R² = 0.9610
+Fitted Equilibrium Magnetization: 0.0002
+R² = 0.9991
 Quadratic coupling T1
-T1 =  6.303734225185644e-08 s
-T1_err =  8.327744112696459e-10 s
+T1 =  9.623115451655431e-08 s
+T1_err =  1.8318571011326223e-10 s
 
 
 Eigenvalues of the Redfield matrix
-[-2.08897837e+08-1.66776197e-08j -2.01136734e+08-1.18070589e-08j
- -1.87383028e+08-1.17840931e-08j -1.84493332e+08+7.60240576e-09j
-  8.20916955e-07-6.23446020e-09j -1.41058892e+07+1.07293940e-08j
- -1.24205488e+07-1.17568006e-08j -3.25784591e+06+1.22658682e-09j
- -5.86814915e+06+2.49648097e-09j]
+[-1.87560879e+07+9.25726996e-11j -1.62571162e+07+2.56232530e-10j
+  8.62806240e-08+2.29245934e-10j -1.21303733e+07-9.41431678e-11j
+ -1.06244493e+07+8.31335170e-11j -7.16633005e+06+9.96063456e-10j
+ -5.48804195e+06+3.59420929e-10j -2.60646703e+06-3.92915531e-10j
+ -3.08545655e+06-2.19937996e-10j]
 
 
-Equilibrium M_parallel: 0.0005687673121864239
+Equilibrium M_parallel: 0.0003656070713202197
 Initial Magnetization: 1.0000
-Fitted Equilibrium Magnetization: 0.0006
-R² = 0.9610
+Fitted Equilibrium Magnetization: 0.0004
+R² = 0.9992
 Total T1 from magnetization decay
-T1 =  6.248628897780945e-08 s
-T1_err =  8.261351830318641e-10 s
+T1 =  9.532040893890932e-08 s
+T1_err =  1.7535741520934423e-10 s
 
 
 Saving data
 Data has been saved to Spin_phonon_20K_1.0.h5
 
 
-Initiate simulation: 0h 0m 43.07s
-Build R1: 0h 0m 0.62s
-Build R2: 0h 1m 55.20s
+Initiate simulation: 0h 0m 30.24s
+Build R1: 0h 0m 0.67s
+Build R2: 0h 1m 55.09s
 Time evolution: 0h 0m 0.01s
 Measuring Time: 0h 0m 0.02s
-Total Run Time: 0h 2m 39.00s
+Total Run Time: 0h 2m 26.10s
 Job completed. Results saved to Spin_phonon_20K_1.0.h5

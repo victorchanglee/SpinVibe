@@ -41,8 +41,7 @@ class coupling:
         self.Nq = L_vectors.shape[0] # Number of q points
         self.Nomega = L_vectors.shape[1] # Number of phonons at q 
 
-        self.R_vectors_mol = np.zeros((self.N, 3), dtype=np.complex128)
-        self.R_vectors_mol = R_vectors[self.indices,:] # Lattice vectors
+        self.R_vectors = R_vectors # Lattice vectors
         self.L_vectors_mol = np.zeros((self.Nq, self.Nomega, self.N, 3), dtype=np.complex128) # Eigenvectors of the molecule in the crystal
         self.L_vectors_mol = L_vectors[:,:,self.indices,:] 
         self.rot_mat = rot_mat # Rotational matrix for hte molecule to match the coordinates in the crystal
@@ -153,6 +152,8 @@ class coupling:
 
          # Phase factor from the lattice vectors
 
+        exp = np.exp(1j * (self.q_vector[q,:] @ self.R_vectors))
+
         for atom in range(self.N):
             freq = 2 * np.pi * self.omega_q[q,omega] * c_cms # Convert to radian/s
 
@@ -161,8 +162,6 @@ class coupling:
             else:
                 prefactor = np.sqrt(hbar_SI / (self.Nq * freq * self.masses[atom])) 
                 prefactor *= 1E10  # Convert to A units
-
-            exp = np.exp(1j * np.dot(self.q_vector[q,:], self.R_vectors_mol[atom,:]))
 
             tmp[atom] = prefactor * exp * self.L_vectors_mol[q, omega, atom]
 
@@ -201,20 +200,21 @@ class coupling:
 
         
 
-        q1_dot_R1 = np.dot(self.R_vectors_mol, self.q_vector[Nq1,:])
-        q2_dot_R2 = np.dot(self.R_vectors_mol, self.q_vector[Nq2,:])
+        q1_dot_R = self.q_vector[Nq1,:] @ self.R_vectors
+        q2_dot_R = self.q_vector[Nq2,:] @ self.R_vectors
 
-        exp1 = np.exp(1j * q1_dot_R1)
-        exp2 = np.exp(1j * q2_dot_R2)
+        exp1 = np.exp(1j * q1_dot_R)
+        exp2 = np.exp(1j * q2_dot_R)
 
-        prefactor1 = self.prefactor[Nq1, Nomega1, :]  * exp1
-        prefactor2 = self.prefactor[Nq2, Nomega2, :]  * exp2
+        prefactor1 = self.prefactor[Nq1, Nomega1, :]
+        prefactor2 = self.prefactor[Nq2, Nomega2, :]
 
-        L1 = self.L_vectors_mol[Nq1, Nomega1, :, :] 
-        L2 = self.L_vectors_mol[Nq2, Nomega2, :, :]  
-    
-        #combined_factors1 = np.einsum('n,i -> ni',prefactor1,exp1)
-        #combined_factors2 = np.einsum('n,i -> ni',prefactor2,exp2)
+        L1 = self.L_vectors_mol[Nq1, Nomega1, :, :]
+        L2 = self.L_vectors_mol[Nq2, Nomega2, :, :]
+
+        L1_R = np.einsum('ni,i->ni', L1, exp1)
+        L2_R = np.einsum('ni,i->ni', L2, exp2)
+
         
         tmp1 = np.einsum('n,ni->ni', prefactor1, L1, optimize=True)
         tmp2 = np.einsum('n,ni->ni', prefactor2, L2, optimize=True)

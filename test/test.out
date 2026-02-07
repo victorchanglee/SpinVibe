@@ -1,23 +1,75 @@
-#### Linear Coupling (R1 tensor)
+Reading input parameters from: input.json
+Running with MPI on rank 0
+Initializing input files...
+  spin_file: Cr_otolyl_4.h5
+  phonon_file: phonon.h5
+  derivatives_file: Cr_otolyl_4_derivatives.h5
+  atoms_file: Sn_otolyl_4_atoms.h5
+  indices_file: molecule_indices.h5
+2026-02-06 20:12:57
+---------------------------------------
+|Start Spin-phonon coupling simulation|
+---------------------------------------
 
-The first-order spin-phonon coupling term, computed from the first derivative of the spin Hamiltonian with respect to phonon coordinates:
 
-```python
+Input Parameters
+================
+Magnetic field: [0.   0.   0.41]
+S: 1
+T: 5.0
+Broadening: 1
+Population type: pure
+Polarization: [0 0 1]
+Rotational matrix:
+[[0 0 1]
+ [1 0 0]
+ [0 1 0]]
+
+
+Spin Hamiltonian
+[[-3.61376628e-01+0.00000000e+00j -2.91812008e-06+1.06333248e-05j
+   5.11553213e-02-7.05205722e-06j]
+ [-2.91812008e-06-1.06333248e-05j -3.41022461e-02+0.00000000e+00j
+   2.91812008e-06-1.06333248e-05j]
+ [ 5.11553213e-02+7.05205722e-06j  2.91812008e-06+1.06333248e-05j
+   3.95478874e-01+0.00000000e+00j]]
+
+
+Eigenvalues of the spin Hamiltonian (cm-1)
+[-0.36481853 -0.03410225  0.39892077]
+
+
+Initialize simulation
+=====================
+Running in serial mode.
+
+
+Initial spin population:
+[[0.+0.j 0.+0.j 0.+0.j]
+ [0.+0.j 0.+0.j 0.+0.j]
+ [0.+0.j 0.+0.j 1.+0.j]]
+
+
 Initializing R1 tensor (Linear coupling)
 Number of tasks per process: 342
 Eigenvalues of the R1 matrix
-[-1.71887308e+11+4.00583665e-06j -1.35665171e+11+1.62088590e-07j
-  4.30592887e-05+1.06517612e-06j -7.91102923e+10+4.40895954e-07j
- -7.32150390e+10+1.51466501e-06j -1.17020723e+10-2.50599902e-06j
- -3.28999927e+10-1.61538728e-06j -4.18243722e+10+7.61222767e-07j
- -3.92098324e+10+1.43533640e-06j]
-```
+[-1.50968380e+11+1.13918217e-06j -1.17213948e+11+2.01866023e-06j
+  5.12757924e-05-1.09134772e-06j -1.14305520e+10+4.75532647e-06j
+ -7.09653914e+10-2.55540301e-06j -6.52649340e+10-3.03390563e-08j
+ -2.95983600e+10-8.28908955e-07j -3.82510442e+10-8.74158889e-07j
+ -3.64920259e+10-2.96161672e-08j]
 
-#### Quadratic Coupling (R2 tensor)
 
-The second-order spin-phonon coupling term, computed from the second derivative of the spin Hamiltonian:
+Equilibrium M_parallel: 0.017442097504324804
+Initial Magnetization: 1.0000
+Fitted Equilibrium Magnetization: 0.0174
+R² = 0.0000
+Linear coupling T1
+T1 =  0.16477489705092618 s
+T1_err =  169831.93420635976 s
+Warning: T1_err is larger than T1!!! Fitting likely failed!!!
 
-```python
+
 Initializing R2 tensor (Quadratic coupling)
 Number of tasks per process: 58653
 Eigenvalues of the R2 matrix
@@ -26,23 +78,43 @@ Eigenvalues of the R2 matrix
  -6.01784249e+10-7.55198447e-06j -7.44042236e+10+6.42926556e-06j
  -1.47254823e+11+3.44718610e-06j -1.11046911e+11+1.47086322e-05j
  -1.25571041e+11-3.57108016e-06j]
-```
 
-#### Validation Check: Redfield Eigenvalues
 
-**Sanity check:** The eigenvalues of the complete Redfield superoperator must satisfy:
-- One eigenvalue must be exactly zero (corresponding to equilibrium)
-- All other eigenvalues must have negative real parts (ensuring decay to equilibrium)
+Equilibrium M_parallel: 0.0010989098938631618
+Initial Magnetization: 1.0000
+Fitted Equilibrium Magnetization: 0.0011
+R² = 0.0000
+Quadratic coupling T1
+T1 =  0.24597885036810407 s
+T1_err =  172215.42434405306 s
+Warning: T1_err is larger than T1!!! Fitting likely failed!!!
 
-```python
+
 Eigenvalues of the Redfield matrix
 [-4.72534336e+11-8.00096644e-06j -3.74092011e+11-3.18826237e-06j
  -1.33507704e-03+3.88492550e-06j -2.36580823e+11-9.44377634e-06j
  -8.06161845e+10+2.86180423e-06j -1.26234499e+11-1.02410232e-05j
  -1.98616644e+11+1.47552540e-05j -1.57317530e+11-2.45955232e-05j
  -1.69440668e+11+1.54264098e-06j]
-```
 
-Note the eigenvalue `-1.33507704e-03`, which is effectively zero within numerical precision. If this condition is violated, the simulation results are unphysical and should not be trusted.
 
-After the construction of the linear, quadratic and total Redfield operators, the code performs a time evolution of the density matrix to separate the linear and quadratic contribution.
+Equilibrium M_parallel: 0.010524389930722388
+Initial Magnetization: 1.0000
+Fitted Equilibrium Magnetization: 0.0105
+R² = 0.1868
+Total T1 from magnetization decay
+T1 =  1.2685482998073143e-08 s
+T1_err =  7.048959592996947e-10 s
+
+
+Saving data
+Data has been saved to Spin_phonon_5K_1.0.h5
+
+
+Initiate simulation: 0h 0m 55.22s
+Build R1: 0h 0m 1.02s
+Build R2: 0h 2m 10.55s
+Time evolution: 0h 0m 0.29s
+Measuring Time: 0h 0m 1.91s
+Total Run Time: 0h 3m 10.83s
+Job completed. Results saved to Spin_phonon_5K_1.0.h5

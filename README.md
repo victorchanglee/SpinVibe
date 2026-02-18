@@ -100,4 +100,4 @@ Contributions are also welcome! Please use the Pull Request and Fork workflow to
 
 ## Contact
 
-For questions or collaboration, please email: victor.changlee@northwestern.edu or jrondinelli@northwestern.edu
+Feel free to reach out at victor.changlee@northwestern.edu or jrondinelli@northwestern.edu

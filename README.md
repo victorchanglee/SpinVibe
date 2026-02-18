@@ -21,6 +21,8 @@ Please take a look at the  [Documentation](https://victorchanglee.github.io/Spin
 ![spinvibe](docs/spinvibe.png)
 
 
+
+
 ---
 
 ## Inputs
@@ -94,4 +96,8 @@ Additionally, a Jupyter Notebook Ttutorial is included inside the test directory
 ## Contributing and Support
 
 Please use the [Issue Tracker](https://github.com/victorchanglee/SpinVibe/issues) to report bugs or request new features.  
-Contributions are also welcome! Please use the Fork and Pull workflow to contribute.
+Contributions are also welcome! Please use the Pull Request and Fork workflow to contribute.
+
+## Contact
+
+For questions or collaboration, please email: victor.changlee@northwestern.edu or jrondinelli@northwestern.edu

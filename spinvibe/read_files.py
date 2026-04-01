@@ -50,7 +50,7 @@ class Read_files:
             R_vectors = f['lattice_vectors'][:]
             reciprocal_vectors = f['reciprocal_vectors'][:]
             masses = f['masses'][:]
-        
+
         masses = masses*(1E-3/avogadro) #masses in kg
             
         return R_vectors, reciprocal_vectors, masses

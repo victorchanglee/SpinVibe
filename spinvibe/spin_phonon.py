@@ -72,6 +72,13 @@ class spin_phonon:
 
         self.file_reader = file_reader
         self.q_vector, self.omega_q, self.L_vectors = self.file_reader.read_phonons()
+
+        if np.any(self.omega_q < 0):
+            self.omega_q = np.maximum(self.omega_q, 0)  # Set negatives to zero
+            if rank == 0:
+                print(f"Warning: Found {np.sum(self.omega_q < 0)} negative phonon frequencies")
+                print("\n")
+
         self.R_vectors,self.reciprocal_vectors, self.masses = self.file_reader.read_atoms() 
 
         self.q_vector = self.q_vector @ self.reciprocal_vectors # Convert q vectors to A^-1
@@ -179,9 +186,12 @@ class spin_phonon:
             print("Linear coupling T1")
             print("T1 = ", self.T1,"s")
             print("T1_err = ", self.T1_err,"s")
-            if self.T1 == 1 or self.T1_err == 0:
+            if self.T1 is None or self.T1_err is None:
+                print("Warning: T1 or T1_err is None — skipping comparison")
+
+            elif self.T1 == 1 or self.T1_err == 0:
                 print("Warning: T1 likely fitting failed!!! Please check M(t) data")
-            if self.T1 < self.T1_err:
+            elif self.T1 < self.T1_err:
                 print("Warning: T1_err is larger than T1!!! Fitting likely failed!!!")
             print("\n")
 
@@ -223,9 +233,12 @@ class spin_phonon:
             print("Quadratic coupling T1")
             print("T1 = ", self.T1,"s")
             print("T1_err = ", self.T1_err,"s")
-            if self.T1 == 1 or self.T1_err == 0:
+            if self.T1 is None or self.T1_err is None:
+                print("Warning: T1 or T1_err is None — skipping comparison")
+
+            elif self.T1 == 1 or self.T1_err == 0:
                 print("Warning: T1 likely fitting failed!!! Please check M(t) data")
-            if self.T1 < self.T1_err:
+            elif self.T1 < self.T1_err:
                 print("Warning: T1_err is larger than T1!!! Fitting likely failed!!!")
             print("\n")
 
@@ -277,9 +290,12 @@ class spin_phonon:
             print("Total T1 from magnetization decay")
             print("T1 = ", self.T1,"s")
             print("T1_err = ", self.T1_err,"s")
-            if self.T1 == 1 or self.T1_err == 0:
+            if self.T1 is None or self.T1_err is None:
+                print("Warning: T1 or T1_err is None — skipping comparison")
+            
+            elif self.T1 == 1 or self.T1_err == 0:
                 print("Warning: T1 likely fitting failed!!! Please check M(t) data")
-            if self.T1 < self.T1_err:
+            elif self.T1 < self.T1_err:
                 print("Warning: T1_err is larger than T1!!! Fitting likely failed!!!")
             print("\n")
 

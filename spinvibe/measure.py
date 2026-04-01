@@ -52,84 +52,74 @@ class measure:
 
         return
     
-    
     def calc_t1(self):
         """
-        Compute the T1 time from the Mz(t) signal using exponential fitting.
-        Returns T1 and its uncertainty.
+        Compute T1 using logarithmic transformation for linear fitting.
+        Cuts data when Mz drops below 1e-2.
         """
-        
-        # Get MPI rank if available, otherwise use rank 0 for serial mode
         if mpi_on:
             comm = MPI.COMM_WORLD
             rank = comm.Get_rank()
         else:
             rank = 0
 
-        # polarization axis
+        # Get Mz data
         n = np.array(self.pol if self.pol is not None else [0., 0., 1.], dtype=float)
-        n_norm = np.linalg.norm(n)
-        if n_norm == 0:
-            raise ValueError("self.Mpol must not be the zero vector")
-        n /= n_norm
-
+        n /= np.linalg.norm(n)
         
-        # Extract Mz(t) data and time points
-
         if self.init_type == 'polarized':
-            if rank == 0:
-                print("Measuring T1 along the polarization axis")
             self.Mz = n @ self.Mvec
         else:
             self.Mz = np.linalg.norm(self.Mvec, axis=0)
         
-        t_data = self.tlist  # Time points (ensure this is defined in your class)
-
-        tolerance = 1E-8
-
-        # Find equilibrium value when consecutive differences become smaller than threshold
-        Mz_eq = self.Mz[-1]  # Default to last value if no convergence found
+        t_data = self.tlist
         
-        for i in range(1, len(self.Mz)):
-            if abs(self.Mz[i] - self.Mz[i - 1]) < tolerance:
-                Mz_eq = self.Mz[i]
-                break
-
+        # Find where Mz drops below 10%
+        cutoff_mask = self.Mz > 0.1
+        cutoff_idx = np.sum(cutoff_mask)
+        
+        if cutoff_idx < 3:
+            if rank == 0:
+                print(f"Warning: Only {cutoff_idx} points above 1e-2. Using minimum of 3 points.")
+            cutoff_idx = min(3, len(self.Mz))
+        
+        # Cut the data
+        t_fit = t_data[:cutoff_idx]
+        Mz_fit = self.Mz[:cutoff_idx]
+        
         if rank == 0:
-            print("Equilibrium M_parallel:", Mz_eq)
-
-        # Define the T1 model function
-        def Mz_model(t, Mz_initial, Mz_eq, T1):
-            return (Mz_initial - Mz_eq) * np.exp(-t / T1) + Mz_eq
+            print(f"Using first {cutoff_idx} of {len(self.Mz)} points (Mz > 1e-2)")
+            print(f"Time range: {t_fit[0]:.4e} to {t_fit[-1]:.4e}")
+            print(f"Mz range: {Mz_fit[0]:.4f} to {Mz_fit[-1]:.4f}")
         
-        # Initial guesses for parameters [Mz_initial, Mz_eq, T1]
-        p0 = [self.Mz[0], Mz_eq, 1]  
-
-        # Define bounds (must have length 3)
-        lower = [-np.inf, -np.inf, 0.0]   # T1 must be positive
-        upper = [ np.inf,  np.inf, np.inf]
+        Mz_eq = 0.0
         
-        # Perform the fit
-        try:
-            params, covariance = curve_fit(Mz_model, t_data, self.Mz, p0=p0,bounds=(lower, upper))
-        except Exception as e:
-            print(f"Fit failed: {e}")
-            return None, None
+        # Calculate delta from equilibrium
+        delta_Mz_fit = Mz_fit - Mz_eq
         
-        # Extract parameters and errors
-        Mz_initial_fit, Mz_eq_fit, T1_fit = params
-        errors = np.sqrt(np.diag(covariance))
-        T1_err = errors[2]  # Uncertainty in T1
+        # Transform to linear form: ln|Mz(t) - Mz_eq| = ln|Mz0 - Mz_eq| - t/T1
+        log_delta_Mz = np.log(np.abs(delta_Mz_fit))
         
-        # Calculate R² (coefficient of determination)
-        y_pred = Mz_model(t_data, *params)  # Predicted values from fit
-        ss_res = np.sum((self.Mz - y_pred) ** 2)  # Sum of squares of residuals
-        ss_tot = np.sum((self.Mz - np.mean(self.Mz)) ** 2)  # Total sum of squares
+        # Linear fit: y = a + b*t where b = -1/T1
+        coeffs = np.polyfit(t_fit, log_delta_Mz, 1)
+        slope, intercept = coeffs
+        
+        T1_fit = -1.0 / slope
+        
+        # Estimate uncertainty from residuals
+        y_pred = slope * t_fit + intercept
+        residuals = log_delta_Mz - y_pred
+        residual_std = np.std(residuals)
+        
+        # Propagate uncertainty to T1
+        T1_err = T1_fit * residual_std / np.sqrt(len(t_fit))
+        
+        # Calculate R²
+        ss_res = np.sum(residuals ** 2)
+        ss_tot = np.sum((log_delta_Mz - np.mean(log_delta_Mz)) ** 2)
         r_squared = 1 - (ss_res / ss_tot)
         
         if rank == 0:
-            print(f"Initial Magnetization: {self.Mz[0]:.4f}")
-            print(f"Fitted Equilibrium Magnetization: {Mz_eq:.4f}")
             print(f"R² = {r_squared:.4f}")
         
         return T1_fit, T1_err

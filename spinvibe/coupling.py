@@ -41,7 +41,7 @@ class coupling:
         self.Nq = L_vectors.shape[0] # Number of q points
         self.Nomega = L_vectors.shape[1] # Number of phonons at q 
 
-        self.R_vectors = R_vectors # Lattice vectors
+        self.R_vectors = R_vectors
         self.L_vectors_mol = np.zeros((self.Nq, self.Nomega, self.N, 3), dtype=np.complex128) # Eigenvectors of the molecule in the crystal
         self.L_vectors_mol = L_vectors[:,:,self.indices,:] 
         self.rot_mat = rot_mat # Rotational matrix for hte molecule to match the coordinates in the crystal
@@ -96,7 +96,8 @@ class coupling:
                         #Pass matrix entries as a function of the atomic displacement to compute the derivatives
                         dg[i,atom,j,k] = math_func.compute_derivative(self.disp1, g_x)
                         dd[i,atom,j,k] = math_func.compute_derivative(self.disp1, d_x)
-                            
+                        
+ 
         #Compute the derivative of the Hamiltonian
         for n in range( self.N):
             for i in range(3):
@@ -150,9 +151,6 @@ class coupling:
         # Initialize local temporary array
         tmp = np.zeros((self.N,3), dtype=np.complex128)
 
-         # Phase factor from the lattice vectors
-
-        exp = np.exp(1j * (self.q_vector[q,:] @ self.R_vectors))
 
         for atom in range(self.N):
             freq = 2 * np.pi * self.omega_q[q,omega] * c_cms # Convert to radian/s
@@ -161,9 +159,9 @@ class coupling:
                 prefactor = 0.0
             else:
                 prefactor = np.sqrt(hbar_SI / (self.Nq * freq * self.masses[atom])) 
-                prefactor *= 1E10  # Convert to A units
+                prefactor *= 1E10  # Convert to A units 
 
-            tmp[atom] = prefactor * exp * self.L_vectors_mol[q, omega, atom]
+            tmp[atom] = prefactor * self.L_vectors_mol[q, omega, atom]
 
         coupling = np.einsum('il,ilab -> ab', tmp, self.dH_dx,optimize=True)
 
@@ -200,22 +198,15 @@ class coupling:
 
         
 
-        q1_dot_R = self.q_vector[Nq1,:] @ self.R_vectors
+        q1_dot_R = self.q_vector[Nq1,:] @ self.R_vectors 
         q2_dot_R = self.q_vector[Nq2,:] @ self.R_vectors
-
-        exp1 = np.exp(1j * q1_dot_R)
-        exp2 = np.exp(1j * q2_dot_R)
 
         prefactor1 = self.prefactor[Nq1, Nomega1, :]
         prefactor2 = self.prefactor[Nq2, Nomega2, :]
 
-        L1 = self.L_vectors_mol[Nq1, Nomega1, :, :]
-        L2 = self.L_vectors_mol[Nq2, Nomega2, :, :]
+        L1 = self.L_vectors_mol[Nq1, Nomega1, :, :] 
+        L2 = self.L_vectors_mol[Nq2, Nomega2, :, :]  
 
-        L1_R = np.einsum('ni,i->ni', L1, exp1)
-        L2_R = np.einsum('ni,i->ni', L2, exp2)
-
-        
         tmp1 = np.einsum('n,ni->ni', prefactor1, L1, optimize=True)
         tmp2 = np.einsum('n,ni->ni', prefactor2, L2, optimize=True)
         

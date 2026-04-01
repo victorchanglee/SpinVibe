@@ -1,10 +1,11 @@
 import numpy as np
-from .constants import k_B, kB_SI
+from .constants import k_B, kB_SI, hbar_SI
 from numpy.polynomial.polynomial import polyfit, polyval2d, Polynomial
 
-def lorentzian(x, eta):
+def broadening(x, eta):
 
     return (eta / np.pi) / ( (x) ** 2 + eta ** 2)
+    #return (1/eta * (np.sqrt(2 * np.pi))) * np.exp(-0.5 * (x/eta)**2)
 
 def diagonalize(hamiltonian):
     """
@@ -32,43 +33,19 @@ def mat(a, b, alpha,q,eigenvectors, V_alpha):
     return tmp1
 
 def bose_einstein(omega_alpha_q, T):
-        """
-        Compute the Bose-Einstein occupation number.
-        
-        Parameters:
-            omega_alpha_q (float): Phonon frequency (ω_{αq}).
-            T (float): Temperature in Kelvin.
-        
-        Returns:
-            float: Bose-Einstein occupation number (n̄_{αq}).
-        """
-        x = omega_alpha_q / (k_B * T)
-        x = np.clip(x, None, 700)
-        
-        n_alpha_q = 1 / (np.exp(x) - 1)
 
-        return n_alpha_q
+    if omega_alpha_q <= 0:
+        n_alpha_q = 0.0
+    else:
+        x = (hbar_SI * omega_alpha_q) / (kB_SI * T)
+        x = np.clip(x, None, 700)  # Prevent overflow
+        n_alpha_q = 1.0 / (np.exp(x) - 1.0)
 
-def finite_difference(f_plus, f_minus, delta):
-    """
-    Computes the numerical gradient at 0 using central difference.
 
-    Parameters:
-        f_plus  : float or np.array
-            Function value at +delta
-        f_zero  : float or np.array
-            Function value at 0
-        f_minus : float or np.array
-            Function value at -delta
-        delta   : float
-            Displacement step size
+    return n_alpha_q
 
-    Returns:
-        float or np.array: Estimated derivative at 0
-    """
-    return (f_plus - f_minus) / (2 * delta)
 
-def compute_derivative(x,fx,displacement=0.0,degree=2):
+def compute_derivative(x,fx,displacement=0.0,degree=3):
     """
     Compute the derivative of f_x with reespect to x by polynomial fitting
 
@@ -87,7 +64,7 @@ def compute_derivative(x,fx,displacement=0.0,degree=2):
     return dfdx
 
 
-def compute_second_derivative(x, fx, poly_degree=2):
+def compute_second_derivative(x, fx, poly_degree=3):
     """
     Fit a 2D polynomial to the function values and compute the mixed second derivative at (0, 0).
     
@@ -142,37 +119,6 @@ def compute_second_derivative(x, fx, poly_degree=2):
     return deriv
 
 
-def compute_trace(matrix):
-    n = len(matrix)
-    if n == 0 or len(matrix[0]) != n:
-        raise ValueError("Matrix must be square.")
-    return sum(matrix[i][i] for i in range(n))
-
-def tensor_traceless(tensor):
-    """
-    Transforms a 3x3 numpy array into a traceless symmetric tensor.
-
-    Args:
-        tensor (numpy.ndarray): A 3x3 numpy array (assumed to be symmetric).
-
-    Returns:
-        numpy.ndarray: A 3x3 traceless symmetric numpy array.
-                       Returns None if the input is not a 3x3 array.
-    """
-    if tensor is None or tensor.shape != (3, 3):
-        print("Error: Input tensor must be a 3x3 NumPy array.")
-        return None
-
-    # Ensure it's symmetric (important if the raw data isn't perfectly symmetric due to parsing or small numerical errors)
-    # This step is good practice, but for ORCA output, it's usually already symmetric
-    tensor = (tensor + tensor.T) / 2
-
-    trace = np.trace(tensor)
-    avg_trace = trace / 3.0
-
-    traceless_tensor = tensor - avg_trace * np.identity(3)
-
-    return traceless_tensor
 
 def rotate_polarization(axis, theta):
     """

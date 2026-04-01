@@ -43,10 +43,12 @@ class Redfield:
          float: Value of G^{1-ph}.
       """
 
-      Delta_alpha_q = self.Delta_alpha_q 
+      omega_ij = 2*np.pi*c_cms*omega_ij
+      omega_alpha_q = 2*np.pi*c_cms*omega_alpha_q
+      Delta_alpha_q = 2*np.pi*c_cms* self.Delta_alpha_q 
 
-      delta_emission = math_func.lorentzian((omega_ij - omega_alpha_q), Delta_alpha_q)
-      delta_absorption = math_func.lorentzian((omega_ij + omega_alpha_q), Delta_alpha_q)
+      delta_emission = math_func.broadening((omega_ij - omega_alpha_q), Delta_alpha_q)
+      delta_absorption = math_func.broadening((omega_ij + omega_alpha_q), Delta_alpha_q)
 
       n_aq = math_func.bose_einstein(omega_alpha_q, self.T)
       G_1ph = delta_emission * n_aq + delta_absorption * (n_aq + 1)
@@ -56,15 +58,18 @@ class Redfield:
 
    def G_2ph(self, omega_ij, omega_alpha_q, omega_beta_qp):
 
-      Delta = self.Delta_alpha_q
+      omega_ij = 2*np.pi*c_cms*omega_ij
+      omega_alpha_q = 2*np.pi*c_cms*omega_alpha_q
+      omega_beta_qp = 2*np.pi*c_cms*omega_beta_qp
+      Delta = 2*np.pi*c_cms*self.Delta_alpha_q
       
       n_alpha = math_func.bose_einstein(omega_alpha_q, self.T)
       n_beta = math_func.bose_einstein(omega_beta_qp, self.T)
 
-      term1 = math_func.lorentzian(omega_ij - omega_alpha_q - omega_beta_qp, Delta) * n_alpha * n_beta
-      term2 = math_func.lorentzian(omega_ij + omega_alpha_q + omega_beta_qp, Delta) * (n_alpha + 1) * (n_beta + 1)
-      term3 = math_func.lorentzian(omega_ij + omega_alpha_q - omega_beta_qp, Delta) * (n_alpha + 1) * n_beta
-      term4 = math_func.lorentzian(omega_ij - omega_alpha_q + omega_beta_qp, Delta) * n_alpha * (n_beta + 1)
+      term1 = math_func.broadening(omega_ij - omega_alpha_q - omega_beta_qp, Delta) * n_alpha * n_beta
+      term2 = math_func.broadening(omega_ij + omega_alpha_q + omega_beta_qp, Delta) * (n_alpha + 1) * (n_beta + 1)
+      term3 = math_func.broadening(omega_ij + omega_alpha_q - omega_beta_qp, Delta) * (n_alpha + 1) * n_beta
+      term4 = math_func.broadening(omega_ij - omega_alpha_q + omega_beta_qp, Delta) * n_alpha * (n_beta + 1)
 
       G2ph = (term1 + term2 + term3 + term4) 
 
@@ -85,7 +90,7 @@ class Redfield:
       omega_alpha = self.omega_q
       
 
-      prefactor = -1 / (4 * hbar**2 * c_cms)
+      prefactor = -np.pi / (2 * hbar_SI**2)
       
       # Create all (q, alpha) tasks for parallelization
       all_tasks = []
@@ -113,7 +118,7 @@ class Redfield:
          V_alpha = init_Vq.compute_V_alpha_q(q, alpha)
 
          dH_local[q,alpha,:,:] = V_alpha
-         #V_alpha = V_alpha * cm2J
+         V_alpha = V_alpha*cm2J
          #working in cm-1
          # Loop over tensor indices
          for a in range(self.hdim):
@@ -128,10 +133,10 @@ class Redfield:
                                  G_term1 = self.G_1ph(self.omega[j, c], omega_alpha[q, alpha])
                                  term1 += V_alpha[a, j] * V_alpha[j, c] * G_term1
                         
-                           #print(term1, G_term1)
                            # Term 2: V^α_{ac} V^α_{db} G^{1-ph}(ω_{bd}, ω_α)
                            V_ac = V_alpha[a, c]
                            V_db = V_alpha[d, b]
+                           
                            G_term2 = self.G_1ph(self.omega[b, d], omega_alpha[q, alpha])
                            term2 = V_ac * V_db * G_term2
 
@@ -179,8 +184,8 @@ class Redfield:
          size = 1
       
       omega_alpha = self.omega_q
-      prefactor = - 1 / (8 * hbar**2  * c_cms) #in cm-1
-      
+      prefactor = - np.pi / (4 * hbar_SI**2) #in cm-1
+
       # Build full list of tasks 
       all_tasks = []
       task_counter = 0
@@ -203,12 +208,16 @@ class Redfield:
 
       R2_local = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
 
+      
+
       for q1, q2, alpha, beta in all_tasks:
          # Get V matrix for this (alpha, beta) pair
          V_alpha_beta = init_Vq.compute_V_alpha_beta_q(q1, q2, alpha, beta)
-         
+
          d2H_local[q1,q2,alpha,beta,:,:] = V_alpha_beta
-         
+           
+         V_alpha_beta = V_alpha_beta *cm2J
+
          # Get the frequencies omega_alpha and omega_beta
          omega_a = omega_alpha[q1, alpha]  
          omega_b = omega_alpha[q2, beta]   
@@ -227,37 +236,37 @@ class Redfield:
             for b in range(self.hdim):
                   for c in range(self.hdim):
                      for d in range(self.hdim):
-                        term_sum = 0.0
+                        term1 = 0.0
+                        term2 = 0.0
+                        term3 = 0.0
+                        term4 = 0.0
                         
                         # First term: δ_bd * Σ_j V^{αβ}_{aj} V^{αβ}_{jc} G^{2-ph}(ω_{jc}, ω_α, ω_β)
                         if b == d:  # Kronecker delta δ_bd
                               for j in range(self.hdim):
                                  omega_jc = self.omega[j, c]
                                  G_jc = G_cache[omega_jc]
-                                 tmp1 = V_alpha_beta[a,j] * V_alpha_beta[j,c]
-                                 term_sum += tmp1 * G_jc
+                                 term1 += V_alpha_beta[a,j] * V_alpha_beta[j,c] * G_jc
                         
                         # Second term: -V^{αβ}_{ac} V^{αβ}_{db} G^{2-ph}(ω_{bd}, ω_α, ω_β)
                         omega_bd = self.omega[b, d]
                         G_bd = G_cache[omega_bd]
-                        tmp2 = V_alpha_beta[a, c] * V_alpha_beta[d, b]
-                        term_sum -= tmp2 * G_bd
+                        term2 -= V_alpha_beta[a, c] * V_alpha_beta[d, b] * G_bd
                         
                         # Third term: -V^{αβ}_{ac} V^{αβ}_{db} G^{2-ph}(ω_{ac}, ω_α, ω_β)
                         omega_ac = self.omega[a, c]
                         G_ac = G_cache[omega_ac]
-                        term_sum -= tmp2 * G_ac
+                        term3 -= V_alpha_beta[a, c] * V_alpha_beta[d, b] * G_ac
                         
                         # Fourth term: δ_ca * Σ_j V^{αβ}_{dj} V^{αβ}_{jb} G^{2-ph}(ω_{jd}, ω_α, ω_β)
                         if c == a:  # Kronecker delta δ_ca
                               for j in range(self.hdim):
-                                 omega_jd = self.omega[j, d]  # Note: corrected from ω_{jb} to ω_{jd}
+                                 omega_jd = self.omega[j, d]  
                                  G_jd = G_cache[omega_jd]
-                                 tmp3 = V_alpha_beta[d,j] * V_alpha_beta[j,b]
-                                 term_sum += tmp3 * G_jd
+                                 term4 += V_alpha_beta[d,j] * V_alpha_beta[j,b] * G_jd
                         
                         # Apply prefactor and add to result
-                        R2_local[a, b, c, d] += prefactor * term_sum
+                        R2_local[a, b, c, d] += prefactor * (term1 + term2 + term3 + term4)
 
       # Gather results from all processes
       if mpi_on:

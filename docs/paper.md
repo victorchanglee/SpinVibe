@@ -160,8 +160,10 @@ $$+ \sum_j  \delta_{ca} V^{\alpha \beta}_{dj} V^{\alpha \, \beta}_{jb} G^{2\text
 where $V^{\alpha \beta} = \frac{\partial^2 \hat{H_{s}}}{\partial Q_{\alpha} \partial Q_{\beta}}$ and 
 
 $$
-G^{2\text{--ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'}) = \frac{1}{\pi} [ \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} - \omega_{\beta q'})^{2}} \bar{n}_{\alpha q}\bar{n}_{\beta q'} + \frac{\Delta_{\alpha q \beta q'}} {\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} + \omega_{\beta q'})^{2}} (\bar{n}_{\alpha q}+1)(\bar{n}_{\beta q'}+1) + \frac{\Delta_{\alpha q \beta q'}} {\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} + \omega_{\beta q'})^{2}} \bar{n}_{\alpha q}(\bar{n}_{\beta q'}+1) + \frac{\Delta_{\alpha q \beta q'}} {\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} - \omega_{\beta q'})^{2}} (\bar{n}_{\alpha q}+1)\bar{n}_{\beta q'} ]
-$$
+G^{2\text{--ph}}(\omega_{ij},\omega_{\alpha q},\omega_{\beta q'}) = \frac{1}{\pi} [ \frac{\Delta_{\alpha q \beta q'}}{\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} - \omega_{\beta q'})^{2}} \bar{n}_{\alpha q}\bar{n}_{\beta q'} $$
+$$+ \frac{\Delta_{\alpha q \beta q'}} {\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} + \omega_{\beta q'})^{2}} (\bar{n}_{\alpha q}+1)(\bar{n}_{\beta q'}+1) $$
+$$+ \frac{\Delta_{\alpha q \beta q'}} {\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} - \omega_{\alpha q} + \omega_{\beta q'})^{2}} \bar{n}_{\alpha q}(\bar{n}_{\beta q'}+1) $$
+$$+ \frac{\Delta_{\alpha q \beta q'}} {\Delta_{\alpha q \beta q'}^{2} + (\omega_{ij} + \omega_{\alpha q} - \omega_{\beta q'})^{2}} (\bar{n}_{\alpha q}+1)\bar{n}_{\beta q'} ]$$
 
 Once the time-evolution is performed, we can study the time-evolution of the magnetization of the system 
 

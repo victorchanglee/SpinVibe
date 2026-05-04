@@ -105,7 +105,7 @@ quantities are extracted and saved in this format.
 # First principles spin-phonon coupling 
 
 Our code implements the theoretical framework developed by Lunghi and
-Sanvito [@Lunghi:2020] [@Lunghi:2023] [Lunghi:2022], where in the
+Sanvito [@Lunghi:2020] [@Lunghi:2023] [@Lunghi:2022], where in the
 weak-coupling regime the interaction between the spin Hamiltonian and
 the phonons is expanded as a Taylor series truncated at the quadratic
 term:

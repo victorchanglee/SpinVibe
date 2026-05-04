@@ -29,8 +29,8 @@ the possibility of large-scale synthetic control and their integration
 with solid-state and solution-phase
 architectures [@Bayliss2022] [@Wojnar2024]. In contrast to solid-state
 defects or superconducting qubits, molecular qubits can be engineered at
-the atomic level, allowing researchers [@Laorenza2022] to systematically tailor their
-electronic, magnetic, and vibrational properties.
+the atomic level, allowing researchers to systematically tailor their
+electronic, magnetic, and vibrational properties [@Laorenza2022].
 However, the practical implementation of molecular qubits is limited by
 decoherence and relaxation processes, which shorten the time window over
 which quantum information can be stored and manipulated.
@@ -52,12 +52,12 @@ vibrational bath, providing the dominant relaxation pathway in many
 molecular crystals.
 
 Depending on the phonon spectrum and the local molecular environment,
-different mechanisms such as the ($i$) direct processes, ($ii$) Raman
+different mechanisms such as ($i$) direct processes, ($ii$) Raman
 processes, and ($iii$) Orbach relaxation can contribute to
 $T_1$ [@Abragam2012]. Recent experimental and theoretical efforts
 have highlighted how molecular structure, ligand field symmetry, and
 host lattice dynamics dictate the magnitude and anisotropy of
-spin--phonon coupling [@Bayliss2022] [@Laorenza2022] [Lunghi2020].
+spin-phonon coupling [@Bayliss2022] [@Laorenza2022] [Lunghi2020].
 
 `SpinVibe` is a Python package for simulating spin-phonon coupling and
 calculating $T_1$ of molecular qubits in a crystal lattice from
@@ -65,14 +65,14 @@ first-principles calculations. This is achieved by connecting periodic
 lattice dynamics and molecular electronic structure calculations. In
 addition, `SpinVibe` enables the parametric analysis of $T_1$ under
 different factors, including temperature, crystal/molecule orientation
-and applied magnetic fields. The code is written in Python3 and is
+and applied magnetic fields. The code is written in Python and is
 MPI-parallelized over phonon modes and $q$-points using `mpi4py`.
 
 ![.\label{fig:spinvibe}](spinvibe.png)
 
 *Figure 1: Schematic representation of the SpinVibe framework. The spin Hamiltonian, derived
 from quantum chemistry calculations, and the phonon modes, obtained from quantum solid-state
-simulations, are merged within SpinVibe to compute spin–phonon relaxation dynamics and T1
+simulations, are merged within SpinVibe to compute spin–phonon relaxation dynamics and $T_1$
 under various environmental factors.*
 
 # Statement of need 
@@ -84,7 +84,7 @@ electronic structure methods, such as CASSCF combined with NEVPT2,
 provide an accurate description of the spin states and their energy
 splittings, which are essential for modeling qubit
 performance [@Janicka2022] [@Baldinelli2025]. Integrating these two
-perspectives into a unified framework for simulating spin--phonon
+perspectives into a unified framework for simulating spin-phonon
 coupling enables a microscopic understanding of the relaxation
 mechanisms in molecular qubits. Such an approach represents a powerful
 tool for the rational design of next-generation molecular qubits, with

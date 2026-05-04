@@ -57,7 +57,7 @@ processes, and ($iii$) Orbach relaxation can contribute to
 $T_1$ [@Zhang:2002]. Recent experimental and theoretical efforts
 have highlighted how molecular structure, ligand field symmetry, and
 host lattice dynamics dictate the magnitude and anisotropy of
-spin-phonon coupling [@Bayliss:2022] [@Laorenza:2022] [Lunghi:2020].
+spin-phonon coupling [@Bayliss:2022] [@Laorenza:2022] [@Lunghi:2020].
 
 `SpinVibe` is a Python package for simulating spin-phonon coupling and
 calculating $T_1$ of molecular qubits in a crystal lattice from

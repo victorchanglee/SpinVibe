@@ -44,7 +44,7 @@ decoherence processes and determines how long the molecular spin can
 maintain its initialized state before it returns to thermal equilibrium
 after excitation. Critically, short $T_1$ values impose additional
 constraints on $T_2$, creating interdependent relationships that must be
-carefully managed through molecular design [@Warner:2013][@Mullin:2024].
+carefully managed through molecular design [@Warner:2013] [@Mullin:2024].
 $T_1$ is limited by the coupling of electronic spins with lattice
 vibrations, commonly known as phonons [@Laorenza:2021]. This spin--phonon
 coupling governs energy exchange between the spin system and the

@@ -193,8 +193,3 @@ V. C. L. thanks L. A. Mariano and A. Lunghi for the helpful discussions.
 
 # References
 
-[14] A. Lunghi, *Toward exact predictions of spin-phonon relaxation times: An ab initio implementation of open quantum systems theory*,  
-**Sci. Adv.** 8, eabn7880 (2022). https://doi.org/10.1126/sciadv.abn7880
-
-[15] A. Lunghi, *Spin-Phonon Relaxation in Magnetic Molecules: Theory, Predictions and Insights*,  
-in **Computational Modelling of Molecular Nanomagnets**, ed. G. Rajaraman, Springer (2023), pp. 219–289. https://doi.org/10.1007/978-3-031-31038-6_6

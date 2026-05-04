@@ -27,10 +27,10 @@ Molecular qubits have emerged as versatile candidates for quantum
 information technologies. Their appeal lies in the chemical tunability,
 the possibility of large-scale synthetic control and their integration
 with solid-state and solution-phase
-architectures [@Bayliss2022] [@Wojnar2024]. In contrast to solid-state
+architectures [@Bayliss:2022] [@Wojnar:2024]. In contrast to solid-state
 defects or superconducting qubits, molecular qubits can be engineered at
 the atomic level, allowing researchers to systematically tailor their
-electronic, magnetic, and vibrational properties [@Laorenza2022].
+electronic, magnetic, and vibrational properties [@Laorenza:2022].
 However, the practical implementation of molecular qubits is limited by
 decoherence and relaxation processes, which shorten the time window over
 which quantum information can be stored and manipulated.
@@ -44,9 +44,9 @@ decoherence processes and determines how long the molecular spin can
 maintain its initialized state before it returns to thermal equilibrium
 after excitation. Critically, short $T_1$ values impose additional
 constraints on $T_2$, creating interdependent relationships that must be
-carefully managed through molecular design [@Warner2013][@Mullin2024].
+carefully managed through molecular design [@Warner:2013][@Mullin:2024].
 $T_1$ is limited by the coupling of electronic spins with lattice
-vibrations, commonly known as phonons [@Laorenza2021]. This spin--phonon
+vibrations, commonly known as phonons [@Laorenza:2021]. This spin--phonon
 coupling governs energy exchange between the spin system and the
 vibrational bath, providing the dominant relaxation pathway in many
 molecular crystals.
@@ -54,10 +54,10 @@ molecular crystals.
 Depending on the phonon spectrum and the local molecular environment,
 different mechanisms such as ($i$) direct processes, ($ii$) Raman
 processes, and ($iii$) Orbach relaxation can contribute to
-$T_1$ [@Abragam2012]. Recent experimental and theoretical efforts
+$T_1$ [@Abragam:2012]. Recent experimental and theoretical efforts
 have highlighted how molecular structure, ligand field symmetry, and
 host lattice dynamics dictate the magnitude and anisotropy of
-spin-phonon coupling [@Bayliss2022] [@Laorenza2022] [Lunghi2020].
+spin-phonon coupling [@Bayliss:2022] [@Laorenza:2022] [Lunghi:2020].
 
 `SpinVibe` is a Python package for simulating spin-phonon coupling and
 calculating $T_1$ of molecular qubits in a crystal lattice from
@@ -79,11 +79,11 @@ under various environmental factors.*
 
 Computational approaches based on density functional theory (DFT) have
 proven to be valuable for analyzing phonon modes and lattice dynamics in
-molecular systems [@Baroni2001]. Complementarily, multiconfigurational
+molecular systems [@Baroni:2001]. Complementarily, multiconfigurational
 electronic structure methods, such as CASSCF combined with NEVPT2,
 provide an accurate description of the spin states and their energy
 splittings, which are essential for modeling qubit
-performance [@Janicka2022] [@Baldinelli2025]. Integrating these two
+performance [@Janicka:2022] [@Baldinelli:2025]. Integrating these two
 perspectives into a unified framework for simulating spin-phonon
 coupling enables a microscopic understanding of the relaxation
 mechanisms in molecular qubits. Such an approach represents a powerful
@@ -93,8 +93,8 @@ long-lived spin states.
 
 To this end, we developed `SpinVibe`, a Python package that is designed
 to be user-friendly, providing streamlined workflows that are readily
-adapted to any *ab initio* code. Although the software packages MolForge [@Lunghiale2024] 
-and Spin-phonon suite [@spin-phonon-suite] have been developed to address this problem, 
+adapted to any *ab initio* code. Although the software packages MolForge [@Lunghi:2024] 
+and Spin-phonon suite [@Spin-phonon-suite] have been developed to address this problem, 
 SpinVibe is intentionally designed for user flexibility and increased interoperability. 
 Our code uses a Python based framework, allowing the storage of the required data from 
 first-principles calculations as `NumPy` arrays in HDF5 files, and is not restricted to 
@@ -105,7 +105,7 @@ quantities are extracted and saved in this format.
 # First principles spin-phonon coupling 
 
 Our code implements the theoretical framework developed by Lunghi and
-Sanvito [@Lunghi2020] [@Lunghi2023] [Lunghi2022], where in the
+Sanvito [@Lunghi:2020] [@Lunghi:2023] [Lunghi:2022], where in the
 weak-coupling regime the interaction between the spin Hamiltonian and
 the phonons is expanded as a Taylor series truncated at the quadratic
 term:

@@ -54,7 +54,7 @@ molecular crystals.
 Depending on the phonon spectrum and the local molecular environment,
 different mechanisms such as ($i$) direct processes, ($ii$) Raman
 processes, and ($iii$) Orbach relaxation can contribute to
-$T_1$ [@Abragam:2012]. Recent experimental and theoretical efforts
+$T_1$ [@Zhang:2002]. Recent experimental and theoretical efforts
 have highlighted how molecular structure, ligand field symmetry, and
 host lattice dynamics dictate the magnitude and anisotropy of
 spin-phonon coupling [@Bayliss:2022] [@Laorenza:2022] [Lunghi:2020].

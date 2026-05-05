@@ -93,7 +93,7 @@ long-lived spin states.
 
 To this end, we developed `SpinVibe`, a Python package that is designed
 to be user-friendly, providing streamlined workflows that are readily
-adapted to any *ab initio* code. Although the software packages MolForge [@Lunghi:2024] 
+adapted to any *ab initio* code. Although the software packages MolForge [@Lunghi:2020,@Lunghi:2024] 
 and Spin-phonon suite [@Spin-phonon-suite:2026] have been developed to address this problem, 
 SpinVibe is intentionally designed for user flexibility and increased interoperability. 
 Our code uses a Python based framework, allowing the storage of the required data from 

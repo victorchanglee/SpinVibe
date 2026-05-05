@@ -27,7 +27,7 @@ Molecular qubits have emerged as versatile candidates for quantum
 information technologies. Their appeal lies in the chemical tunability,
 the possibility of large-scale synthetic control and their integration
 with solid-state and solution-phase
-architectures [@Bayliss:2022] [@Wojnar:2024]. In contrast to solid-state
+architectures [@Bayliss:2022,@Wojnar:2024]. In contrast to solid-state
 defects or superconducting qubits, molecular qubits can be engineered at
 the atomic level, allowing researchers to systematically tailor their
 electronic, magnetic, and vibrational properties [@Laorenza:2022].
@@ -44,7 +44,7 @@ decoherence processes and determines how long the molecular spin can
 maintain its initialized state before it returns to thermal equilibrium
 after excitation. Critically, short $T_1$ values impose additional
 constraints on $T_2$, creating interdependent relationships that must be
-carefully managed through molecular design [@Warner:2013] [@Mullin:2024].
+carefully managed through molecular design [@Warner:2013,@Mullin:2024].
 $T_1$ is limited by the coupling of electronic spins with lattice
 vibrations, commonly known as phonons [@Laorenza:2021]. This spin--phonon
 coupling governs energy exchange between the spin system and the
@@ -57,7 +57,7 @@ processes, and ($iii$) Orbach relaxation can contribute to
 $T_1$ [@Zhang:2002]. Recent experimental and theoretical efforts
 have highlighted how molecular structure, ligand field symmetry, and
 host lattice dynamics dictate the magnitude and anisotropy of
-spin-phonon coupling [@Bayliss:2022] [@Laorenza:2022] [@Lunghi:2020].
+spin-phonon coupling [@Bayliss:2022,@Laorenza:2022,@Lunghi:2020].
 
 `SpinVibe` is a Python package for simulating spin-phonon coupling and
 calculating $T_1$ of molecular qubits in a crystal lattice from
@@ -83,7 +83,7 @@ molecular systems [@Baroni:2001]. Complementarily, multiconfigurational
 electronic structure methods, such as CASSCF combined with NEVPT2,
 provide an accurate description of the spin states and their energy
 splittings, which are essential for modeling qubit
-performance [@Janicka:2022] [@Baldinelli:2025]. Integrating these two
+performance [@Janicka:2022,@Baldinelli:2025]. Integrating these two
 perspectives into a unified framework for simulating spin-phonon
 coupling enables a microscopic understanding of the relaxation
 mechanisms in molecular qubits. Such an approach represents a powerful
@@ -105,7 +105,7 @@ quantities are extracted and saved in this format.
 # First principles spin-phonon coupling 
 
 Our code implements the theoretical framework developed by Lunghi and
-Sanvito [@Lunghi:2020] [@Lunghi:2023] [@Lunghi:2022], where in the
+Sanvito [@Lunghi:2020,@Lunghi:2023,@Lunghi:2022], where in the
 weak-coupling regime the interaction between the spin Hamiltonian and
 the phonons is expanded as a Taylor series truncated at the quadratic
 term:

@@ -127,7 +127,7 @@ $$
 \hat{Q}_{\alpha q}(t)\,\hat{Q}_{\beta q'}(t)
 $$
 
-where the first order term represents the interaction of the spin with a single phonon $Q_{\alpha q}$. The second order term describes the interaction of the spin with two phonons $Q_{\alpha q}$ and $Q_{\beta q'}$. 
+where the first order term represents the interaction of the spin with a single phonon $Q_{\alpha q}$ and the second order term describes the interaction of the spin with two phonons $Q_{\alpha q}$ and $Q_{\beta q'}$. 
 
 To describe the time evolution of the system, we employ the secular Redfield equation under the Born-Markov approximation 
 

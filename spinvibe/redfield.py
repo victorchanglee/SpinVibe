@@ -115,7 +115,7 @@ class Redfield:
       for q, alpha in all_tasks:
          # Initialize contribution for this (q, alpha) pair
          R1_qa = np.zeros((self.hdim, self.hdim, self.hdim, self.hdim), dtype=np.complex128)
-         V_alpha = init_Vq.compute_V_alpha_q(q, alpha)
+         V_alpha = init_Vq.compute_V_alpha_q(q, alpha, self.eigenvectors)
 
          dH_local[q,alpha,:,:] = V_alpha
          V_alpha = V_alpha*cm2J
@@ -212,7 +212,7 @@ class Redfield:
 
       for q1, q2, alpha, beta in all_tasks:
          # Get V matrix for this (alpha, beta) pair
-         V_alpha_beta = init_Vq.compute_V_alpha_beta_q(q1, q2, alpha, beta)
+         V_alpha_beta = init_Vq.compute_V_alpha_beta_q(q1, q2, alpha, beta,self.eigenvectors)
 
          d2H_local[q1,q2,alpha,beta,:,:] = V_alpha_beta
            

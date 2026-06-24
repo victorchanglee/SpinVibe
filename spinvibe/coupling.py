@@ -96,6 +96,7 @@ class coupling:
                         #Pass matrix entries as a function of the atomic displacement to compute the derivatives
                         dg[i,atom,j,k] = math_func.compute_derivative(self.disp1, g_x)
                         dd[i,atom,j,k] = math_func.compute_derivative(self.disp1, d_x)
+
                         
  
         #Compute the derivative of the Hamiltonian
@@ -143,7 +144,7 @@ class coupling:
                             sH = hamiltonian.hamiltonian( self.B, self.S, d2g_dxij, d2D_dxij)
                             self.dH2_dxdx[atom1,atom2,i,j,:,:] = sH.Hs
 
-    def compute_V_alpha_q(self, q, omega):
+    def compute_V_alpha_q(self, q, omega,eigenvectors):
         """
         Compute the interaction matrix elements V^{alpha q}_{aj}.
         """
@@ -168,7 +169,9 @@ class coupling:
         H_herm = np.conj(coupling.T)
         V_alpha = 0.5 * (coupling + H_herm)
 
-        return V_alpha
+        V_ab = eigenvectors.conj().T @ V_alpha @ eigenvectors
+
+        return V_ab
 
     def pre_compute_V_alpha_beta_q(self):
         
@@ -194,7 +197,7 @@ class coupling:
 
         return
 
-    def compute_V_alpha_beta_q(self, Nq1, Nq2, Nomega1, Nomega2):
+    def compute_V_alpha_beta_q(self, Nq1, Nq2, Nomega1, Nomega2, eigenvectors):
 
         
 
@@ -216,8 +219,10 @@ class coupling:
         
         V_alpha_beta += V_alpha_beta.conj().T
         V_alpha_beta *= 0.5
+
+        V_ab = eigenvectors.conj().T @ V_alpha_beta @ eigenvectors
            
-        return V_alpha_beta
+        return V_ab
 
     def save_data(self):
 

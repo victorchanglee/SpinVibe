@@ -112,6 +112,8 @@ class spin_phonon:
             print("\n")
             print("Eigenvalues of the spin Hamiltonian (cm-1)")
             print(self.eigenvalues)
+            print("Eigenvectors of the spin Hamiltonian")
+            print(self.eigenvectors)
             print("\n")
 
 

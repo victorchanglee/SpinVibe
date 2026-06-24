@@ -5,6 +5,7 @@ from numpy.polynomial.polynomial import polyfit, polyval2d, Polynomial
 def broadening(x, eta):
 
     return (eta / np.pi) / ( (x) ** 2 + eta ** 2)
+    #return (1/eta * (np.sqrt(2 * np.pi))) * np.exp(-0.5 * (x/eta)**2)
 
 def diagonalize(hamiltonian):
     """
